@@ -1,0 +1,346 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Capture Screen to Detect" : {
+      "comment" : "[Menu] Hint for capturing the screen",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捕捉屏幕来检测"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "擷取螢幕來檢測"
+          }
+        }
+      }
+    },
+    "Clear Contents" : {
+      "comment" : "[Menu] Clear the clipboard",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除内容"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除內容"
+          }
+        }
+      }
+    },
+    "Click to Copy" : {
+      "comment" : "[Menu] Hint for copying text",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击来复制内容"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點選來拷貝內容"
+          }
+        }
+      }
+    },
+    "Clipboard" : {
+      "comment" : "[Menu] Clipboard options",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剪贴板"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剪貼簿"
+          }
+        }
+      }
+    },
+    "Configure" : {
+      "comment" : "[Menu] Configure system services",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
+        }
+      }
+    },
+    "Copy All" : {
+      "comment" : "[Menu] Copy all text at once",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制全部"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷貝全部"
+          }
+        }
+      }
+    },
+    "Documentation" : {
+      "comment" : "[Menu] Open the wiki for system services",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文档"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文檔"
+          }
+        }
+      }
+    },
+    "en-US" : {
+      "comment" : "Identifier used to locate localized resources",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zh-Hans"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zh-Hant"
+          }
+        }
+      }
+    },
+    "Failed to run \"%@\"." : {
+      "comment" : "Error message when a system service failed",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”运行失败。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”執行失敗。"
+          }
+        }
+      }
+    },
+    "GitHub" : {
+      "comment" : "[Menu] Open the TextGrabber2 repository on GitHub",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub"
+          }
+        }
+      }
+    },
+    "How to Capture?" : {
+      "comment" : "[Menu] How to use the app",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如何捕捉？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如何捕捉？"
+          }
+        }
+      }
+    },
+    "Join Directly" : {
+      "comment" : "[Menu] Join all text directly",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接合并"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接合併"
+          }
+        }
+      }
+    },
+    "Join with Line Breaks" : {
+      "comment" : "[Menu] Join all text with line breaks and copy them",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用换行合并"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用換行合併"
+          }
+        }
+      }
+    },
+    "Join with Spaces" : {
+      "comment" : "[Menu] Join all text with spaces and copy them",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用空格合并"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用空格合併"
+          }
+        }
+      }
+    },
+    "Launch at Login" : {
+      "comment" : "[Menu] Automatically start the app at login",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录时启动"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登入時啟動"
+          }
+        }
+      }
+    },
+    "Quit TextGrabber2" : {
+      "comment" : "[Menu] Quit the app",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 TextGrabber2"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 TextGrabber2"
+          }
+        }
+      }
+    },
+    "Recognizing..." : {
+      "comment" : "[Menu] The recognition is ongoing",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "识别中…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "識別中…"
+          }
+        }
+      }
+    },
+    "Save as File" : {
+      "comment" : "[Menu] Save the clipboard as file",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存为文件"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "儲存為檔案"
+          }
+        }
+      }
+    },
+    "Services" : {
+      "comment" : "[Menu] System services menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務"
+          }
+        }
+      }
+    },
+    "Version" : {
+      "comment" : "[Menu] Version number label",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
