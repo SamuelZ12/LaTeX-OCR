@@ -208,9 +208,9 @@ final class App: NSObject, NSApplicationDelegate {
                 let copied = pasteboard.writeObjects([latex as NSString])
                 Logger.log(.info, "Clipboard write successful: \(copied)")
                 
-                guard let menu = statusItem.menu else { 
+                guard let menu = statusItem.menu else {
                     Logger.log(.error, "Menu not available")
-                    return 
+                    return
                 }
                 
                 menu.removeItems { $0 is ResultItem }
@@ -268,7 +268,7 @@ final class App: NSObject, NSApplicationDelegate {
         let payload: [String: Any] = [
             "contents": [[
                 "parts": [
-                    ["text": "Convert the image into text. Convert any mathematical expressions in this image to LaTeX code. Return only text in the image along with any the LaTeX code without any additional text or explanation."],
+                    ["text": "Extract all content from this image. For mathematical expressions, convert them to LaTeX notation. For regular text, keep it as plain text without any formatting. Do not add explanations, delimiters, or markdown. Return only the detected content."],
                     ["inline_data": [
                         "mime_type": "image/png",
                         "data": imageBase64
