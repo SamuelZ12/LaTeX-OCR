@@ -169,7 +169,7 @@ final class App: NSObject, NSApplicationDelegate {
             return
         }
         
-        Logger.log(.info, "API Key exists: \(Config.geminiAPIKey != nil)")
+        Logger.log(.info, "API key is configured")
         
         guard let tiffData = image.tiffRepresentation,
               let bitmapImage = NSBitmapImageRep(data: tiffData),
@@ -241,30 +241,6 @@ final class App: NSObject, NSApplicationDelegate {
     }
     
     private func getLatexFromGemini(imageBase64: String) async throws -> String {
-        #if !canImport(ConfigMarker)
-        @MainActor
-        enum Config {
-            private static let secrets: [String: Any]? = {
-                guard let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
-                      let dict = NSDictionary(contentsOfFile: path) as? [String: Any] else {
-                    return nil
-                }
-                return dict
-            }()
-
-            static var geminiAPIKey: String? {
-                secrets?["GEMINI_API_KEY"] as? String
-            }
-
-            static let geminiEndpoint =
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-        }
-        #endif
-        
-        guard let apiKey = Config.geminiAPIKey else {
-            throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing Gemini API key"])
-        }
-        
         let payload: [String: Any] = [
             "contents": [[
                 "parts": [
@@ -277,7 +253,7 @@ final class App: NSObject, NSApplicationDelegate {
             ]]
         ]
         
-        guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
+        guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(Config.geminiAPIKey)") else {
             throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
         }
         
