@@ -28,6 +28,8 @@
 		87E192F72BABD18900A87A4E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192F62BABD18900A87A4E /* Logger.swift */; };
 		87E192FB2BAC044E00A87A4E /* NSObject+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192FA2BAC044E00A87A4E /* NSObject+Extension.swift */; };
 		87E192FD2BAC1BD600A87A4E /* NSWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */; };
+		B9634B0E2DBAEC1F00911E43 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B0D2DBAEC1F00911E43 /* Config.swift */; };
+		B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9634B0F2DBAEDA100911E43 /* Secrets.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +58,8 @@
 		87E192FA2BAC044E00A87A4E /* NSObject+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Extension.swift"; sourceTree = "<group>"; };
 		87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extension.swift"; sourceTree = "<group>"; };
 		B9634B0C2DBADC4E00911E43 /* instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = instructions.md; sourceTree = "<group>"; };
+		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,7 @@
 				87E192D62BAAE16200A87A4E /* Sources */,
 				8772FAE72BAC73F100DBEAA0 /* Resources */,
 				87E192D22BAAE0CD00A87A4E /* Supporting Files */,
+				B9634B0F2DBAEDA100911E43 /* Secrets.plist */,
 			);
 			path = TextGrabber2;
 			sourceTree = "<group>";
@@ -139,6 +144,7 @@
 			children = (
 				87E192D32BAAE11500A87A4E /* Extensions */,
 				87E192C22BAADE1200A87A4E /* App.swift */,
+				B9634B0D2DBAEC1F00911E43 /* Config.swift */,
 				87E192F42BABC8FD00A87A4E /* Detector.swift */,
 				87E192F62BABD18900A87A4E /* Logger.swift */,
 				87E192F02BABB6EA00A87A4E /* Recognizer.swift */,
@@ -208,6 +214,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */,
 				8737A24A2BBEC27700042E83 /* Services in Resources */,
 				8772FAE92BAC743D00DBEAA0 /* Localizable.xcstrings in Resources */,
 				87E192C72BAADE1300A87A4E /* Assets.xcassets in Resources */,
@@ -225,6 +232,7 @@
 				87E192DF2BAAE38700A87A4E /* NSControl+Extension.swift in Sources */,
 				875364A42BE1D6FC00611579 /* NSAlert+Extension.swift in Sources */,
 				87E192F32BABB71D00A87A4E /* NSPasteboard+Extension.swift in Sources */,
+				B9634B0E2DBAEC1F00911E43 /* Config.swift in Sources */,
 				87E192E72BAAFBC900A87A4E /* SMAppService+Extension.swift in Sources */,
 				87E192F12BABB6EA00A87A4E /* Recognizer.swift in Sources */,
 				87E192FD2BAC1BD600A87A4E /* NSWindow+Extension.swift in Sources */,

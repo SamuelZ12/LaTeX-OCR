@@ -138,7 +138,21 @@
       }
     },
     "Extract LaTeX" : {
-      "comment" : "[Menu] Extract LaTeX code from image"
+      "comment" : "[Menu] Extract LaTeX code from image",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提取 LaTeX"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "擷取 LaTeX"
+          }
+        }
+      }
     },
     "Failed to run \"%@\"." : {
       "comment" : "Error message when a system service failed",
