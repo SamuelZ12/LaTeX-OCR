@@ -7,6 +7,7 @@
 
 import AppKit
 import ServiceManagement
+import Foundation
 
 @MainActor
 final class App: NSObject, NSApplicationDelegate {
@@ -152,10 +153,6 @@ final class App: NSObject, NSApplicationDelegate {
     return item
   }()
 
-  // ADD: Configuration for Gemini API
-  private let geminiAPIKey = "AIzaSyBoP7ZVuXOOVjZM1JDlDQL9jF-ViKb3dVU"
-  private let geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-
   func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
     guard let button = statusItem.button, let window = button.window else {
       Logger.log(.error, "Missing button or window to provide positioning info")
@@ -215,6 +212,10 @@ final class App: NSObject, NSApplicationDelegate {
   }
   
   private func getLatexFromGemini(imageBase64: String) async throws -> String {
+    guard let apiKey = Config.geminiAPIKey else {
+        throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing Gemini API key"])
+    }
+    
     let payload: [String: Any] = [
       "contents": [[
         "parts": [
@@ -227,7 +228,7 @@ final class App: NSObject, NSApplicationDelegate {
       ]]
     ]
     
-    guard let url = URL(string: "\(geminiEndpoint)?key=\(geminiAPIKey)") else {
+    guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
       throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
     }
     
@@ -254,13 +255,15 @@ final class App: NSObject, NSApplicationDelegate {
     
     guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
           let candidates = json["candidates"] as? [[String: Any]],
-          let content = candidates.first?["content"] as? [String: Any],
+          let firstCandidate = candidates.first,
+          let content = firstCandidate["content"] as? [String: Any],
           let parts = content["parts"] as? [[String: Any]],
-          let text = parts.first?["text"] as? String else {
+          let firstPart = parts.first,
+          let text = firstPart["text"] as? String else {
       throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
     }
     
-    return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    return text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
   }
 
   func applicationDidFinishLaunching(_ notification: Notification) {

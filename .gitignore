@@ -60,8 +60,9 @@ DerivedData/
 .env
 .env.local
 APIKeys.swift
-Secrets.swift
 Config.swift
+Secrets.plist
+**/Secrets.plist
 
 # Logs and databases
 *.log
