@@ -34,6 +34,8 @@ enum Localized {
   static let menuTitleLaunchAtLogin = String(localized: "Launch at Login", comment: "[Menu] Automatically start the app at login")
   static let menuTitleVersion = String(localized: "Version", comment: "[Menu] Version number label")
   static let menuTitleQuitTextGrabber2 = String(localized: "Quit TextGrabber2", comment: "[Menu] Quit the app")
+  static let menuTitleExtractLaTeX = String(localized: "Extract LaTeX", comment: "[Menu] Extract LaTeX code from image")
+
 }
 
 // Icon set used in the app: https://developer.apple.com/sf-symbols/

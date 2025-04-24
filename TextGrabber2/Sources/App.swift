@@ -27,6 +27,7 @@ final class App: NSObject, NSApplicationDelegate {
     menu.addItem(howToItem)
     menu.addItem(.separator())
     menu.addItem(copyAllItem)
+    menu.addItem(extractLatexItem)
     menu.addItem(servicesItem)
     menu.addItem(clipboardItem)
     menu.addItem(.separator())
@@ -87,6 +88,14 @@ final class App: NSObject, NSApplicationDelegate {
     return item
   }()
 
+  private lazy var extractLatexItem: NSMenuItem = {
+    let item = NSMenuItem(title: Localized.menuTitleExtractLaTeX)
+    item.addAction { [weak self] in
+      self?.extractLatex()
+    }
+    return item
+  }()
+
   private lazy var servicesItem: NSMenuItem = {
     let menu = NSMenu()
     menu.addItem(.separator())
@@ -143,6 +152,10 @@ final class App: NSObject, NSApplicationDelegate {
     return item
   }()
 
+  // ADD: Configuration for Gemini API
+  private let geminiAPIKey = "AIzaSyBoP7ZVuXOOVjZM1JDlDQL9jF-ViKb3dVU"
+  private let geminiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+
   func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
     guard let button = statusItem.button, let window = button.window else {
       Logger.log(.error, "Missing button or window to provide positioning info")
@@ -151,11 +164,105 @@ final class App: NSObject, NSApplicationDelegate {
 
     return (window.convertToScreen(button.frame), window.screen ?? .main)
   }
-}
 
-// MARK: - Life Cycle
+  func extractLatex() {
+    guard let image = NSPasteboard.general.image else {
+      Logger.log(.error, "No image in clipboard")
+      return
+    }
+    
+    // Convert NSImage to PNG data
+    guard let tiffData = image.tiffRepresentation,
+          let bitmapImage = NSBitmapImageRep(data: tiffData),
+          let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
+      Logger.log(.error, "Failed to convert image to PNG data")
+      return
+    }
+    
+    let base64Image = imageData.base64EncodedString()
+    
+    // Update menu to show processing state
+    hintItem.title = "Processing LaTeX..."
+    
+    Task {
+      do {
+        let latex = try await getLatexFromGemini(imageBase64: base64Image)
+        
+        // Add result to menu
+        guard let menu = statusItem.menu else { return }
+        
+        // Remove any existing LaTeX results
+        menu.removeItems { $0 is ResultItem }
+        
+        let separator = NSMenuItem.separator()
+        menu.insertItem(separator, at: menu.index(of: howToItem) + 1)
+        
+        let item = ResultItem(title: latex)
+        item.addAction {
+          NSPasteboard.general.string = latex
+          Logger.log(.info, "Copied LaTeX to clipboard")
+        }
+        menu.insertItem(item, at: menu.index(of: separator) + 1)
+        
+        // Reset hint
+        hintItem.title = Localized.menuTitleHintCopy
+        
+      } catch {
+        Logger.log(.error, "LaTeX extraction failed: \(error)")
+        hintItem.title = "LaTeX extraction failed"
+      }
+    }
+  }
+  
+  private func getLatexFromGemini(imageBase64: String) async throws -> String {
+    let payload: [String: Any] = [
+      "contents": [[
+        "parts": [
+          ["text": "Convert the mathematical expression in this image to LaTeX code. Return only the LaTeX code without any additional text or explanation."],
+          ["inline_data": [
+            "mime_type": "image/png",
+            "data": imageBase64
+          ]]
+        ]
+      ]]
+    ]
+    
+    guard let url = URL(string: "\(geminiEndpoint)?key=\(geminiAPIKey)") else {
+      throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse else {
+      throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+    }
+    
+    if httpResponse.statusCode != 200 {
+      if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+         let error = errorJson["error"] as? [String: Any],
+         let message = error["message"] as? String {
+        throw NSError(domain: "TextGrabber", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
+      } else {
+        throw NSError(domain: "TextGrabber", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "API request failed with status \(httpResponse.statusCode)"])
+      }
+    }
+    
+    guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let candidates = json["candidates"] as? [[String: Any]],
+          let content = candidates.first?["content"] as? [String: Any],
+          let parts = content["parts"] as? [[String: Any]],
+          let text = parts.first?["text"] as? String else {
+      throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+    }
+    
+    return text.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
 
-extension App {
   func applicationDidFinishLaunching(_ notification: Notification) {
     Services.initialize()
     clearMenuItems()

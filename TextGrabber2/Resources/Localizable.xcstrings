@@ -137,6 +137,9 @@
         }
       }
     },
+    "Extract LaTeX" : {
+      "comment" : "[Menu] Extract LaTeX code from image"
+    },
     "Failed to run \"%@\"." : {
       "comment" : "Error message when a system service failed",
       "localizations" : {
