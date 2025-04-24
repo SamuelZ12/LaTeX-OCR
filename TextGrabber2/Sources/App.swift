@@ -192,6 +192,14 @@ final class App: NSObject, NSApplicationDelegate {
                 
                 // Clean up the response
                 latex = latex.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                // Remove LaTeX markdown delimiters
+                let markdownDelimiters = ["```latex", "```", "$$", "$", "\\begin{align}", "\\end{align}", "\\begin{equation}", "\\end{equation}"]
+                for delimiter in markdownDelimiters {
+                    latex = latex.replacingOccurrences(of: delimiter, with: "")
+                }
+                latex = latex.trimmingCharacters(in: .whitespacesAndNewlines)
+                
                 Logger.log(.info, "Cleaned LaTeX: \(latex)")
                 
                 // Copy to clipboard using a more reliable method
@@ -260,7 +268,7 @@ final class App: NSObject, NSApplicationDelegate {
         let payload: [String: Any] = [
             "contents": [[
                 "parts": [
-                    ["text": "Convert the mathematical expression in this image to LaTeX code. Return only the LaTeX code without any additional text or explanation."],
+                    ["text": "Convert the image into text. Convert any mathematical expressions in this image to LaTeX code. Return only text in the image along with any the LaTeX code without any additional text or explanation."],
                     ["inline_data": [
                         "mime_type": "image/png",
                         "data": imageBase64
