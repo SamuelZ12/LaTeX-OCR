@@ -153,6 +153,8 @@ final class App: NSObject, NSApplicationDelegate {
         return item
     }()
 
+    private let latexService = LatexAPIService()
+    
     func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
         guard let button = statusItem.button, let window = button.window else {
             Logger.log(.error, "Missing button or window to provide positioning info")
@@ -187,7 +189,7 @@ final class App: NSObject, NSApplicationDelegate {
         Task {
             do {
                 Logger.log(.info, "Starting Gemini API call")
-                var latex = try await getLatexFromGemini(imageBase64: base64Image)
+                var latex = try await self.latexService.extractLatex(from: base64Image)
                 Logger.log(.info, "Received LaTeX from API: \(latex)")
                 
                 // Clean up the response
@@ -208,7 +210,7 @@ final class App: NSObject, NSApplicationDelegate {
                 let copied = pasteboard.writeObjects([latex as NSString])
                 Logger.log(.info, "Clipboard write successful: \(copied)")
                 
-                guard let menu = statusItem.menu else {
+                guard let menu = self.statusItem.menu else {
                     Logger.log(.error, "Menu not available")
                     return
                 }
@@ -223,72 +225,21 @@ final class App: NSObject, NSApplicationDelegate {
                     Logger.log(.info, "Menu item clipboard copy: \(copied)")
                 }
                 
-                menu.insertItem(item, at: menu.index(of: hintItem) + 1)
+                menu.insertItem(item, at: menu.index(of: self.hintItem) + 1)
                 
                 if copied {
-                    hintItem.title = "LaTeX copied! Click to copy again"
+                    self.hintItem.title = "LaTeX copied! Click to copy again"
                 } else {
-                    hintItem.title = "Failed to copy LaTeX"
+                    self.hintItem.title = "Failed to copy LaTeX"
                     Logger.log(.error, "Failed to write to clipboard")
                 }
                 
             } catch {
                 let errorMessage = "LaTeX extraction failed: \(error.localizedDescription)"
                 Logger.log(.error, errorMessage)
-                hintItem.title = errorMessage
+                self.hintItem.title = errorMessage
             }
         }
-    }
-    
-    private func getLatexFromGemini(imageBase64: String) async throws -> String {
-        let payload: [String: Any] = [
-            "contents": [[
-                "parts": [
-                    ["text": "Extract all content from this image. For mathematical expressions, convert them to LaTeX notation. For regular text, keep it as plain text without any formatting. Do not add explanations, delimiters, or markdown. Return only the detected content."],
-                    ["inline_data": [
-                        "mime_type": "image/png",
-                        "data": imageBase64
-                    ]]
-                ]
-            ]]
-        ]
-        
-        guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(Config.geminiAPIKey)") else {
-            throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
-        }
-        
-        if httpResponse.statusCode != 200 {
-            if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorJson["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw NSError(domain: "TextGrabber", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: message])
-            } else {
-                throw NSError(domain: "TextGrabber", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "API request failed with status \(httpResponse.statusCode)"])
-            }
-        }
-        
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let candidates = json["candidates"] as? [[String: Any]],
-              let firstCandidate = candidates.first,
-              let content = firstCandidate["content"] as? [String: Any],
-              let parts = content["parts"] as? [[String: Any]],
-              let firstPart = parts.first,
-              let text = firstPart["text"] as? String else {
-            throw NSError(domain: "TextGrabber", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
-        }
-        
-        return text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -376,10 +327,10 @@ private extension App {
 
         Task {
             let fastResult = await Recognizer.detect(image: image, level: .fast)
-            showResult(fastResult, in: menu)
+            self.showResult(fastResult, in: menu)
 
             let accurateResult = await Recognizer.detect(image: image, level: .accurate)
-            showResult(accurateResult, in: menu)
+            self.showResult(accurateResult, in: menu)
         }
     }
 

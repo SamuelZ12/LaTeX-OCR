@@ -30,6 +30,7 @@
 		87E192FD2BAC1BD600A87A4E /* NSWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */; };
 		B9634B0E2DBAEC1F00911E43 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B0D2DBAEC1F00911E43 /* Config.swift */; };
 		B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9634B0F2DBAEDA100911E43 /* Secrets.plist */; };
+		B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B112DBAFAA800911E43 /* LatexAPIService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		B9634B0C2DBADC4E00911E43 /* instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = instructions.md; sourceTree = "<group>"; };
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
+		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,8 +152,17 @@
 				87E192F02BABB6EA00A87A4E /* Recognizer.swift */,
 				87E192E82BAAFF0200A87A4E /* Resources.swift */,
 				8737A24B2BBECB8800042E83 /* Services.swift */,
+				B9634B122DBAFAA800911E43 /* Services */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		B9634B122DBAFAA800911E43 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B9634B112DBAFAA800911E43 /* LatexAPIService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -229,6 +240,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8737A24C2BBECB8800042E83 /* Services.swift in Sources */,
+				B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */,
 				87E192DF2BAAE38700A87A4E /* NSControl+Extension.swift in Sources */,
 				875364A42BE1D6FC00611579 /* NSAlert+Extension.swift in Sources */,
 				87E192F32BABB71D00A87A4E /* NSPasteboard+Extension.swift in Sources */,
