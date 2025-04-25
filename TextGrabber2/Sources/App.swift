@@ -8,142 +8,195 @@
 import AppKit
 import ServiceManagement
 import Foundation
-import SwiftUI
 
 @MainActor
-final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
+final class App: NSObject, NSApplicationDelegate {
     private var currentResult: Recognizer.ResultData?
     private var pasteboardObserver: Timer?
     private var pasteboardChangeCount = 0
 
-    internal let statusItem: NSStatusItem = {
+    private lazy var statusItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.behavior = .terminationOnRemoval
         item.autosaveName = Bundle.main.bundleName
         item.button?.image = .with(symbolName: Icons.textViewFinder, pointSize: 15)
 
         let menu = NSMenu()
-        // ... rest of menu setup
         menu.delegate = self
+
+        menu.addItem(hintItem)
+        menu.addItem(howToItem)
+        menu.addItem(.separator())
+        menu.addItem(copyAllItem)
+        menu.addItem(extractLatexItem)
+        menu.addItem(servicesItem)
+        menu.addItem(clipboardItem)
+        menu.addItem(.separator())
+        menu.addItem(launchAtLoginItem)
+
+        menu.addItem(withTitle: Localized.menuTitleGitHub) {
+            NSWorkspace.shared.safelyOpenURL(string: Links.github)
+        }
+
+        menu.addItem(.separator())
+        menu.addItem({
+            let item = NSMenuItem(title: "\(Localized.menuTitleVersion) \(Bundle.main.shortVersionString)")
+            item.isEnabled = false
+
+            return item
+        }())
+
+        menu.addItem({
+            let item = NSMenuItem(title: Localized.menuTitleQuitTextGrabber2, action: nil, keyEquivalent: "q")
+            item.keyEquivalentModifierMask = .command
+            item.addAction {
+                NSApp.terminate(nil)
+            }
+
+            return item
+        }())
+
         item.menu = menu
         return item
     }()
 
-    private lazy var extractVisionItem: NSMenuItem = {
-        let item = NSMenuItem(title: String(localized: "menu.extract.vision"))
-        item.addAction { [weak self] in
-            self?.triggerVisionExtraction()
+    private let hintItem = NSMenuItem()
+    private let howToItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleHowTo)
+        item.addAction {
+            NSWorkspace.shared.safelyOpenURL(string: "\(Links.github)/wiki#capture-screen-on-mac")
         }
+
+        return item
+    }()
+
+    private lazy var copyAllItem: NSMenuItem = {
+        let menu = NSMenu()
+        menu.addItem(withTitle: Localized.menuTitleJoinDirectly) {
+            NSPasteboard.general.string = self.currentResult?.directlyJoined
+        }
+
+        menu.addItem(withTitle: Localized.menuTitleJoinWithLineBreaks) {
+            NSPasteboard.general.string = self.currentResult?.lineBreaksJoined
+        }
+
+        menu.addItem(withTitle: Localized.menuTitleJoinWithSpaces) {
+            NSPasteboard.general.string = self.currentResult?.spacesJoined
+        }
+
+        let item = NSMenuItem(title: Localized.menuTitleCopyAll)
+        item.submenu = menu
         return item
     }()
 
     private lazy var extractLatexItem: NSMenuItem = {
-        let item = NSMenuItem(title: String(localized: "menu.extract.latex"))
+        let item = NSMenuItem(title: Localized.menuTitleExtractLaTeX)
         item.addAction { [weak self] in
-            self?.triggerLatexExtraction()
+            self?.extractLatex()
         }
         return item
     }()
 
-    private lazy var settingsItem: NSMenuItem = {
-        let item = NSMenuItem(title: String(localized: "menu.settings"))
-        item.addAction { [weak self] in
-            self?.openSettingsWindow()
+    private lazy var servicesItem: NSMenuItem = {
+        let menu = NSMenu()
+        menu.addItem(.separator())
+
+        menu.addItem(withTitle: Localized.menuTitleConfigure) {
+            NSWorkspace.shared.open(Services.fileURL)
         }
+
+        menu.addItem(withTitle: Localized.menuTitleDocumentation) {
+            NSWorkspace.shared.safelyOpenURL(string: "\(Links.github)/wiki#connect-to-system-services")
+        }
+
+        let item = NSMenuItem(title: Localized.menuTitleServices)
+        item.submenu = menu
         return item
     }()
 
-    private lazy var quitItem: NSMenuItem = {
-        let item = NSMenuItem(title: String(localized: "menu.quit"),
-                            action: nil,
-                            keyEquivalent: "q")
-        item.keyEquivalentModifierMask = .command
+    private lazy var clipboardItem: NSMenuItem = {
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        menu.addItem(saveImageItem)
+
+        menu.addItem(withTitle: Localized.menuTitleClearContents) {
+            NSPasteboard.general.clearContents()
+        }
+
+        let item = NSMenuItem(title: Localized.menuTitleClipboard)
+        item.submenu = menu
+        return item
+    }()
+
+    private let saveImageItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleSaveAsFile)
         item.addAction {
-            NSApp.terminate(nil)
+            NSPasteboard.general.saveImageAsFile()
         }
+
         return item
     }()
 
-    private let latexService: LatexAPIService
-    private let screenCapture = ScreenCapture()
+    private let launchAtLoginItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleLaunchAtLogin)
+        item.addAction { [weak item] in
+            do {
+                try SMAppService.mainApp.toggle()
+            } catch {
+                Logger.log(.error, "\(error)")
+            }
 
-    override init() {
-        self.latexService = LatexAPIService()
-        super.init()
-    }
-    
-    private var settingsWindowController: SettingsWindowController?
-    private let shortcutMonitor = ShortcutMonitor()
-    
-    private func triggerVisionExtraction() {
-        statusItem.menu?.cancelTracking()
-        screenCapture.selectRegion { [weak self] (image: CGImage?) in
-            guard let self = self, let image = image else { return }
-            self.performVisionExtraction(image: image)
+            item?.toggle()
         }
-    }
+
+        item.setOn(SMAppService.mainApp.isEnabled)
+        return item
+    }()
+
+    private let latexService = LatexAPIService()
     
-    private func triggerLatexExtraction() {
-        statusItem.menu?.cancelTracking()
-        screenCapture.selectRegion { [weak self] (image: CGImage?) in
-            guard let self = self, let image = image else { return }
-            self.performLatexExtraction(image: image)
+    func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
+        guard let button = statusItem.button, let window = button.window else {
+            Logger.log(.error, "Missing button or window to provide positioning info")
+            return nil
         }
+
+        return (window.convertToScreen(button.frame), window.screen ?? .main)
     }
-    
-    private func performVisionExtraction(image: CGImage) {
-        Task {
-            let result = await Recognizer.detect(image: image, level: .accurate)
-            
-            guard !result.candidates.isEmpty else {
-                NSAlert.runModal(message: String(localized: "alert.no_text"))
-                return
-            }
-            
-            // Copy result based on candidates
-            NSPasteboard.general.string = result.candidates.first ?? ""
-            
-            if let button = statusItem.button {
-                let originalImage = button.image
-                button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
-                
-                // Revert back after delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
-                    button?.image = originalImage
-                }
-            }
-            
-            Logger.log(.info, "Vision extraction completed")
+
+    func extractLatex() {
+        guard let image = NSPasteboard.general.image else {
+            Logger.log(.error, "No image in clipboard")
+            hintItem.title = "No image in clipboard"
+            return
         }
-    }
-    
-    private func performLatexExtraction(image: CGImage) {
+        
+        Logger.log(.info, "API key is configured")
+        
+        guard let tiffData = image.tiffRepresentation,
+              let bitmapImage = NSBitmapImageRep(data: tiffData),
+              let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
+            Logger.log(.error, "Failed to convert image to PNG data")
+            hintItem.title = "Failed to convert image"
+            return
+        }
+        
+        let base64Image = imageData.base64EncodedString()
+        Logger.log(.info, "Image converted to base64")
+        
+        hintItem.title = "Processing LaTeX..."
+        
         Task {
             do {
-                guard let apiKey = SettingsManager.shared.getGeminiApiKey(),
-                      !apiKey.isEmpty else {
-                    NSAlert.runModal(message: String(localized: "alert.api_key_missing"))
-                    return
-                }
+                Logger.log(.info, "Starting Gemini API call")
+                var latex = try await self.latexService.extractLatex(from: base64Image)
+                Logger.log(.info, "Received LaTeX from API: \(latex)")
                 
-                // Convert CGImage to PNG data using NSBitmapImageRep
-                let bitmapRep = NSBitmapImageRep(cgImage: image)
-                guard let pngData = bitmapRep.representation(using: .png, properties: [:]) else {
-                    throw NSError(domain: "TextGrabber", code: -1, userInfo: [
-                        NSLocalizedDescriptionKey: "Failed to convert image to PNG"
-                    ])
-                }
-                
-                let base64String = pngData.base64EncodedString()
-                
-                // Call Gemini API
-                var latex = try await latexService.extractLatex(from: base64String)
-                
-                // Clean up the LaTeX response
+                // Clean up the response
                 latex = latex.trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 // Remove LaTeX markdown delimiters
-                let markdownDelimiters = ["$$", "\\[", "\\]"]
+                let markdownDelimiters = ["```latex", "```", "$$", "$", "\\begin{align}", "\\end{align}", "\\begin{equation}", "\\end{equation}"]
                 for delimiter in markdownDelimiters {
                     latex = latex.replacingOccurrences(of: delimiter, with: "")
                 }
@@ -176,29 +229,33 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 
                 if copied {
                     self.hintItem.title = "LaTeX copied! Click to copy again"
+                    
+                    // Show visual feedback
+                    if let button = self.statusItem.button {
+                        let originalImage = button.image
+                        button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
+                        
+                        // Revert back to original icon after delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
+                            button?.image = originalImage
+                        }
+                    }
                 } else {
                     self.hintItem.title = "Failed to copy LaTeX"
                     Logger.log(.error, "Failed to write to clipboard")
                 }
                 
-                Logger.log(.info, "LaTeX extraction completed")
             } catch {
-                NSAlert.runModal(message: error.localizedDescription)
-                Logger.log(.error, "LaTeX extraction failed: \(error)")
+                let errorMessage = "LaTeX extraction failed: \(error.localizedDescription)"
+                Logger.log(.error, errorMessage)
+                self.hintItem.title = errorMessage
             }
         }
     }
-    
-    private func openSettingsWindow() {
-        if settingsWindowController == nil {
-            settingsWindowController = SettingsWindowController()
-        }
-        
-        settingsWindowController?.showWindow(nil as Any?)
-        NSApp.activate(ignoringOtherApps: true)
-    }
-    
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Services.initialize()
+        clearMenuItems()
         statusItem.isVisible = true
     }
 }
@@ -207,7 +264,14 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
 extension App: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
+        extractLatexItem.isHidden = true  // Hide initially when menu opens
+        
+        // Start detection and check for image
         startDetection()
+        
+        if let image = NSPasteboard.general.image?.cgImage {
+            extractLatexItem.isHidden = false  // Show button if image exists
+        }
         
         servicesItem.submenu?.removeItems { $0 is ServiceItem }
         for service in Services.items.reversed() {
@@ -259,6 +323,7 @@ private extension App {
         hintItem.title = Localized.menuTitleHintCapture
         howToItem.isHidden = false
         copyAllItem.isHidden = true
+        extractLatexItem.isHidden = true // Add this line
         statusItem.menu?.removeItems { $0 is ResultItem }
     }
 
@@ -271,11 +336,13 @@ private extension App {
         pasteboardChangeCount = NSPasteboard.general.changeCount
         clipboardItem.isHidden = NSPasteboard.general.isEmpty
         saveImageItem.isEnabled = false
+        extractLatexItem.isHidden = true // Hide by default
 
         guard let image = NSPasteboard.general.image?.cgImage else {
             return Logger.log(.info, "No image was copied")
         }
 
+        extractLatexItem.isHidden = false // Show when image is present
         hintItem.title = Localized.menuTitleHintRecognizing
         howToItem.isHidden = true
 
