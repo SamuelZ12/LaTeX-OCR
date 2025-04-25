@@ -229,6 +229,17 @@ final class App: NSObject, NSApplicationDelegate {
                 
                 if copied {
                     self.hintItem.title = "LaTeX copied! Click to copy again"
+                    
+                    // Show visual feedback
+                    if let button = self.statusItem.button {
+                        let originalImage = button.image
+                        button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
+                        
+                        // Revert back to original icon after delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
+                            button?.image = originalImage
+                        }
+                    }
                 } else {
                     self.hintItem.title = "Failed to copy LaTeX"
                     Logger.log(.error, "Failed to write to clipboard")
@@ -253,7 +264,14 @@ final class App: NSObject, NSApplicationDelegate {
 
 extension App: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
+        extractLatexItem.isHidden = true  // Hide initially when menu opens
+        
+        // Start detection and check for image
         startDetection()
+        
+        if let image = NSPasteboard.general.image?.cgImage {
+            extractLatexItem.isHidden = false  // Show button if image exists
+        }
         
         servicesItem.submenu?.removeItems { $0 is ServiceItem }
         for service in Services.items.reversed() {
@@ -305,6 +323,7 @@ private extension App {
         hintItem.title = Localized.menuTitleHintCapture
         howToItem.isHidden = false
         copyAllItem.isHidden = true
+        extractLatexItem.isHidden = true // Add this line
         statusItem.menu?.removeItems { $0 is ResultItem }
     }
 
@@ -317,11 +336,13 @@ private extension App {
         pasteboardChangeCount = NSPasteboard.general.changeCount
         clipboardItem.isHidden = NSPasteboard.general.isEmpty
         saveImageItem.isEnabled = false
+        extractLatexItem.isHidden = true // Hide by default
 
         guard let image = NSPasteboard.general.image?.cgImage else {
             return Logger.log(.info, "No image was copied")
         }
 
+        extractLatexItem.isHidden = false // Show when image is present
         hintItem.title = Localized.menuTitleHintRecognizing
         howToItem.isHidden = true
 

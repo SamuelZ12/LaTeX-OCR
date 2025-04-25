@@ -43,6 +43,7 @@ enum Localized {
 // Note: double check availability and deployment target before adding new icons
 enum Icons {
   static let textViewFinder = "text.viewfinder"
+  static let checkmark = "checkmark.circle.fill"
 }
 
 enum Links {
