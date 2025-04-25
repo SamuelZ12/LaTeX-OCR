@@ -1,50 +1,45 @@
-<img src="./Icon.png" width="96">
+# LaTeX-OCR
 
-# TextGrabber2
+A macOS menu bar app that extracts text and LaTeX equations from screen captures using Apple Vision and Google's Gemini API.
 
-[![](https://img.shields.io/badge/Platform-macOS_14.0+-blue?color=007bff)](https://github.com/TextGrabber2-app/TextGrabber2/releases/latest)  [![](https://github.com/TextGrabber2-app/TextGrabber2/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/TextGrabber2-app/TextGrabber2/actions/workflows/build.yml)
+## Features
 
-TextGrabber2 is a free and **open-source** macOS menu bar app that efficiently detects text from copied images. This eliminates the need to save images as files and then delete them solely for the purpose of text detection.
+- Extract text using Apple Vision
+- Extract LaTeX equations using Gemini API
+- No screen recording permissions required
+- Simple menu bar interface
 
-<img src="./Screenshots/01.png" width="360" alt="Screenshot 01"> <img src="./Screenshots/02.png" width="360" alt="Screenshot 02">
+## Usage
 
-For example, press `Control-Shift-Command-4` to capture a portion of the screen and then open TextGrabber2 from the menu bar.
+To extract text or LaTeX equations:
 
-It also functions effectively for any form of image copying.
+1. Press Control-Shift-Command-4 to capture a screen region (this automatically copies it to clipboard)
+2. Click the TextGrabber2 menu bar icon and select either:
+   - "Extract Text (Apple Vision)" for general text
+   - "Extract LaTeX (Gemini)" for mathematical equations
 
-> Note that keyboard shortcuts can be remapped (and it's recommended since pressing 4 keys is a bit clunky). Please check out Apple's [documentation](https://support.apple.com/guide/mac-help/mchlp2271/mac) for details.
->
-> Learn more [here](https://github.com/TextGrabber2-app/TextGrabber2/wiki#capture-screen-on-mac).
+The extracted text will be automatically copied to your clipboard.
 
-> [!TIP]
-> Discover our other free and open-source apps at [libremac.github.io](https://libremac.github.io/).
+## Requirements
 
-## Installation
+- macOS 10.15 or later
+- Gemini API key (for LaTeX extraction)
 
-Get `TextGrabber2.dmg` from the <a href="https://github.com/TextGrabber2-app/TextGrabber2/releases/latest" target="_blank">latest release</a>, open it and drag `TextGrabber2.app` to `Applications`.
+## Setup
 
-<img src="./Screenshots/03.png" width="540" alt="Install TextGrabber2">
+1. Clone the repository
+2. Create a `Secrets.plist` file with your Gemini API key
+3. Build and run the project in Xcode
 
-> TextGrabber2 does NOT check for updates automatically. You will need to check this repository for new releases. However, it's worth noting that updates will likely be infrequent, typically limited to bug fixes.
+## Configuration 
 
-## Why TextGrabber2
+Access settings through the menu bar icon to:
 
-TextGrabber2 is NOT a screenshot tool, meaning it doesn't require access like `Screen Recording` or `Accessibility`. It relies on the keyboard shortcuts you use daily.
+- Enter your Gemini API key
+- Configure text/LaTeX output formats
+- Set keyboard shortcuts
+- Toggle launch at login
 
-TextGrabber2 utilizes the built-in [Vision](https://developer.apple.com/documentation/vision/) framework, which is on-device, secure, fast, accurate, and **free**. In fact, it's often superior to many paid services.
+## Privacy
 
-TextGrabber2 connects to [system services](https://github.com/TextGrabber2-app/TextGrabber2/wiki#connect-to-system-services), you can easily integrate your workflows.
-
-TextGrabber2 does NOT have any settings; it works magically until something goes wrong.
-
-It's simple, privacy-oriented, brutal and beautiful.
-
-## Where is TextGrabber1
-
-TextGrabber1 does not exist; the "2" in TextGrabber2 does not indicate a version number.
-
-Here's the thing, there was a discontinued app called TextGrabber that I used a decade ago, I quite liked it.
-
-When initiating this project, I couldn't think of a better name than TextGrabber, so I decided to name it:
-
-**TextGrabber** *"too"*.
+This app does not require screen recording permissions as it only processes images that you explicitly share via clipboard using the system screenshot tool.

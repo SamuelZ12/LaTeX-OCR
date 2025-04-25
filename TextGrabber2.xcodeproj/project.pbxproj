@@ -31,6 +31,8 @@
 		B9634B0E2DBAEC1F00911E43 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B0D2DBAEC1F00911E43 /* Config.swift */; };
 		B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9634B0F2DBAEDA100911E43 /* Secrets.plist */; };
 		B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B112DBAFAA800911E43 /* LatexAPIService.swift */; };
+		B9CBF2F82DBC01AF00BAA6B9 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */; };
+		B9CBF2F92DBC01AF00BAA6B9 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF2F52DBC01AF00BAA6B9 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +64,8 @@
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
+		B9CBF2F52DBC01AF00BAA6B9 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +157,7 @@
 				87E192E82BAAFF0200A87A4E /* Resources.swift */,
 				8737A24B2BBECB8800042E83 /* Services.swift */,
 				B9634B122DBAFAA800911E43 /* Services */,
+				B9CBF2F72DBC01AF00BAA6B9 /* Settings */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -163,6 +168,15 @@
 				B9634B112DBAFAA800911E43 /* LatexAPIService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		B9CBF2F72DBC01AF00BAA6B9 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B9CBF2F52DBC01AF00BAA6B9 /* SettingsViewController.swift */,
+				B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,6 +263,8 @@
 				87E192F12BABB6EA00A87A4E /* Recognizer.swift in Sources */,
 				87E192FD2BAC1BD600A87A4E /* NSWindow+Extension.swift in Sources */,
 				87E192D52BAAE12600A87A4E /* Bundle+Extension.swift in Sources */,
+				B9CBF2F82DBC01AF00BAA6B9 /* SettingsWindowController.swift in Sources */,
+				B9CBF2F92DBC01AF00BAA6B9 /* SettingsViewController.swift in Sources */,
 				87E192FB2BAC044E00A87A4E /* NSObject+Extension.swift in Sources */,
 				87E192DE2BAAE38700A87A4E /* NSMenuItem+Extension.swift in Sources */,
 				87E192E52BAAFB1800A87A4E /* NSWorkspace+Extension.swift in Sources */,

@@ -10,7 +10,8 @@ enum LatexAPIError: Error {
 }
 
 /// Service responsible for handling LaTeX extraction API requests
-struct LatexAPIService {
+@MainActor
+class LatexAPIService {
     private let session: URLSession
     
     init(session: URLSession = .shared) {
@@ -34,7 +35,10 @@ struct LatexAPIService {
             ]]
         ]
         
-        let apiKey = await Config.geminiAPIKey
+        let apiKey = Config.geminiAPIKey
+        guard !apiKey.isEmpty else {
+            throw LatexAPIError.apiError("Gemini API key not set in Settings.")
+        }
         
         guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
             throw LatexAPIError.invalidURL
