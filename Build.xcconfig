@@ -6,8 +6,6 @@
 //
 // https://help.apple.com/xcode/#/dev745c5c974
 
-CODE_SIGN_IDENTITY = -
-DEVELOPMENT_TEAM =
 PRODUCT_BUNDLE_IDENTIFIER = app.cyan.textgrabber2-dev
 
 MARKETING_VERSION = 1.3.0

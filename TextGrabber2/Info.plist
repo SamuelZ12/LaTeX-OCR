@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSPrivacyScreenCaptureUsageDescription</key>
-    <string>TextGrabber2 needs screen recording permission to capture screenshots for text and LaTeX recognition.</string>
+  <!-- standard keys -->
+  <key>CFBundleExecutable</key>           <string>$(EXECUTABLE_NAME)</string>
+  <key>CFBundleIdentifier</key>           <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+  <key>CFBundleName</key>                 <string>$(PRODUCT_NAME)</string>
+  <key>CFBundlePackageType</key>          <string>APPL</string>
+  <key>LSUIElement</key>                  <true/>          <!-- menu-bar-only app -->
+  <key>NSPrincipalClass</key>             <string>NSApplication</string>
+
+  <!-- privacy -->
+  <key>NSPrivacyScreenCaptureUsageDescription</key>
+  <string>TextGrabber2 needs screen-recording permission to capture screenshots for text and LaTeX recognition.</string>
 </dict>
 </plist>

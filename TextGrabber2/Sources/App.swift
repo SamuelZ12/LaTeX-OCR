@@ -93,25 +93,26 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Check or request screen recording permission
-        let hasPermission = CGPreflightScreenCaptureAccess() 
-            || CGRequestScreenCaptureAccess()  // returns true if already allowed or just granted
-        
-        guard hasPermission else {
-            // User clicked "Don't Allow" - terminate app
+        // 1) If we have never been granted, ask now…
+        if !CGPreflightScreenCaptureAccess() {
+            CGRequestScreenCaptureAccess() 
+            // 2) Tell the user to restart
+            NSAlert.showModalAlert(
+            message: "TextGrabber2 needs screen-recording permission.\n\nPlease quit and re-launch the app after granting access."
+            )
             NSApp.terminate(nil)
             return
         }
 
-        // Permission granted - proceed with normal startup
+        // 3) Now that we already have permission, do your normal startup
         Services.initialize()
         clearMenuItems()
         statusItem.isVisible = true
-
         ShortcutMonitor.shared.startMonitoring { [weak self] type in
             self?.initiateCapture(for: type)
         }
     }
+
     
     func applicationWillTerminate(_ notification: Notification) {
         ShortcutMonitor.shared.stopMonitoring()

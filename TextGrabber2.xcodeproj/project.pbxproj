@@ -66,7 +66,7 @@
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
-		B99BF4FB2DBC4D8700B8BCCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B99BF4FC2DBC542500B8BCCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		B9CBF2FF2DBC147200BAA6B9 /* ShortcutMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutMonitor.swift; sourceTree = "<group>"; };
 		B9CBF3012DBC148000BAA6B9 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
@@ -115,11 +115,11 @@
 		87E192C12BAADE1200A87A4E /* TextGrabber2 */ = {
 			isa = PBXGroup;
 			children = (
-				B99BF4FB2DBC4D8700B8BCCF /* Info.plist */,
 				87E192D62BAAE16200A87A4E /* Sources */,
 				8772FAE72BAC73F100DBEAA0 /* Resources */,
 				87E192D22BAAE0CD00A87A4E /* Supporting Files */,
 				B9634B0F2DBAEDA100911E43 /* Secrets.plist */,
+				B99BF4FC2DBC542500B8BCCF /* Info.plist */,
 			);
 			path = TextGrabber2;
 			sourceTree = "<group>";
@@ -438,8 +438,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = "$(inherited)";
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = LC98XFTQS7;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TextGrabber2/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TextGrabber2;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -471,8 +472,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = "$(inherited)";
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = LC98XFTQS7;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TextGrabber2/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TextGrabber2;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
