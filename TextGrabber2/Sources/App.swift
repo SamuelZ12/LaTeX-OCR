@@ -199,7 +199,7 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
         shortcutMonitor.start()
     }
 
-    // MARK: - NSMenuDelegate 
+    // MARK: - NSMenuDelegate
     @objc func menuWillOpen(_ menu: NSMenu) {
         // Menu delegate stays minimal - no automatic detection
     }
