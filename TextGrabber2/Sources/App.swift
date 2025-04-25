@@ -15,6 +15,39 @@ final class App: NSObject, NSApplicationDelegate {
     private var pasteboardObserver: Timer?
     private var pasteboardChangeCount = 0
 
+    private lazy var extractTextItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleExtractText)
+        item.addAction { [weak self] in
+            self?.performExtraction(type: .text)
+        }
+        return item
+    }()
+
+    private lazy var extractLatexItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleExtractLaTeX)
+        item.addAction { [weak self] in
+            self?.performExtraction(type: .latex)
+        }
+        return item
+    }()
+
+    private lazy var settingsItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleSettings)
+        item.addAction { [weak self] in
+            self?.openSettings()
+        }
+        return item
+    }()
+
+    private lazy var quitItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleQuitTextGrabber2, action: nil, keyEquivalent: "q")
+        item.keyEquivalentModifierMask = .command
+        item.addAction {
+            NSApp.terminate(nil)
+        }
+        return item
+    }()
+
     private lazy var statusItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.behavior = .terminationOnRemoval
@@ -24,132 +57,13 @@ final class App: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.delegate = self
 
-        menu.addItem(hintItem)
-        menu.addItem(howToItem)
+        menu.addItem(extractTextItem)
+        menu.addItem(extractLatexItem) 
         menu.addItem(.separator())
-        menu.addItem(copyAllItem)
-        menu.addItem(extractLatexItem)
-        menu.addItem(servicesItem)
-        menu.addItem(clipboardItem)
-        menu.addItem(.separator())
-        menu.addItem(launchAtLoginItem)
-
-        menu.addItem(withTitle: Localized.menuTitleGitHub) {
-            NSWorkspace.shared.safelyOpenURL(string: Links.github)
-        }
-
-        menu.addItem(.separator())
-        menu.addItem({
-            let item = NSMenuItem(title: "\(Localized.menuTitleVersion) \(Bundle.main.shortVersionString)")
-            item.isEnabled = false
-
-            return item
-        }())
-
-        menu.addItem({
-            let item = NSMenuItem(title: Localized.menuTitleQuitTextGrabber2, action: nil, keyEquivalent: "q")
-            item.keyEquivalentModifierMask = .command
-            item.addAction {
-                NSApp.terminate(nil)
-            }
-
-            return item
-        }())
+        menu.addItem(settingsItem)
+        menu.addItem(quitItem)
 
         item.menu = menu
-        return item
-    }()
-
-    private let hintItem = NSMenuItem()
-    private let howToItem: NSMenuItem = {
-        let item = NSMenuItem(title: Localized.menuTitleHowTo)
-        item.addAction {
-            NSWorkspace.shared.safelyOpenURL(string: "\(Links.github)/wiki#capture-screen-on-mac")
-        }
-
-        return item
-    }()
-
-    private lazy var copyAllItem: NSMenuItem = {
-        let menu = NSMenu()
-        menu.addItem(withTitle: Localized.menuTitleJoinDirectly) {
-            NSPasteboard.general.string = self.currentResult?.directlyJoined
-        }
-
-        menu.addItem(withTitle: Localized.menuTitleJoinWithLineBreaks) {
-            NSPasteboard.general.string = self.currentResult?.lineBreaksJoined
-        }
-
-        menu.addItem(withTitle: Localized.menuTitleJoinWithSpaces) {
-            NSPasteboard.general.string = self.currentResult?.spacesJoined
-        }
-
-        let item = NSMenuItem(title: Localized.menuTitleCopyAll)
-        item.submenu = menu
-        return item
-    }()
-
-    private lazy var extractLatexItem: NSMenuItem = {
-        let item = NSMenuItem(title: Localized.menuTitleExtractLaTeX)
-        item.addAction { [weak self] in
-            self?.extractLatex()
-        }
-        return item
-    }()
-
-    private lazy var servicesItem: NSMenuItem = {
-        let menu = NSMenu()
-        menu.addItem(.separator())
-
-        menu.addItem(withTitle: Localized.menuTitleConfigure) {
-            NSWorkspace.shared.open(Services.fileURL)
-        }
-
-        menu.addItem(withTitle: Localized.menuTitleDocumentation) {
-            NSWorkspace.shared.safelyOpenURL(string: "\(Links.github)/wiki#connect-to-system-services")
-        }
-
-        let item = NSMenuItem(title: Localized.menuTitleServices)
-        item.submenu = menu
-        return item
-    }()
-
-    private lazy var clipboardItem: NSMenuItem = {
-        let menu = NSMenu()
-        menu.autoenablesItems = false
-        menu.addItem(saveImageItem)
-
-        menu.addItem(withTitle: Localized.menuTitleClearContents) {
-            NSPasteboard.general.clearContents()
-        }
-
-        let item = NSMenuItem(title: Localized.menuTitleClipboard)
-        item.submenu = menu
-        return item
-    }()
-
-    private let saveImageItem: NSMenuItem = {
-        let item = NSMenuItem(title: Localized.menuTitleSaveAsFile)
-        item.addAction {
-            NSPasteboard.general.saveImageAsFile()
-        }
-
-        return item
-    }()
-
-    private let launchAtLoginItem: NSMenuItem = {
-        let item = NSMenuItem(title: Localized.menuTitleLaunchAtLogin)
-        item.addAction { [weak item] in
-            do {
-                try SMAppService.mainApp.toggle()
-            } catch {
-                Logger.log(.error, "\(error)")
-            }
-
-            item?.toggle()
-        }
-
-        item.setOn(SMAppService.mainApp.isEnabled)
         return item
     }()
 
@@ -167,7 +81,6 @@ final class App: NSObject, NSApplicationDelegate {
     func extractLatex() {
         guard let image = NSPasteboard.general.image else {
             Logger.log(.error, "No image in clipboard")
-            hintItem.title = "No image in clipboard"
             return
         }
         
@@ -177,14 +90,11 @@ final class App: NSObject, NSApplicationDelegate {
               let bitmapImage = NSBitmapImageRep(data: tiffData),
               let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
             Logger.log(.error, "Failed to convert image to PNG data")
-            hintItem.title = "Failed to convert image"
             return
         }
         
         let base64Image = imageData.base64EncodedString()
         Logger.log(.info, "Image converted to base64")
-        
-        hintItem.title = "Processing LaTeX..."
         
         Task {
             do {
@@ -225,11 +135,9 @@ final class App: NSObject, NSApplicationDelegate {
                     Logger.log(.info, "Menu item clipboard copy: \(copied)")
                 }
                 
-                menu.insertItem(item, at: menu.index(of: self.hintItem) + 1)
+                menu.insertItem(item, at: 0)
                 
                 if copied {
-                    self.hintItem.title = "LaTeX copied! Click to copy again"
-                    
                     // Show visual feedback
                     if let button = self.statusItem.button {
                         let originalImage = button.image
@@ -241,14 +149,12 @@ final class App: NSObject, NSApplicationDelegate {
                         }
                     }
                 } else {
-                    self.hintItem.title = "Failed to copy LaTeX"
                     Logger.log(.error, "Failed to write to clipboard")
                 }
                 
             } catch {
                 let errorMessage = "LaTeX extraction failed: \(error.localizedDescription)"
                 Logger.log(.error, errorMessage)
-                self.hintItem.title = errorMessage
             }
         }
     }
@@ -272,44 +178,10 @@ extension App: NSMenuDelegate {
         if let image = NSPasteboard.general.image?.cgImage {
             extractLatexItem.isHidden = false  // Show button if image exists
         }
-        
-        servicesItem.submenu?.removeItems { $0 is ServiceItem }
-        for service in Services.items.reversed() {
-            let item = ServiceItem(title: service.displayName)
-            item.addAction {
-                NSPasteboard.general.string = self.currentResult?.spacesJoined
-                
-                if !NSPerformService(service.serviceName, .general) {
-                    NSAlert.runModal(message: String(format: Localized.failedToRun, service.displayName))
-                }
-            }
-
-            servicesItem.submenu?.insertItem(item, at: 0)
-        }
-
-        let timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
-            guard let self else {
-                return
-            }
-
-            DispatchQueue.main.async {
-                guard NSPasteboard.general.changeCount != self.pasteboardChangeCount else {
-                    return
-                }
-
-                self.startDetection()
-            }
-        }
-
-        pasteboardObserver = timer
-        RunLoop.current.add(timer, forMode: .common)
     }
 
     func menuDidClose(_ menu: NSMenu) {
         clearMenuItems()
-
-        pasteboardObserver?.invalidate()
-        pasteboardObserver = nil
     }
 }
 
@@ -317,13 +189,9 @@ extension App: NSMenuDelegate {
 
 private extension App {
     class ResultItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
-    class ServiceItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
 
     func clearMenuItems() {
-        hintItem.title = Localized.menuTitleHintCapture
-        howToItem.isHidden = false
-        copyAllItem.isHidden = true
-        extractLatexItem.isHidden = true // Add this line
+        extractLatexItem.isHidden = true
         statusItem.menu?.removeItems { $0 is ResultItem }
     }
 
@@ -334,17 +202,12 @@ private extension App {
 
         currentResult = nil
         pasteboardChangeCount = NSPasteboard.general.changeCount
-        clipboardItem.isHidden = NSPasteboard.general.isEmpty
-        saveImageItem.isEnabled = false
-        extractLatexItem.isHidden = true // Hide by default
 
         guard let image = NSPasteboard.general.image?.cgImage else {
             return Logger.log(.info, "No image was copied")
         }
 
         extractLatexItem.isHidden = false // Show when image is present
-        hintItem.title = Localized.menuTitleHintRecognizing
-        howToItem.isHidden = true
 
         Task {
             let fastResult = await Recognizer.detect(image: image, level: .fast)
@@ -364,13 +227,9 @@ private extension App {
         }
 
         currentResult = resultData
-        hintItem.title = resultData.candidates.isEmpty ? Localized.menuTitleHintCapture : Localized.menuTitleHintCopy
-        howToItem.isHidden = !resultData.candidates.isEmpty
-        copyAllItem.isHidden = resultData.candidates.count < 2
-        saveImageItem.isEnabled = true
 
         let separator = NSMenuItem.separator()
-        menu.insertItem(separator, at: menu.index(of: howToItem) + 1)
+        menu.insertItem(separator, at: 0)
         menu.removeItems { $0 is ResultItem }
 
         for text in resultData.candidates.reversed() {
@@ -379,4 +238,28 @@ private extension App {
             menu.insertItem(item, at: menu.index(of: separator) + 1)
         }
     }
+
+    func performExtraction(type: ExtractionType) {
+        guard let image = NSPasteboard.general.image else {
+            Logger.log(.error, "No image in clipboard")
+            return
+        }
+        
+        switch type {
+        case .text:
+            // Perform text extraction
+            break
+        case .latex:
+            extractLatex()
+        }
+    }
+
+    func openSettings() {
+        // Open settings
+    }
+}
+
+enum ExtractionType {
+    case text
+    case latex
 }

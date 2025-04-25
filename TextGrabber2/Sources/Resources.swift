@@ -35,6 +35,8 @@ enum Localized {
   static let menuTitleVersion = String(localized: "Version", comment: "[Menu] Version number label")
   static let menuTitleQuitTextGrabber2 = String(localized: "Quit TextGrabber2", comment: "[Menu] Quit the app")
   static let menuTitleExtractLaTeX = String(localized: "Extract LaTeX", comment: "[Menu] Extract LaTeX code from image")
+  static let menuTitleExtractText = String(localized: "Extract Text", comment: "[Menu] Extract text using Apple Vision")
+  static let menuTitleSettings = String(localized: "Settings", comment: "[Menu] Open settings window")
 
 }
 

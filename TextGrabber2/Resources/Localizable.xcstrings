@@ -154,6 +154,9 @@
         }
       }
     },
+    "Extract Text" : {
+      "comment" : "[Menu] Extract text using Apple Vision"
+    },
     "Failed to run \"%@\"." : {
       "comment" : "Error message when a system service failed",
       "localizations" : {
@@ -340,6 +343,9 @@
           }
         }
       }
+    },
+    "Settings" : {
+      "comment" : "[Menu] Open settings window"
     },
     "Version" : {
       "comment" : "[Menu] Version number label",
