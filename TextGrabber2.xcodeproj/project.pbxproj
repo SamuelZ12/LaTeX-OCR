@@ -31,6 +31,10 @@
 		B9634B0E2DBAEC1F00911E43 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B0D2DBAEC1F00911E43 /* Config.swift */; };
 		B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9634B0F2DBAEDA100911E43 /* Secrets.plist */; };
 		B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B112DBAFAA800911E43 /* LatexAPIService.swift */; };
+		B9634B1C2DBB1EEB00911E43 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B182DBB1EEB00911E43 /* SettingsView.swift */; };
+		B9634B1D2DBB1EEB00911E43 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B192DBB1EEB00911E43 /* SettingsWindowController.swift */; };
+		B9634B1E2DBB1EEB00911E43 /* ShortcutMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B1A2DBB1EEB00911E43 /* ShortcutMonitor.swift */; };
+		B9634B1F2DBB1EEB00911E43 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B172DBB1EEB00911E43 /* SettingsManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +66,10 @@
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
+		B9634B172DBB1EEB00911E43 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		B9634B182DBB1EEB00911E43 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B9634B192DBB1EEB00911E43 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		B9634B1A2DBB1EEB00911E43 /* ShortcutMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +161,7 @@
 				87E192E82BAAFF0200A87A4E /* Resources.swift */,
 				8737A24B2BBECB8800042E83 /* Services.swift */,
 				B9634B122DBAFAA800911E43 /* Services */,
+				B9634B1B2DBB1EEB00911E43 /* Settings */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -163,6 +172,17 @@
 				B9634B112DBAFAA800911E43 /* LatexAPIService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		B9634B1B2DBB1EEB00911E43 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B9634B172DBB1EEB00911E43 /* SettingsManager.swift */,
+				B9634B182DBB1EEB00911E43 /* SettingsView.swift */,
+				B9634B192DBB1EEB00911E43 /* SettingsWindowController.swift */,
+				B9634B1A2DBB1EEB00911E43 /* ShortcutMonitor.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,6 +260,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8737A24C2BBECB8800042E83 /* Services.swift in Sources */,
+				B9634B1C2DBB1EEB00911E43 /* SettingsView.swift in Sources */,
+				B9634B1D2DBB1EEB00911E43 /* SettingsWindowController.swift in Sources */,
+				B9634B1E2DBB1EEB00911E43 /* ShortcutMonitor.swift in Sources */,
+				B9634B1F2DBB1EEB00911E43 /* SettingsManager.swift in Sources */,
 				B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */,
 				87E192DF2BAAE38700A87A4E /* NSControl+Extension.swift in Sources */,
 				875364A42BE1D6FC00611579 /* NSAlert+Extension.swift in Sources */,

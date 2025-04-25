@@ -1,0 +1,76 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "menu.extract.vision" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extract Text (Vision)"
+          }
+        }
+      }
+    },
+    "menu.extract.latex" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extract LaTeX (Gemini)"
+          }
+        }
+      }
+    },
+    "menu.settings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings..."
+          }
+        }
+      }
+    },
+    "menu.quit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit TextGrabber2"
+          }
+        }
+      }
+    },
+    "alert.no_text" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No text detected in the selected region"
+          }
+        }
+      }
+    },
+    "alert.api_key_missing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please set your Gemini API key in Settings"
+          }
+        }
+      }
+    },
+    "settings.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

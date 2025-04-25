@@ -1,4 +1,5 @@
 import Foundation
+import AppKit // Added for CGImage support
 
 /// Represents possible errors that can occur during LaTeX API operations
 enum LatexAPIError: Error {
@@ -7,38 +8,48 @@ enum LatexAPIError: Error {
     case networkError(Error)
     case apiError(String)
     case parsingError
+    case invalidAPIKey
 }
 
 /// Service responsible for handling LaTeX extraction API requests
-struct LatexAPIService {
+@MainActor
+public final class LatexAPIService {
     private let session: URLSession
+    private let settingsManager: SettingsManager
     
-    init(session: URLSession = .shared) {
+    init(session: URLSession = .shared, settingsManager: SettingsManager = .shared) {
         self.session = session
+        self.settingsManager = settingsManager
     }
     
     /// Extracts LaTeX from an image using Gemini API
-    /// - Parameter imageBase64: Base64 encoded image string
+    /// - Parameter base64Image: Base64 encoded image string
     /// - Returns: Extracted LaTeX string
     /// - Throws: LatexAPIError
-    func extractLatex(from imageBase64: String) async throws -> String {
-        let payload: [String: Any] = [
-            "contents": [[
-                "parts": [
-                    ["text": "Extract all mathematical expressions from this image and convert them to precise LaTeX notation. Carefully preserve all symbols, subscripts, superscripts, fractions, integrals, summations, and special characters. Ensure proper nesting of brackets and parentheses. For non-mathematical text, return it as plain text. Do not add any explanations, markdown formatting, or delimiters like $$ or ```latex. Return only the detected content with accurate LaTeX syntax."],
-                    ["inline_data": [
-                        "mime_type": "image/png",
-                        "data": imageBase64
-                    ]]
-                ]
-            ]]
-        ]
-        
-        let apiKey = await Config.geminiAPIKey
-        
-        guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
-            throw LatexAPIError.invalidURL
+    func extractLatex(from base64Image: String) async throws -> String {
+        guard let apiKey = settingsManager.getGeminiApiKey(),
+              !apiKey.isEmpty else {
+            throw LatexAPIError.invalidAPIKey
         }
+        
+        let endpoint = "\(Config.geminiEndpoint)?key=\(apiKey)"
+        guard let url = URL(string: endpoint) else {
+            throw LatexAPIError.invalidResponse
+        }
+        
+        let payload: [String: Any] = [
+            "contents": [
+                [
+                    "parts": [
+                        ["text": "Convert the mathematical expression in this image to LaTeX code."],
+                        ["inline_data": [
+                            "mime_type": "image/png",
+                            "data": base64Image
+                        ]]
+                    ]
+                ]
+            ]
+        ]
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -46,37 +57,33 @@ struct LatexAPIService {
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         
         do {
-            let (data, response) = try await session.data(for: request)
+            let (data, _) = try await session.data(for: request)
+            let response = try JSONDecoder().decode(GeminiResponse.self, from: data)
             
-            guard let httpResponse = response as? HTTPURLResponse else {
+            guard let text = response.candidates.first?.content.parts.first?.text else {
                 throw LatexAPIError.invalidResponse
             }
             
-            if httpResponse.statusCode != 200 {
-                if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let error = errorJson["error"] as? [String: Any],
-                   let message = error["message"] as? String {
-                    throw LatexAPIError.apiError(message)
-                } else {
-                    throw LatexAPIError.apiError("API request failed with status \(httpResponse.statusCode)")
-                }
-            }
-            
-            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let candidates = json["candidates"] as? [[String: Any]],
-                  let firstCandidate = candidates.first,
-                  let content = firstCandidate["content"] as? [String: Any],
-                  let parts = content["parts"] as? [[String: Any]],
-                  let firstPart = parts.first,
-                  let text = firstPart["text"] as? String else {
-                throw LatexAPIError.parsingError
-            }
-            
-            return text.trimmingCharacters(in: .whitespacesAndNewlines)
-        } catch let error as LatexAPIError {
-            throw error
+            return text
         } catch {
             throw LatexAPIError.networkError(error)
         }
     }
+}
+
+// MARK: - Response Types
+private struct GeminiResponse: Codable {
+    let candidates: [Candidate]
+}
+
+private struct Candidate: Codable {
+    let content: Content
+}
+
+private struct Content: Codable {
+    let parts: [Part]
+}
+
+private struct Part: Codable {
+    let text: String
 }
