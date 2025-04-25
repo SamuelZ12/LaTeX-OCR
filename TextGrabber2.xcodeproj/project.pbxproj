@@ -32,7 +32,10 @@
 		B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9634B0F2DBAEDA100911E43 /* Secrets.plist */; };
 		B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B112DBAFAA800911E43 /* LatexAPIService.swift */; };
 		B9CBF2F82DBC01AF00BAA6B9 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */; };
-		B9CBF2F92DBC01AF00BAA6B9 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF2F52DBC01AF00BAA6B9 /* SettingsViewController.swift */; };
+		B9CBF3002DBC147200BAA6B9 /* ShortcutMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF2FF2DBC147200BAA6B9 /* ShortcutMonitor.swift */; };
+		B9CBF3022DBC148000BAA6B9 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF3012DBC148000BAA6B9 /* SettingsManager.swift */; };
+		B9CBF3042DBC149800BAA6B9 /* UserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF3032DBC149800BAA6B9 /* UserDefaults+Extension.swift */; };
+		B9CBF3082DBC22EA00BAA6B9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CBF3072DBC22EA00BAA6B9 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,12 +63,14 @@
 		87E192F62BABD18900A87A4E /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		87E192FA2BAC044E00A87A4E /* NSObject+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Extension.swift"; sourceTree = "<group>"; };
 		87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extension.swift"; sourceTree = "<group>"; };
-		B9634B0C2DBADC4E00911E43 /* instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = instructions.md; sourceTree = "<group>"; };
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
-		B9CBF2F52DBC01AF00BAA6B9 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		B9CBF2FF2DBC147200BAA6B9 /* ShortcutMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutMonitor.swift; sourceTree = "<group>"; };
+		B9CBF3012DBC148000BAA6B9 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		B9CBF3032DBC149800BAA6B9 /* UserDefaults+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extension.swift"; sourceTree = "<group>"; };
+		B9CBF3072DBC22EA00BAA6B9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +97,6 @@
 		87E192B62BAADE1200A87A4E = {
 			isa = PBXGroup;
 			children = (
-				B9634B0C2DBADC4E00911E43 /* instructions.md */,
 				87E192C12BAADE1200A87A4E /* TextGrabber2 */,
 				87E192C02BAADE1200A87A4E /* Products */,
 				87E192D12BAADEFE00A87A4E /* Build.xcconfig */,
@@ -141,6 +145,7 @@
 				87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */,
 				87E192E42BAAFB1800A87A4E /* NSWorkspace+Extension.swift */,
 				87E192E62BAAFBC900A87A4E /* SMAppService+Extension.swift */,
+				B9CBF3032DBC149800BAA6B9 /* UserDefaults+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -173,8 +178,10 @@
 		B9CBF2F72DBC01AF00BAA6B9 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				B9CBF2F52DBC01AF00BAA6B9 /* SettingsViewController.swift */,
 				B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */,
+				B9CBF2FF2DBC147200BAA6B9 /* ShortcutMonitor.swift */,
+				B9CBF3012DBC148000BAA6B9 /* SettingsManager.swift */,
+				B9CBF3072DBC22EA00BAA6B9 /* SettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -254,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8737A24C2BBECB8800042E83 /* Services.swift in Sources */,
+				B9CBF3002DBC147200BAA6B9 /* ShortcutMonitor.swift in Sources */,
 				B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */,
 				87E192DF2BAAE38700A87A4E /* NSControl+Extension.swift in Sources */,
 				875364A42BE1D6FC00611579 /* NSAlert+Extension.swift in Sources */,
@@ -264,7 +272,6 @@
 				87E192FD2BAC1BD600A87A4E /* NSWindow+Extension.swift in Sources */,
 				87E192D52BAAE12600A87A4E /* Bundle+Extension.swift in Sources */,
 				B9CBF2F82DBC01AF00BAA6B9 /* SettingsWindowController.swift in Sources */,
-				B9CBF2F92DBC01AF00BAA6B9 /* SettingsViewController.swift in Sources */,
 				87E192FB2BAC044E00A87A4E /* NSObject+Extension.swift in Sources */,
 				87E192DE2BAAE38700A87A4E /* NSMenuItem+Extension.swift in Sources */,
 				87E192E52BAAFB1800A87A4E /* NSWorkspace+Extension.swift in Sources */,
@@ -272,9 +279,12 @@
 				87E192DA2BAAE25500A87A4E /* NSImage+Extension.swift in Sources */,
 				87E192F52BABC8FD00A87A4E /* Detector.swift in Sources */,
 				87E192E02BAAE38700A87A4E /* NSMenu+Extension.swift in Sources */,
+				B9CBF3022DBC148000BAA6B9 /* SettingsManager.swift in Sources */,
 				87E192F72BABD18900A87A4E /* Logger.swift in Sources */,
 				87E192C32BAADE1200A87A4E /* App.swift in Sources */,
+				B9CBF3042DBC149800BAA6B9 /* UserDefaults+Extension.swift in Sources */,
 				87E192E92BAAFF0200A87A4E /* Resources.swift in Sources */,
+				B9CBF3082DBC22EA00BAA6B9 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

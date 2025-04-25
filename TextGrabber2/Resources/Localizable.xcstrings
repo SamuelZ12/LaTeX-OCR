@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "API Key" : {
+
+    },
     "Capture Screen to Detect" : {
       "comment" : "[Menu] Hint for capturing the screen",
       "localizations" : {
@@ -103,6 +106,9 @@
         }
       }
     },
+    "Copy Format" : {
+
+    },
     "Documentation" : {
       "comment" : "[Menu] Open the wiki for system services",
       "localizations" : {
@@ -173,6 +179,9 @@
           }
         }
       }
+    },
+    "Gemini API Key" : {
+
     },
     "GitHub" : {
       "comment" : "[Menu] Open the TextGrabber2 repository on GitHub",
@@ -259,6 +268,15 @@
         }
       }
     },
+    "Keyboard Shortcuts" : {
+
+    },
+    "LaTeX Copy Format:" : {
+
+    },
+    "LaTeX Shortcut:" : {
+
+    },
     "Launch at Login" : {
       "comment" : "[Menu] Automatically start the app at login",
       "localizations" : {
@@ -275,6 +293,9 @@
           }
         }
       }
+    },
+    "Line Breaks" : {
+
     },
     "Quit TextGrabber2" : {
       "comment" : "[Menu] Quit the app",
@@ -309,6 +330,9 @@
           }
         }
       }
+    },
+    "Save" : {
+
     },
     "Save as File" : {
       "comment" : "[Menu] Save the clipboard as file",
@@ -346,6 +370,15 @@
     },
     "Settings" : {
       "comment" : "[Menu] Open settings window"
+    },
+    "Spaces" : {
+
+    },
+    "Text Copy Format:" : {
+
+    },
+    "Text Shortcut:" : {
+
     },
     "Version" : {
       "comment" : "[Menu] Version number label",

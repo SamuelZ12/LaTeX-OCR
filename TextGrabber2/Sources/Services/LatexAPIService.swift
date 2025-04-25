@@ -1,17 +1,41 @@
 import Foundation
 
 /// Represents possible errors that can occur during LaTeX API operations
-enum LatexAPIError: Error {
-    case invalidURL
-    case invalidResponse
-    case networkError(Error)
+enum LatexAPIError: Error, LocalizedError {
+    case apiKeyMissing
+    case apiKeyInvalid
     case apiError(String)
+    case requestFailed(Error)
+    case invalidResponse
+    case imageProcessingFailed
+    case networkError(Error)
     case parsingError
+
+    var errorDescription: String? {
+        switch self {
+        case .apiKeyMissing:
+            return "Missing API key"
+        case .apiKeyInvalid:
+            return "Invalid API key"
+        case .apiError(let message):
+            return "API Error: \(message)"
+        case .requestFailed(let error):
+            return "Request failed: \(error.localizedDescription)"
+        case .invalidResponse:
+            return "Invalid response from server"
+        case .imageProcessingFailed:
+            return "Failed to process image"
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        case .parsingError:
+            return "Failed to parse response"
+        }
+    }
 }
 
 /// Service responsible for handling LaTeX extraction API requests
 @MainActor
-class LatexAPIService {
+struct LatexAPIService {
     private let session: URLSession
     
     init(session: URLSession = .shared) {
@@ -19,29 +43,31 @@ class LatexAPIService {
     }
     
     /// Extracts LaTeX from an image using Gemini API
-    /// - Parameter imageBase64: Base64 encoded image string
+    /// - Parameter base64Image: Base64 encoded image string
+    /// - Parameter apiKey: API key for Gemini API
     /// - Returns: Extracted LaTeX string
     /// - Throws: LatexAPIError
-    func extractLatex(from imageBase64: String) async throws -> String {
+    func extractLatex(from base64Image: String, apiKey: String) async throws -> String {
+        guard !apiKey.isEmpty else {
+            throw LatexAPIError.apiKeyMissing
+        }
+        
+        let prompt = "Extract all mathematical expressions from this image and convert them to precise LaTeX notation. Carefully preserve all symbols, subscripts, superscripts, fractions, integrals, summations, and special characters. Ensure proper nesting of brackets and parentheses. For non-mathematical text, return it as plain text. Do not add any explanations, markdown formatting, or delimiters like $$ or ```latex. Return only the detected content with accurate LaTeX syntax."
+        
         let payload: [String: Any] = [
             "contents": [[
                 "parts": [
-                    ["text": "Extract all mathematical expressions from this image and convert them to precise LaTeX notation. Carefully preserve all symbols, subscripts, superscripts, fractions, integrals, summations, and special characters. Ensure proper nesting of brackets and parentheses. For non-mathematical text, return it as plain text. Do not add any explanations, markdown formatting, or delimiters like $$ or ```latex. Return only the detected content with accurate LaTeX syntax."],
+                    ["text": prompt],
                     ["inline_data": [
                         "mime_type": "image/png",
-                        "data": imageBase64
+                        "data": base64Image
                     ]]
                 ]
             ]]
         ]
         
-        let apiKey = Config.geminiAPIKey
-        guard !apiKey.isEmpty else {
-            throw LatexAPIError.apiError("Gemini API key not set in Settings.")
-        }
-        
         guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
-            throw LatexAPIError.invalidURL
+            throw LatexAPIError.invalidResponse
         }
         
         var request = URLRequest(url: url)

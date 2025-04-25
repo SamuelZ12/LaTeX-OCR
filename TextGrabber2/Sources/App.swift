@@ -8,6 +8,8 @@
 import AppKit
 import ServiceManagement
 import Foundation
+import Carbon
+import os.log
 
 @MainActor
 final class App: NSObject, NSApplicationDelegate {
@@ -15,11 +17,12 @@ final class App: NSObject, NSApplicationDelegate {
     private var pasteboardObserver: Timer?
     private var pasteboardChangeCount = 0
     private var settingsWindowController: SettingsWindowController?
+    private let settingsManager = SettingsManager.shared
 
     private lazy var extractTextItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleExtractText)
         item.addAction { [weak self] in
-            self?.performExtraction(type: .text)
+            self?.initiateCapture(for: .text)
         }
         return item
     }()
@@ -27,7 +30,7 @@ final class App: NSObject, NSApplicationDelegate {
     private lazy var extractLatexItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleExtractLaTeX)
         item.addAction { [weak self] in
-            self?.performExtraction(type: .latex)
+            self?.initiateCapture(for: .latex)
         }
         return item
     }()
@@ -84,6 +87,7 @@ final class App: NSObject, NSApplicationDelegate {
             settingsWindowController = SettingsWindowController()
         }
         settingsWindowController?.showWindow(nil)
+        settingsWindowController?.window?.center()
         NSApp.activate(ignoringOtherApps: true)
     }
 
@@ -91,13 +95,17 @@ final class App: NSObject, NSApplicationDelegate {
         Services.initialize()
         clearMenuItems()
         statusItem.isVisible = true
+
+        ShortcutMonitor.shared.startMonitoring { [weak self] type in
+            self?.initiateCapture(for: type)
+        }
     }
-}
+    
+    func applicationWillTerminate(_ notification: Notification) {
+        ShortcutMonitor.shared.stopMonitoring()
+    }
 
-// MARK: - NSMenuDelegate
-
-extension App: NSMenuDelegate {
-    func menuWillOpen(_ menu: NSMenu) {
+    @objc func menuWillOpen(_ menu: NSMenu) {
         extractLatexItem.isHidden = true
         extractTextItem.isHidden = true  // Hide both items initially
         
@@ -106,26 +114,33 @@ extension App: NSMenuDelegate {
             extractTextItem.isHidden = false  // Show both items if image exists
         }
         
-        // Start detection and check for image
         startDetection()
     }
 
     func menuDidClose(_ menu: NSMenu) {
         clearMenuItems()
     }
-}
 
-// MARK: - Private
-
-private extension App {
-    class ResultItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
-
-    func clearMenuItems() {
-        extractLatexItem.isHidden = true
-        statusItem.menu?.removeItems { $0 is ResultItem }
+    func initiateCapture(for type: ExtractionType) {
+        Task { @MainActor in
+            if let image = await captureScreenRegion() {
+                performExtraction(type: type, image: image)
+            }
+        }
+    }
+    
+    private func captureScreenRegion() async -> NSImage? {
+        guard let image = NSPasteboard.general.image else {
+            NSAlert.showModalAlert(
+                message: "No image found in clipboard",
+                informativeText: "Please take a screenshot first (Cmd+Shift+4) before using the extract shortcut."
+            )
+            return nil
+        }
+        return image
     }
 
-    func startDetection() {
+    private func startDetection() {
         guard let menu = statusItem.menu else {
             return Logger.assertFail("Missing menu to proceed")
         }
@@ -170,12 +185,12 @@ private extension App {
         }
     }
 
-    func performExtraction(type: ExtractionType) {
-        guard let image = NSPasteboard.general.image else {
-            NSAlert.showModalAlert(message: "Please capture a screen region first (Control-Shift-Command-4)")
+    func performExtraction(type: ExtractionType, image: NSImage?) {
+        guard let image = image else {
+            Logger.log(.error, "performExtraction called with no image for type \(type).")
             return
         }
-        
+
         switch type {
         case .text:
             Task {
@@ -183,40 +198,30 @@ private extension App {
                     NSAlert.showModalAlert(message: "Failed to process image")
                     return
                 }
-                
+
                 let result = await Recognizer.detect(image: cgImage, level: .accurate)
-                let copyFormat = UserDefaults.standard.string(forKey: "extractTextCopyFormat") ?? "lineBreaks"
+                let copyFormat = settingsManager.extractTextCopyFormat
                 let textToCopy = copyFormat == "lineBreaks" ? result.lineBreaksJoined : result.spacesJoined
-                
-                // Copy to clipboard
+
                 let pasteboard = NSPasteboard.general
                 pasteboard.clearContents()
                 let copied = pasteboard.setString(textToCopy, forType: .string)
-                
+
                 if copied {
-                    // Show visual feedback
-                    if let button = self.statusItem.button {
-                        let originalImage = button.image
-                        button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
-                        
-                        // Revert back to original icon after delay
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
-                            button?.image = originalImage
-                        }
-                    }
-                    
-                    // Add result to menu for later copying
+                    showSuccessFeedback()
+
                     guard let menu = statusItem.menu else { return }
                     showResult(result, in: menu)
                 }
             }
-            
+
         case .latex:
             guard let apiKey = UserDefaults.standard.string(forKey: "geminiAPIKey"), !apiKey.isEmpty else {
                 NSAlert.showModalAlert(message: "Please set your Gemini API key in Settings")
+                showSettings()
                 return
             }
-            
+
             guard let tiffData = image.tiffRepresentation,
                   let bitmapImage = NSBitmapImageRep(data: tiffData),
                   let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
@@ -224,42 +229,35 @@ private extension App {
                 NSAlert.showModalAlert(message: "Failed to process image data.")
                 return
             }
-            
+
             let base64Image = imageData.base64EncodedString()
-            
+
             Task {
                 do {
-                    var latex = try await latexService.extractLatex(from: base64Image)
+                    let latex = try await latexService.extractLatex(from: base64Image, apiKey: apiKey)
                     Logger.log(.info, "Raw LaTeX from API: \(latex)")
                     
-                    // Clean up the response (basic cleaning)
-                    latex = latex.trimmingCharacters(in: .whitespacesAndNewlines)
-                    // Optional: Add more aggressive cleaning if needed, like removing markdown
-                    // latex = latex.replacingOccurrences(of: "```latex", with: "").replacingOccurrences(of: "```", with: "")
-                    // latex = latex.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                    let copyFormat = UserDefaults.standard.string(forKey: "extractLatexCopyFormat") ?? "lineBreaks"
-                    let textToCopy = copyFormat == "lineBreaks" ? latex : latex.replacingOccurrences(of: "\n", with: " ")
+                    let cleanedLatex = cleanLatexString(latex)
+                    let copyFormat = settingsManager.extractLatexCopyFormat
+                    let textToCopy = copyFormat == "lineBreaks" ? cleanedLatex : cleanedLatex.replacingOccurrences(of: "\n", with: " ")
+                    
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(textToCopy, forType: .string)
                     Logger.log(.info, "Copied LaTeX to clipboard (format: \(copyFormat))")
                     showSuccessFeedback()
                 } catch let error as LatexAPIError {
-                    switch error {
-                    case .apiError(let message) where message.contains("API key not valid"): // More specific check if possible
-                        NSAlert.showModalAlert(message: "Invalid Gemini API key. Please check Settings.")
-                    case .apiError(let message):
-                        NSAlert.showModalAlert(message: "Gemini API Error: \(message)")
-                    default:
-                        NSAlert.showModalAlert(message: "Failed to extract LaTeX: \(error.localizedDescription)")
-                    }
-                    Logger.log(.error, "LaTeX extraction failed: \(error)")
+                    handleLatexError(error)
                 } catch {
                     NSAlert.showModalAlert(message: "Failed to extract LaTeX: \(error.localizedDescription)")
                     Logger.log(.error, "LaTeX extraction failed: \(error)")
                 }
             }
         }
+    }
+
+    private func cleanLatexString(_ rawString: String) -> String {
+        let cleaned = rawString.trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned
     }
 
     func showSuccessFeedback() {
@@ -271,6 +269,45 @@ private extension App {
             }
         }
     }
+
+    private func handleLatexError(_ error: LatexAPIError) {
+        switch error {
+        case .apiKeyMissing:
+            NSAlert.showModalAlert(message: "Gemini API key is missing. Please set it in Settings.")
+            showSettings()
+        case .apiKeyInvalid:
+            NSAlert.showModalAlert(message: "Invalid Gemini API key. Please check Settings.")
+            showSettings()
+        case .apiError(let message):
+            NSAlert.showModalAlert(message: "Gemini API Error: \(message)")
+        case .requestFailed(let error):
+            NSAlert.showModalAlert(message: "Network request failed: \(error.localizedDescription)")
+        case .invalidResponse:
+            NSAlert.showModalAlert(message: "Received an invalid response from the API.")
+        case .imageProcessingFailed:
+            NSAlert.showModalAlert(message: "Failed to process image data for API request.")
+        case .networkError(let error):
+            NSAlert.showModalAlert(message: "Network error: \(error.localizedDescription)")
+        case .parsingError:
+            NSAlert.showModalAlert(message: "Failed to parse the API response.")
+        }
+        Logger.log(.error, "LaTeX extraction failed: \(error)")
+    }
+}
+
+// MARK: - Private
+
+private extension App {
+    class ResultItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
+
+    func clearMenuItems() {
+        extractLatexItem.isHidden = true
+        statusItem.menu?.removeItems { $0 is ResultItem }
+    }
+}
+
+extension App: NSMenuDelegate {
+    // No duplicate methods here - they're already defined in the main class
 }
 
 enum ExtractionType {
