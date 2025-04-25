@@ -147,18 +147,38 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 for delimiter in markdownDelimiters {
                     latex = latex.replacingOccurrences(of: delimiter, with: "")
                 }
+                latex = latex.trimmingCharacters(in: .whitespacesAndNewlines)
                 
-                // Copy LaTeX to pasteboard
-                NSPasteboard.general.string = latex
+                Logger.log(.info, "Cleaned LaTeX: \(latex)")
                 
-                if let button = statusItem.button {
-                    let originalImage = button.image
-                    button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
-                    
-                    // Revert back after delay
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
-                        button?.image = originalImage
-                    }
+                // Copy to clipboard using a more reliable method
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()
+                let copied = pasteboard.writeObjects([latex as NSString])
+                Logger.log(.info, "Clipboard write successful: \(copied)")
+                
+                guard let menu = self.statusItem.menu else {
+                    Logger.log(.error, "Menu not available")
+                    return
+                }
+                
+                menu.removeItems { $0 is ResultItem }
+                
+                let item = ResultItem(title: latex)
+                item.addAction { [latex] in
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()
+                    let copied = pasteboard.writeObjects([latex as NSString])
+                    Logger.log(.info, "Menu item clipboard copy: \(copied)")
+                }
+                
+                menu.insertItem(item, at: menu.index(of: self.hintItem) + 1)
+                
+                if copied {
+                    self.hintItem.title = "LaTeX copied! Click to copy again"
+                } else {
+                    self.hintItem.title = "Failed to copy LaTeX"
+                    Logger.log(.error, "Failed to write to clipboard")
                 }
                 
                 Logger.log(.info, "LaTeX extraction completed")
@@ -180,31 +200,116 @@ final class App: NSObject, NSApplicationDelegate, NSMenuDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem.isVisible = true
-        setupShortcuts()
     }
-    
-    private func setupShortcuts() {
-        if let visionShortcut = SettingsManager.shared.getShortcut(forType: "visionShortcut") {
-            shortcutMonitor.registerShortcut(visionShortcut) { [weak self] in
-                self?.triggerVisionExtraction()
+}
+
+// MARK: - NSMenuDelegate
+
+extension App: NSMenuDelegate {
+    func menuWillOpen(_ menu: NSMenu) {
+        startDetection()
+        
+        servicesItem.submenu?.removeItems { $0 is ServiceItem }
+        for service in Services.items.reversed() {
+            let item = ServiceItem(title: service.displayName)
+            item.addAction {
+                NSPasteboard.general.string = self.currentResult?.spacesJoined
+                
+                if !NSPerformService(service.serviceName, .general) {
+                    NSAlert.runModal(message: String(format: Localized.failedToRun, service.displayName))
+                }
+            }
+
+            servicesItem.submenu?.insertItem(item, at: 0)
+        }
+
+        let timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let self else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                guard NSPasteboard.general.changeCount != self.pasteboardChangeCount else {
+                    return
+                }
+
+                self.startDetection()
             }
         }
-        
-        if let latexShortcut = SettingsManager.shared.getShortcut(forType: "latexShortcut") {
-            shortcutMonitor.registerShortcut(latexShortcut) { [weak self] in
-                self?.triggerLatexExtraction()
-            }
+
+        pasteboardObserver = timer
+        RunLoop.current.add(timer, forMode: .common)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        clearMenuItems()
+
+        pasteboardObserver?.invalidate()
+        pasteboardObserver = nil
+    }
+}
+
+// MARK: - Private
+
+private extension App {
+    class ResultItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
+    class ServiceItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
+
+    func clearMenuItems() {
+        hintItem.title = Localized.menuTitleHintCapture
+        howToItem.isHidden = false
+        copyAllItem.isHidden = true
+        statusItem.menu?.removeItems { $0 is ResultItem }
+    }
+
+    func startDetection() {
+        guard let menu = statusItem.menu else {
+            return Logger.assertFail("Missing menu to proceed")
         }
-        
-        shortcutMonitor.start()
+
+        currentResult = nil
+        pasteboardChangeCount = NSPasteboard.general.changeCount
+        clipboardItem.isHidden = NSPasteboard.general.isEmpty
+        saveImageItem.isEnabled = false
+
+        guard let image = NSPasteboard.general.image?.cgImage else {
+            return Logger.log(.info, "No image was copied")
+        }
+
+        hintItem.title = Localized.menuTitleHintRecognizing
+        howToItem.isHidden = true
+
+        Task {
+            let fastResult = await Recognizer.detect(image: image, level: .fast)
+            self.showResult(fastResult, in: menu)
+
+            let accurateResult = await Recognizer.detect(image: image, level: .accurate)
+            self.showResult(accurateResult, in: menu)
+        }
     }
 
-    // MARK: - NSMenuDelegate
-    @objc func menuWillOpen(_ menu: NSMenu) {
-        // Menu delegate stays minimal - no automatic detection
-    }
+    func showResult(_ resultData: Recognizer.ResultData, in menu: NSMenu) {
+        guard currentResult != resultData else {
+            #if DEBUG
+                Logger.log(.debug, "No change in result data")
+            #endif
+            return
+        }
 
-    @objc func menuDidClose(_ menu: NSMenu) {
-        // Menu delegate stays minimal - no cleanup needed
+        currentResult = resultData
+        hintItem.title = resultData.candidates.isEmpty ? Localized.menuTitleHintCapture : Localized.menuTitleHintCopy
+        howToItem.isHidden = !resultData.candidates.isEmpty
+        copyAllItem.isHidden = resultData.candidates.count < 2
+        saveImageItem.isEnabled = true
+
+        let separator = NSMenuItem.separator()
+        menu.insertItem(separator, at: menu.index(of: howToItem) + 1)
+        menu.removeItems { $0 is ResultItem }
+
+        for text in resultData.candidates.reversed() {
+            let item = ResultItem(title: text)
+            item.addAction { NSPasteboard.general.string = text }
+            menu.insertItem(item, at: menu.index(of: separator) + 1)
+        }
     }
 }
