@@ -10,6 +10,7 @@ import ServiceManagement
 import Foundation
 import Carbon
 import os.log
+import CoreGraphics
 
 @MainActor
 final class App: NSObject, NSApplicationDelegate {
@@ -92,6 +93,17 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Check or request screen recording permission
+        let hasPermission = CGPreflightScreenCaptureAccess() 
+            || CGRequestScreenCaptureAccess()  // returns true if already allowed or just granted
+        
+        guard hasPermission else {
+            // User clicked "Don't Allow" - terminate app
+            NSApp.terminate(nil)
+            return
+        }
+
+        // Permission granted - proceed with normal startup
         Services.initialize()
         clearMenuItems()
         statusItem.isVisible = true
@@ -123,21 +135,28 @@ final class App: NSObject, NSApplicationDelegate {
 
     func initiateCapture(for type: ExtractionType) {
         Task { @MainActor in
-            if let image = await captureScreenRegion() {
+            await captureViaSystemUI()
+            if let image = NSPasteboard.general.image {
                 performExtraction(type: type, image: image)
+            } else {
+                NSAlert.showModalAlert(
+                    message: "Screenshot cancelled",
+                    informativeText: "Press ⌘3 for text or ⌘4 for LaTeX extraction."
+                )
             }
         }
     }
     
-    private func captureScreenRegion() async -> NSImage? {
-        guard let image = NSPasteboard.general.image else {
-            NSAlert.showModalAlert(
-                message: "No image found in clipboard",
-                informativeText: "Please take a screenshot first (Cmd+Shift+4) before using the extract shortcut."
-            )
-            return nil
+    private func captureViaSystemUI() async {
+        await withCheckedContinuation { continuation in
+            let task = Process()
+            task.launchPath = "/usr/sbin/screencapture"
+            task.arguments = ["-i", "-c", "-x"] // -i interactive, -c copy to clipboard, -x suppress sound
+            task.terminationHandler = { _ in
+                continuation.resume()
+            }
+            try? task.run()
         }
-        return image
     }
 
     private func startDetection() {
@@ -185,7 +204,7 @@ final class App: NSObject, NSApplicationDelegate {
         }
     }
 
-    func performExtraction(type: ExtractionType, image: NSImage?) {
+    private func performExtraction(type: ExtractionType, image: NSImage?) {
         guard let image = image else {
             Logger.log(.error, "performExtraction called with no image for type \(type).")
             return

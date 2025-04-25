@@ -66,6 +66,7 @@
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
+		B99BF4FB2DBC4D8700B8BCCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B9CBF2F62DBC01AF00BAA6B9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		B9CBF2FF2DBC147200BAA6B9 /* ShortcutMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutMonitor.swift; sourceTree = "<group>"; };
 		B9CBF3012DBC148000BAA6B9 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
@@ -114,6 +115,7 @@
 		87E192C12BAADE1200A87A4E /* TextGrabber2 */ = {
 			isa = PBXGroup;
 			children = (
+				B99BF4FB2DBC4D8700B8BCCF /* Info.plist */,
 				87E192D62BAAE16200A87A4E /* Sources */,
 				8772FAE72BAC73F100DBEAA0 /* Resources */,
 				87E192D22BAAE0CD00A87A4E /* Supporting Files */,
@@ -429,6 +431,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = TextGrabber2/Info.entitlements;
 				CODE_SIGN_IDENTITY = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
@@ -437,6 +440,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TextGrabber2/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TextGrabber2;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
@@ -460,6 +464,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = TextGrabber2/Info.entitlements;
 				CODE_SIGN_IDENTITY = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
@@ -468,6 +473,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TextGrabber2/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TextGrabber2;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;

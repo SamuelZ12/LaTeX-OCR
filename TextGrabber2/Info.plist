@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSPrivacyScreenCaptureUsageDescription</key>
+    <string>TextGrabber2 needs screen recording permission to capture screenshots for text and LaTeX recognition.</string>
+</dict>
+</plist>
