@@ -1,10 +1,25 @@
 import SwiftUI
 
+// Add EventMonitor class to manage monitor lifecycle
+private class EventMonitor {
+    var monitor: Any?
+    
+    init(eventMask: NSEvent.EventTypeMask, handler: @escaping (NSEvent) -> NSEvent?) {
+        self.monitor = NSEvent.addLocalMonitorForEvents(matching: eventMask, handler: handler)
+    }
+    
+    deinit {
+        if let monitor = self.monitor {
+            NSEvent.removeMonitor(monitor)
+        }
+    }
+}
+
 struct ShortcutRecorderButton: View {
     let label: String
     @Binding var shortcut: ShortcutMonitor.KeyboardShortcut?
     @State private var isRecording = false
-    private var eventMonitor: Any?
+    @State private var eventMonitor: EventMonitor?
     
     init(label: String, shortcut: Binding<ShortcutMonitor.KeyboardShortcut?>) {
         self.label = label
@@ -13,8 +28,12 @@ struct ShortcutRecorderButton: View {
     
     var body: some View {
         Button(action: {
-            isRecording.toggle()
             if isRecording {
+                // Cancel recording
+                eventMonitor = nil
+                isRecording = false
+            } else {
+                isRecording = true
                 startRecording()
             }
         }) {
@@ -26,7 +45,7 @@ struct ShortcutRecorderButton: View {
     
     private func startRecording() {
         DispatchQueue.main.async {
-            NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .flagsChanged]) { event in
+            self.eventMonitor = EventMonitor(eventMask: [.keyDown, .flagsChanged]) { event in
                 if event.type == .keyDown {
                     let newShortcut = ShortcutMonitor.KeyboardShortcut(
                         keyCode: Int(event.keyCode),
@@ -34,6 +53,7 @@ struct ShortcutRecorderButton: View {
                     )
                     shortcut = newShortcut
                     isRecording = false
+                    self.eventMonitor = nil // This will trigger deinit and cleanup
                     return nil
                 }
                 return event
