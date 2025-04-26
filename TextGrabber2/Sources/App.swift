@@ -177,13 +177,8 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     @objc func menuWillOpen(_ menu: NSMenu) {
-        extractLatexItem.isHidden = true
-        extractTextItem.isHidden = true  // Hide both items initially
-        
-        if NSPasteboard.general.image?.cgImage != nil {
-            extractLatexItem.isHidden = false
-            extractTextItem.isHidden = false  // Show both items if image exists
-        }
+        extractLatexItem.isHidden = false
+        extractTextItem.isHidden = false
         
         updateHistoryMenu()
         startDetection()
