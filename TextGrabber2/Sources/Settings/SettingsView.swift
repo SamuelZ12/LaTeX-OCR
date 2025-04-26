@@ -189,7 +189,6 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
         .frame(width: 450, height: 500)
         .onAppear {
             isValidAPIKey = validateAPIKey(apiKeyInput)

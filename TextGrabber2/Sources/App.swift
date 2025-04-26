@@ -12,6 +12,42 @@ import Carbon
 import os.log
 import CoreGraphics
 
+struct HistoryEntry: Codable {
+    let text: String
+    let type: ExtractionType
+    let timestamp: Date
+    
+    var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from: timestamp)
+    }
+}
+
+@MainActor
+class HistoryManager {
+    static let shared = HistoryManager()
+    private let maxEntries = 10
+    private var entries: [HistoryEntry] = []
+    
+    func addEntry(_ text: String, type: ExtractionType) {
+        let entry = HistoryEntry(text: text, type: type, timestamp: Date())
+        entries.insert(entry, at: 0)
+        if entries.count > maxEntries {
+            entries.removeLast()
+        }
+    }
+    
+    func clearHistory() {
+        entries.removeAll()
+    }
+    
+    var recentEntries: [HistoryEntry] {
+        return entries
+    }
+}
+
 @MainActor
 final class App: NSObject, NSApplicationDelegate {
     private var currentResult: Recognizer.ResultData?
@@ -19,7 +55,8 @@ final class App: NSObject, NSApplicationDelegate {
     private var pasteboardChangeCount = 0
     private var settingsWindowController: SettingsWindowController?
     private let settingsManager = SettingsManager.shared
-
+    private let historyManager = HistoryManager.shared
+    
     private lazy var extractTextItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleExtractText)
         item.addAction { [weak self] in
@@ -53,6 +90,25 @@ final class App: NSObject, NSApplicationDelegate {
         return item
     }()
 
+    private lazy var historyMenu: NSMenu = {
+        let menu = NSMenu()
+        return menu
+    }()
+    
+    private lazy var historyItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleHistory)
+        item.submenu = historyMenu
+        return item
+    }()
+    
+    private lazy var clearHistoryItem: NSMenuItem = {
+        let item = NSMenuItem(title: Localized.menuTitleClearHistory)
+        item.addAction { [weak self] in
+            self?.historyManager.clearHistory()
+        }
+        return item
+    }()
+
     private lazy var statusItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.behavior = .terminationOnRemoval
@@ -64,6 +120,8 @@ final class App: NSObject, NSApplicationDelegate {
 
         menu.addItem(extractTextItem)
         menu.addItem(extractLatexItem)
+        menu.addItem(.separator())
+        menu.addItem(historyItem)
         menu.addItem(.separator())
         menu.addItem(settingsItem)
         menu.addItem(quitItem)
@@ -95,7 +153,7 @@ final class App: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 1) If we have never been granted, ask now…
         if !CGPreflightScreenCaptureAccess() {
-            CGRequestScreenCaptureAccess() 
+            CGRequestScreenCaptureAccess()
             // 2) Tell the user to restart
             NSAlert.showModalAlert(
             message: "TextGrabber2 needs screen-recording permission.\n\nPlease quit and re-launch the app after granting access."
@@ -127,6 +185,7 @@ final class App: NSObject, NSApplicationDelegate {
             extractTextItem.isHidden = false  // Show both items if image exists
         }
         
+        updateHistoryMenu()
         startDetection()
     }
 
@@ -161,48 +220,20 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     private func startDetection() {
-        guard let menu = statusItem.menu else {
+        guard statusItem.menu != nil else {
             return Logger.assertFail("Missing menu to proceed")
         }
 
         currentResult = nil
         pasteboardChangeCount = NSPasteboard.general.changeCount
 
-        guard let image = NSPasteboard.general.image?.cgImage else {
-            return Logger.log(.info, "No image was copied")
-        }
-
-        extractLatexItem.isHidden = false // Show when image is present
-        extractTextItem.isHidden = false // Show when image is present
-
-        Task {
-            let fastResult = await Recognizer.detect(image: image, level: .fast)
-            self.showResult(fastResult, in: menu)
-
-            let accurateResult = await Recognizer.detect(image: image, level: .accurate)
-            self.showResult(accurateResult, in: menu)
+        if NSPasteboard.general.image?.cgImage != nil {
+            extractLatexItem.isHidden = false
+            extractTextItem.isHidden = false
         }
     }
 
     func showResult(_ resultData: Recognizer.ResultData, in menu: NSMenu) {
-        guard currentResult != resultData else {
-            #if DEBUG
-                Logger.log(.debug, "No change in result data")
-            #endif
-            return
-        }
-
-        currentResult = resultData
-
-        let separator = NSMenuItem.separator()
-        menu.insertItem(separator, at: 0)
-        menu.removeItems { $0 is ResultItem }
-
-        for text in resultData.candidates.reversed() {
-            let item = ResultItem(title: text)
-            item.addAction { NSPasteboard.general.string = text }
-            menu.insertItem(item, at: menu.index(of: separator) + 1)
-        }
     }
 
     private func performExtraction(type: ExtractionType, image: NSImage?) {
@@ -229,9 +260,7 @@ final class App: NSObject, NSApplicationDelegate {
 
                 if copied {
                     showSuccessFeedback()
-
-                    guard let menu = statusItem.menu else { return }
-                    showResult(result, in: menu)
+                    historyManager.addEntry(textToCopy, type: .text)
                 }
             }
 
@@ -265,6 +294,7 @@ final class App: NSObject, NSApplicationDelegate {
                     NSPasteboard.general.setString(textToCopy, forType: .string)
                     Logger.log(.info, "Copied LaTeX to clipboard (format: \(copyFormat))")
                     showSuccessFeedback()
+                    historyManager.addEntry(textToCopy, type: .latex)
                 } catch let error as LatexAPIError {
                     handleLatexError(error)
                 } catch {
@@ -313,16 +343,48 @@ final class App: NSObject, NSApplicationDelegate {
         }
         Logger.log(.error, "LaTeX extraction failed: \(error)")
     }
-}
 
-// MARK: - Private
+    private func updateHistoryMenu() {
+        historyMenu.removeAllItems()
+        
+        let entries = historyManager.recentEntries
+        if entries.isEmpty {
+            let emptyItem = NSMenuItem(title: Localized.menuTitleNoHistory)
+            emptyItem.isEnabled = false
+            historyMenu.addItem(emptyItem)
+        } else {
+            for entry in entries {
+                let menuItem = NSMenuItem(
+                    title: "\(entry.formattedDate) - \(entry.type == .text ? "Text" : "LaTeX")",
+                    action: nil,
+                    keyEquivalent: ""
+                )
+                
+                let submenu = NSMenu()
+                let previewItem = NSMenuItem(title: entry.text.prefix(50) + "...", action: nil, keyEquivalent: "")
+                previewItem.isEnabled = false
+                submenu.addItem(previewItem)
+                submenu.addItem(.separator())
+                
+                let copyItem = NSMenuItem(title: Localized.menuTitleCopy)
+                copyItem.addAction { [weak self] in
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(entry.text, forType: .string)
+                    self?.showSuccessFeedback()
+                }
+                submenu.addItem(copyItem)
+                
+                menuItem.submenu = submenu
+                historyMenu.addItem(menuItem)
+            }
+            
+            historyMenu.addItem(.separator())
+            historyMenu.addItem(clearHistoryItem)
+        }
+    }
 
-private extension App {
-    class ResultItem: NSMenuItem { /* Just a sub-class to be identifiable */ }
-
-    func clearMenuItems() {
+    private func clearMenuItems() {
         extractLatexItem.isHidden = true
-        statusItem.menu?.removeItems { $0 is ResultItem }
     }
 }
 
@@ -330,7 +392,7 @@ extension App: NSMenuDelegate {
     // No duplicate methods here - they're already defined in the main class
 }
 
-enum ExtractionType {
+enum ExtractionType: String, Codable {
     case text
     case latex
 }

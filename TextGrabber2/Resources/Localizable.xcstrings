@@ -47,6 +47,9 @@
         }
       }
     },
+    "Clear History" : {
+      "comment" : "[Menu] Clear capture history"
+    },
     "Click to Copy" : {
       "comment" : "[Menu] Hint for copying text",
       "localizations" : {
@@ -97,6 +100,9 @@
           }
         }
       }
+    },
+    "Copy" : {
+      "comment" : "[Menu] Copy text to clipboard"
     },
     "Copy All" : {
       "comment" : "[Menu] Copy all text at once",
@@ -312,6 +318,9 @@
         }
       }
     },
+    "No Recent Captures" : {
+      "comment" : "[Menu] When no captures are available"
+    },
     "Quit TextGrabber2" : {
       "comment" : "[Menu] Quit the app",
       "localizations" : {
@@ -328,6 +337,9 @@
           }
         }
       }
+    },
+    "Recent Captures" : {
+      "comment" : "[Menu] Recent captures submenu"
     },
     "Recognizing..." : {
       "comment" : "[Menu] The recognition is ongoing",

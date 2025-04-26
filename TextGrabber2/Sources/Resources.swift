@@ -37,7 +37,10 @@ enum Localized {
   static let menuTitleExtractLaTeX = String(localized: "Extract LaTeX", comment: "[Menu] Extract LaTeX code from image")
   static let menuTitleExtractText = String(localized: "Extract Text", comment: "[Menu] Extract text using Apple Vision")
   static let menuTitleSettings = String(localized: "Settings", comment: "[Menu] Open settings window")
-
+  static let menuTitleHistory = String(localized: "Recent Captures", comment: "[Menu] Recent captures submenu")
+  static let menuTitleNoHistory = String(localized: "No Recent Captures", comment: "[Menu] When no captures are available")
+  static let menuTitleCopy = String(localized: "Copy", comment: "[Menu] Copy text to clipboard")
+  static let menuTitleClearHistory = String(localized: "Clear History", comment: "[Menu] Clear capture history")
 }
 
 // Icon set used in the app: https://developer.apple.com/sf-symbols/
