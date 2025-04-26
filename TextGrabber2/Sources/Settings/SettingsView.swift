@@ -78,41 +78,47 @@ struct SettingsView: View {
             }
             
             Section("Keyboard Shortcuts") {
-                HStack {
-                    Text("Text Shortcut:")
-                    Spacer()
-                    ShortcutRecorderButton(
-                        label: "Text Shortcut",
-                        shortcut: Binding(
-                            get: { settings.textShortcut },
-                            set: { settings.textShortcut = $0 }
+                Grid(alignment: .leading, horizontalSpacing: 20) {
+                    GridRow {
+                        Text("Text Shortcut:")
+                            .gridColumnAlignment(.leading)
+                        ShortcutRecorderButton(
+                            label: "Text Shortcut",
+                            shortcut: Binding(
+                                get: { settings.textShortcut },
+                                set: { settings.textShortcut = $0 }
+                            )
                         )
-                    )
-                }
-                
-                HStack {
-                    Text("LaTeX Shortcut:")
-                    Spacer()
-                    ShortcutRecorderButton(
-                        label: "LaTeX Shortcut",
-                        shortcut: Binding(
-                            get: { settings.latexShortcut },
-                            set: { settings.latexShortcut = $0 }
+                        .gridColumnAlignment(.leading)
+                    }
+                    
+                    GridRow {
+                        Text("LaTeX Shortcut:")
+                        ShortcutRecorderButton(
+                            label: "LaTeX Shortcut",
+                            shortcut: Binding(
+                                get: { settings.latexShortcut },
+                                set: { settings.latexShortcut = $0 }
+                            )
                         )
-                    )
+                    }
                 }
             }
             
             Section("Copy Format") {
+                // --- CHANGE: Use standard Picker with label and rely on Form layout ---
                 Picker("Text Copy Format:", selection: $settings.extractTextCopyFormat) {
                     Text("Line Breaks").tag("lineBreaks")
                     Text("Spaces").tag("spaces")
                 }
-                
+                .pickerStyle(.menu) // Ensure menu style
+
                 Picker("LaTeX Copy Format:", selection: $settings.extractLatexCopyFormat) {
                     Text("Line Breaks").tag("lineBreaks")
                     Text("Spaces").tag("spaces")
                 }
+                .pickerStyle(.menu) // Ensure menu style
+                // --- END CHANGE ---
             }
             
             HStack {
@@ -126,7 +132,9 @@ struct SettingsView: View {
             }
         }
         .padding()
-        .frame(width: 480, height: 300)
+        // --- CHANGE: Adjusted frame width, removed height constraint ---
+        .frame(width: 500)
+        // --- END CHANGE ---
     }
 }
 

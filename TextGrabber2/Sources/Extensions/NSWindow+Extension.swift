@@ -19,12 +19,10 @@ extension NSWindow {
   }()
 
   @objc func swizzled_setFrame(_ originalRect: CGRect, display: Bool, animate: Bool) {
-    // Only for the first popup menu window
-    //
-    // Private, but we're not on the Mac App Store, so who the hell cares.
-    //
-    // The worst case is that the width of all popup menu windows is fixed.
-    guard NSApp.windows.first(where: { $0.className == "NSPopupMenuWindow" }) === self else {
+    // Only reposition windows that are attached sheets or have a parent window that is the NSStatusBarWindow
+    // This specifically targets menus or popovers originating from the status bar item.
+    guard let parent = self.sheetParent ?? self.attachedSheet, parent.className == "NSStatusBarWindow" else {
+      // If it's not a window attached to the status bar window, use the original method.
       return swizzled_setFrame(originalRect, display: display, animate: animate)
     }
 
