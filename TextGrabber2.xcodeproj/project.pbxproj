@@ -7,12 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8737A24A2BBEC27700042E83 /* Services in Resources */ = {isa = PBXBuildFile; fileRef = 8737A2492BBEC27700042E83 /* Services */; };
-		8737A24C2BBECB8800042E83 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8737A24B2BBECB8800042E83 /* Services.swift */; };
 		875364A42BE1D6FC00611579 /* NSAlert+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 875364A32BE1D6FC00611579 /* NSAlert+Extension.swift */; };
-		8772FAE92BAC743D00DBEAA0 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8772FAE82BAC743D00DBEAA0 /* Localizable.xcstrings */; };
 		87E192C32BAADE1200A87A4E /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192C22BAADE1200A87A4E /* App.swift */; };
-		87E192C72BAADE1300A87A4E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 87E192C62BAADE1300A87A4E /* Assets.xcassets */; };
 		87E192D52BAAE12600A87A4E /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192D42BAAE12600A87A4E /* Bundle+Extension.swift */; };
 		87E192D82BAAE17200A87A4E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192D72BAAE17200A87A4E /* main.swift */; };
 		87E192DA2BAAE25500A87A4E /* NSImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192D92BAAE25500A87A4E /* NSImage+Extension.swift */; };
@@ -39,13 +35,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8737A2492BBEC27700042E83 /* Services */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Services; sourceTree = "<group>"; };
-		8737A24B2BBECB8800042E83 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		875364A32BE1D6FC00611579 /* NSAlert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAlert+Extension.swift"; sourceTree = "<group>"; };
-		8772FAE82BAC743D00DBEAA0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		87E192BF2BAADE1200A87A4E /* TextGrabber2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TextGrabber2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		87E192C22BAADE1200A87A4E /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		87E192C62BAADE1300A87A4E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		87E192CB2BAADE1400A87A4E /* Info.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Info.entitlements; sourceTree = "<group>"; };
 		87E192D12BAADEFE00A87A4E /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
 		87E192D42BAAE12600A87A4E /* Bundle+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
@@ -85,16 +77,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		8772FAE72BAC73F100DBEAA0 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				8737A2492BBEC27700042E83 /* Services */,
-				87E192C62BAADE1300A87A4E /* Assets.xcassets */,
-				8772FAE82BAC743D00DBEAA0 /* Localizable.xcstrings */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		87E192B62BAADE1200A87A4E = {
 			isa = PBXGroup;
 			children = (
@@ -116,7 +98,6 @@
 			isa = PBXGroup;
 			children = (
 				87E192D62BAAE16200A87A4E /* Sources */,
-				8772FAE72BAC73F100DBEAA0 /* Resources */,
 				87E192D22BAAE0CD00A87A4E /* Supporting Files */,
 				B9634B0F2DBAEDA100911E43 /* Secrets.plist */,
 				B99BF4FC2DBC542500B8BCCF /* Info.plist */,
@@ -162,7 +143,6 @@
 				87E192F62BABD18900A87A4E /* Logger.swift */,
 				87E192F02BABB6EA00A87A4E /* Recognizer.swift */,
 				87E192E82BAAFF0200A87A4E /* Resources.swift */,
-				8737A24B2BBECB8800042E83 /* Services.swift */,
 				B9634B122DBAFAA800911E43 /* Services */,
 				B9CBF2F72DBC01AF00BAA6B9 /* Settings */,
 			);
@@ -249,9 +229,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */,
-				8737A24A2BBEC27700042E83 /* Services in Resources */,
-				8772FAE92BAC743D00DBEAA0 /* Localizable.xcstrings in Resources */,
-				87E192C72BAADE1300A87A4E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +239,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8737A24C2BBECB8800042E83 /* Services.swift in Sources */,
 				B9CBF3002DBC147200BAA6B9 /* ShortcutMonitor.swift in Sources */,
 				B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */,
 				87E192DF2BAAE38700A87A4E /* NSControl+Extension.swift in Sources */,

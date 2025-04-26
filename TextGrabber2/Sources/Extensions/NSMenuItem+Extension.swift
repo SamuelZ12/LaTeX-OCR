@@ -1,6 +1,6 @@
 //
 //  NSMenuItem+Extension.swift
-//  TextGrabber2
+//  LaTeXOCR
 //
 //  Created by cyan on 2024/3/20.
 

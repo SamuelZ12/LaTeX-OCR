@@ -30,10 +30,10 @@ enum Localized {
   static let menuTitleClipboard = String(localized: "Clipboard", comment: "[Menu] Clipboard options")
   static let menuTitleSaveAsFile = String(localized: "Save as File", comment: "[Menu] Save the clipboard as file")
   static let menuTitleClearContents = String(localized: "Clear Contents", comment: "[Menu] Clear the clipboard")
-  static let menuTitleGitHub = String(localized: "GitHub", comment: "[Menu] Open the TextGrabber2 repository on GitHub")
+  static let menuTitleGitHub = String(localized: "GitHub", comment: "[Menu] Open the LaTeXOCR repository on GitHub")
   static let menuTitleLaunchAtLogin = String(localized: "Launch at Login", comment: "[Menu] Automatically start the app at login")
   static let menuTitleVersion = String(localized: "Version", comment: "[Menu] Version number label")
-  static let menuTitleQuitTextGrabber2 = String(localized: "Quit TextGrabber2", comment: "[Menu] Quit the app")
+  static let menuTitleQuitTextGrabber2 = String(localized: "Quit", comment: "[Menu] Quit the app")
   static let menuTitleExtractLaTeX = String(localized: "Extract LaTeX", comment: "[Menu] Extract LaTeX code from image")
   static let menuTitleExtractText = String(localized: "Extract Text", comment: "[Menu] Extract text using Apple Vision")
   static let menuTitleSettings = String(localized: "Settings", comment: "[Menu] Open settings window")
@@ -52,5 +52,5 @@ enum Icons {
 }
 
 enum Links {
-  static let github = "https://github.com/TextGrabber2-app/TextGrabber2"
+  static let github = "https://github.com/samuelz12/LaTeX-OCR"
 }

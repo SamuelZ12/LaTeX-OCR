@@ -162,7 +162,7 @@ final class App: NSObject, NSApplicationDelegate {
             return
         }
 
-        Services.initialize()
+        
         clearMenuItems()
         statusItem.isVisible = true
         

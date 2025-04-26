@@ -19,6 +19,6 @@
 
   <!-- privacy -->
   <key>NSPrivacyScreenCaptureUsageDescription</key>
-  <string>TextGrabber2 needs screen-recording permission to capture screenshots for text and LaTeX recognition.</string>
+  <string>LaTeXOCR needs screen-recording permission to capture screenshots for text and LaTeX recognition.</string>
 </dict>
 </plist>
