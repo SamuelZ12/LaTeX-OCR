@@ -89,7 +89,6 @@ If you prefer to build the application yourself:
 * `LaTeXOCR/Sources/Extensions/`: Utility extensions for various AppKit/Foundation classes.
 * `LaTeXOCR/Info.plist`: Application metadata and permission descriptions.
 * `LaTeXOCR.xcodeproj`: Xcode project file.
-* `Screenshots/`: Contains screenshots for documentation.
 
 ## License
 
@@ -97,4 +96,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-* Built on top of [TextGrabber2](https://github.com/TextGrabber2-app/TextGrabber2) by cyanzhong
+Built on top of [TextGrabber2](https://github.com/TextGrabber2-app/TextGrabber2) by cyanzhong
