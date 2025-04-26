@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-class SettingsWindowController: NSWindowController {
+class SettingsWindowController: NSWindowController, NSWindowDelegate {
     static var shared: SettingsWindowController?
     
     convenience init() {
@@ -21,6 +21,7 @@ class SettingsWindowController: NSWindowController {
         window.minSize = NSSize(width: 450, height: 400)
         
         self.init(window: window)
+        window.delegate = self
     }
     
     deinit {
@@ -50,11 +51,15 @@ class SettingsWindowController: NSWindowController {
         NSApp.activate(ignoringOtherApps: true)
     }
     
+    func windowWillClose(_ notification: Notification) {
+        Self.shared = nil
+    }
+    
     static func showSettings() {
         if shared == nil {
             shared = SettingsWindowController()
         }
-        shared?.window?.makeKeyAndOrderFront(nil)
+        shared?.showWindow(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }

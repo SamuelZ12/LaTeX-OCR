@@ -189,13 +189,10 @@
         }
       }
     },
-    "Format" : {
+    "Format Settings" : {
 
     },
     "Gemini API Key:" : {
-
-    },
-    "General" : {
 
     },
     "Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)" : {
@@ -285,6 +282,9 @@
           }
         }
       }
+    },
+    "Keyboard Shortcuts" : {
+
     },
     "LaTeX Format:" : {
 

@@ -74,7 +74,7 @@ struct ShortcutRecorderButton: View {
     }
 }
 
-struct GeneralSettingsView: View {
+struct SettingsView: View {
     @StateObject private var settings = SettingsManager.shared
     @AppStorage("geminiAPIKey") private var apiKey: String = ""
     
@@ -128,18 +128,10 @@ struct GeneralSettingsView: View {
                     )
                     .frame(width: 200)
                 }
+            } header: {
+                Text("Keyboard Shortcuts")
             }
-        }
-        .formStyle(.grouped)
-        .padding()
-    }
-}
-
-struct FormatSettingsView: View {
-    @StateObject private var settings = SettingsManager.shared
-    
-    var body: some View {
-        Form {
+            
             Section {
                 VStack(alignment: .leading) {
                     LabeledContent("Text Format:") {
@@ -168,27 +160,13 @@ struct FormatSettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            } header: {
+                Text("Format Settings")
             }
         }
         .formStyle(.grouped)
         .padding()
-    }
-}
-
-struct SettingsView: View {
-    var body: some View {
-        TabView {
-            GeneralSettingsView()
-                .tabItem {
-                    Label("General", systemImage: "gear")
-                }
-            
-            FormatSettingsView()
-                .tabItem {
-                    Label("Format", systemImage: "text.alignleft")
-                }
-        }
-        .frame(minWidth: 450, minHeight: 400)
+        .frame(width: 450, height: 500)
     }
 }
 
