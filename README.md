@@ -24,7 +24,7 @@ A simple macOS menu bar application to perform OCR on screen captures, with a sp
 
 ## Installation & Usage
 
-1.  **Download:** Get the latest release `.dmg` file from the [**GitHub Releases page**](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest). *(Link will work once you create releases)*
+1.  **Download:** Get the latest release `.dmg` file from the [**GitHub Releases page**](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest).
 2.  **Mount:** Open the downloaded `.dmg` file.
 3.  **Install:** Drag the `LaTeXOCR.app` icon into your Applications folder.
 4.  **Eject:** You can eject the `.dmg` file in Finder after installation.
