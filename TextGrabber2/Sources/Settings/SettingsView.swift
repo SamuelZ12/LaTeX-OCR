@@ -1,6 +1,6 @@
 import SwiftUI
+import Carbon
 
-// Add EventMonitor class to manage monitor lifecycle
 private class EventMonitor {
     var monitor: Any?
     
@@ -21,40 +21,52 @@ struct ShortcutRecorderButton: View {
     @State private var isRecording = false
     @State private var eventMonitor: EventMonitor?
     
-    init(label: String, shortcut: Binding<ShortcutMonitor.KeyboardShortcut?>) {
-        self.label = label
-        self._shortcut = shortcut
-    }
-    
     var body: some View {
-        Button(action: {
+        Button {
             if isRecording {
-                // Cancel recording
                 eventMonitor = nil
                 isRecording = false
             } else {
                 isRecording = true
                 startRecording()
             }
-        }) {
-            Text(isRecording ? "Recording..." : (shortcut?.description ?? "Click to Record"))
-                .frame(width: 150)
+        } label: {
+            HStack {
+                Text(isRecording ? "Recording..." : (shortcut?.description ?? "Click to Record"))
+                    .foregroundStyle(isRecording ? .secondary : .primary)
+                if !isRecording {
+                    Image(systemName: "keyboard")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 6))
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.plain)
     }
     
     private func startRecording() {
         DispatchQueue.main.async {
+            self.eventMonitor = nil
             self.eventMonitor = EventMonitor(eventMask: [.keyDown, .flagsChanged]) { event in
-                if event.type == .keyDown {
+                if event.type == .keyDown &&
+                   event.keyCode != kVK_Shift &&
+                   event.keyCode != kVK_Control &&
+                   event.keyCode != kVK_Option &&
+                   event.keyCode != kVK_Command &&
+                   event.keyCode != kVK_Function {
                     let newShortcut = ShortcutMonitor.KeyboardShortcut(
                         keyCode: Int(event.keyCode),
                         modifiers: event.modifierFlags
                     )
                     shortcut = newShortcut
                     isRecording = false
-                    self.eventMonitor = nil // This will trigger deinit and cleanup
+                    self.eventMonitor = nil
                     return nil
+                } else if event.type == .flagsChanged {
+                    return event
                 }
                 return event
             }
@@ -62,79 +74,106 @@ struct ShortcutRecorderButton: View {
     }
 }
 
-struct SettingsView: View {
+struct GeneralSettingsView: View {
     @StateObject private var settings = SettingsManager.shared
     @State private var apiKey: String = UserDefaults.standard.string(forKey: "geminiAPIKey") ?? ""
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         Form {
-            Section("API Key") {
-                TextField("Gemini API Key", text: $apiKey)
-                    .textFieldStyle(.roundedBorder)
-                    .onChange(of: apiKey) { _, newValue in
-                        UserDefaults.standard.set(newValue, forKey: "geminiAPIKey")
-                    }
+            Section {
+                LabeledContent("API Key:") {
+                    SecureField("Enter your Gemini API Key", text: $apiKey)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 300)
+                        .onChange(of: apiKey) { _, newValue in
+                            UserDefaults.standard.set(newValue, forKey: "geminiAPIKey")
+                        }
+                }
             }
             
-            Section("Keyboard Shortcuts") {
-                Grid(alignment: .leading, horizontalSpacing: 20) {
-                    GridRow {
-                        Text("Text Shortcut:")
-                            .gridColumnAlignment(.leading)
-                        ShortcutRecorderButton(
-                            label: "Text Shortcut",
-                            shortcut: Binding(
-                                get: { settings.textShortcut },
-                                set: { settings.textShortcut = $0 }
-                            )
+            Section {
+                LabeledContent("Text Shortcut:") {
+                    ShortcutRecorderButton(
+                        label: "Text Shortcut",
+                        shortcut: Binding(
+                            get: { settings.textShortcut },
+                            set: { settings.textShortcut = $0 }
                         )
-                        .gridColumnAlignment(.leading)
-                    }
-                    
-                    GridRow {
-                        Text("LaTeX Shortcut:")
-                        ShortcutRecorderButton(
-                            label: "LaTeX Shortcut",
-                            shortcut: Binding(
-                                get: { settings.latexShortcut },
-                                set: { settings.latexShortcut = $0 }
-                            )
+                    )
+                    .frame(width: 200)
+                }
+                
+                LabeledContent("LaTeX Shortcut:") {
+                    ShortcutRecorderButton(
+                        label: "LaTeX Shortcut",
+                        shortcut: Binding(
+                            get: { settings.latexShortcut },
+                            set: { settings.latexShortcut = $0 }
                         )
-                    }
+                    )
+                    .frame(width: 200)
                 }
-            }
-            
-            Section("Copy Format") {
-                // --- CHANGE: Use standard Picker with label and rely on Form layout ---
-                Picker("Text Copy Format:", selection: $settings.extractTextCopyFormat) {
-                    Text("Line Breaks").tag("lineBreaks")
-                    Text("Spaces").tag("spaces")
-                }
-                .pickerStyle(.menu) // Ensure menu style
-
-                Picker("LaTeX Copy Format:", selection: $settings.extractLatexCopyFormat) {
-                    Text("Line Breaks").tag("lineBreaks")
-                    Text("Spaces").tag("spaces")
-                }
-                .pickerStyle(.menu) // Ensure menu style
-                // --- END CHANGE ---
-            }
-            
-            HStack {
-                Spacer()
-                Button("Save") {
-                    UserDefaults.standard.set(apiKey, forKey: "geminiAPIKey")
-                    settings.objectWillChange.send()
-                    NSApp.keyWindow?.close()
-                }
-                .keyboardShortcut(.defaultAction)
             }
         }
+        .formStyle(.grouped)
         .padding()
-        // --- CHANGE: Adjusted frame width, removed height constraint ---
-        .frame(width: 500)
-        // --- END CHANGE ---
+    }
+}
+
+struct FormatSettingsView: View {
+    @StateObject private var settings = SettingsManager.shared
+    
+    var body: some View {
+        Form {
+            Section {
+                VStack(alignment: .leading) {
+                    LabeledContent("Text Format:") {
+                        Picker("", selection: $settings.extractTextCopyFormat) {
+                            Text("Join with Line Breaks").tag("lineBreaks")
+                            Text("Join with Spaces").tag("spaces")
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 250)
+                    }
+                    Text("Choose how to join multiple text blocks")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                VStack(alignment: .leading) {
+                    LabeledContent("LaTeX Format:") {
+                        Picker("", selection: $settings.extractLatexCopyFormat) {
+                            Text("Join with Line Breaks").tag("lineBreaks")
+                            Text("Join with Spaces").tag("spaces")
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 250)
+                    }
+                    Text("Choose how to join multiple LaTeX expressions")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
+}
+
+struct SettingsView: View {
+    var body: some View {
+        TabView {
+            GeneralSettingsView()
+                .tabItem {
+                    Label("General", systemImage: "gear")
+                }
+            
+            FormatSettingsView()
+                .tabItem {
+                    Label("Format", systemImage: "text.alignleft")
+                }
+        }
+        .frame(minWidth: 450, minHeight: 400)
     }
 }
 

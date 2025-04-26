@@ -1,7 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "API Key" : {
+    "" : {
+
+    },
+    "API Key:" : {
 
     },
     "Capture Screen to Detect" : {
@@ -20,6 +23,12 @@
           }
         }
       }
+    },
+    "Choose how to join multiple LaTeX expressions" : {
+
+    },
+    "Choose how to join multiple text blocks" : {
+
     },
     "Clear Contents" : {
       "comment" : "[Menu] Clear the clipboard",
@@ -106,9 +115,6 @@
         }
       }
     },
-    "Copy Format" : {
-
-    },
     "Documentation" : {
       "comment" : "[Menu] Open the wiki for system services",
       "localizations" : {
@@ -142,6 +148,9 @@
           }
         }
       }
+    },
+    "Enter your Gemini API Key" : {
+
     },
     "Extract LaTeX" : {
       "comment" : "[Menu] Extract LaTeX code from image",
@@ -180,7 +189,10 @@
         }
       }
     },
-    "Gemini API Key" : {
+    "Format" : {
+
+    },
+    "General" : {
 
     },
     "GitHub" : {
@@ -268,10 +280,7 @@
         }
       }
     },
-    "Keyboard Shortcuts" : {
-
-    },
-    "LaTeX Copy Format:" : {
+    "LaTeX Format:" : {
 
     },
     "LaTeX Shortcut:" : {
@@ -293,9 +302,6 @@
           }
         }
       }
-    },
-    "Line Breaks" : {
-
     },
     "Quit TextGrabber2" : {
       "comment" : "[Menu] Quit the app",
@@ -330,9 +336,6 @@
           }
         }
       }
-    },
-    "Save" : {
-
     },
     "Save as File" : {
       "comment" : "[Menu] Save the clipboard as file",
@@ -371,10 +374,7 @@
     "Settings" : {
       "comment" : "[Menu] Open settings window"
     },
-    "Spaces" : {
-
-    },
-    "Text Copy Format:" : {
+    "Text Format:" : {
 
     },
     "Text Shortcut:" : {

@@ -2,20 +2,23 @@ import AppKit
 import SwiftUI
 
 class SettingsWindowController: NSWindowController {
+    static var shared: SettingsWindowController?
+    
     convenience init() {
         let settingsView = SettingsView()
         let hostingController = NSHostingController(rootView: settingsView)
         
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
+            contentRect: NSRect(x: 0, y: 0, width: 450, height: 400),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
         )
-        window.title = "Settings"
-        window.contentViewController = hostingController
         window.center()
+        window.contentViewController = hostingController
+        window.title = "Settings"
         window.isReleasedWhenClosed = false
+        window.minSize = NSSize(width: 450, height: 400)
         
         self.init(window: window)
     }
@@ -31,7 +34,7 @@ class SettingsWindowController: NSWindowController {
             let hostingController = NSHostingController(rootView: settingsView)
             
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
+                contentRect: NSRect(x: 0, y: 0, width: 450, height: 300),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false
@@ -44,6 +47,14 @@ class SettingsWindowController: NSWindowController {
         }
         
         window?.makeKeyAndOrderFront(sender)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+    
+    static func showSettings() {
+        if shared == nil {
+            shared = SettingsWindowController()
+        }
+        shared?.window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }
