@@ -76,7 +76,13 @@ struct ShortcutRecorderButton: View {
 
 struct SettingsView: View {
     @StateObject private var settings = SettingsManager.shared
-    @AppStorage("geminiAPIKey") private var apiKey: String = ""
+    @AppStorage("geminiAPIKey") private var apiKeyInput: String = ""
+    @State private var isValidAPIKey: Bool = false
+    
+    private func validateAPIKey(_ key: String) -> Bool {
+        let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.starts(with: "AIza") && trimmed.count == 39
+    }
     
     var body: some View {
         Form {
@@ -84,14 +90,32 @@ struct SettingsView: View {
                 VStack(alignment: .leading) {
                     LabeledContent("Gemini API Key:") {
                         HStack {
-                            SecureField("Enter your API key", text: $apiKey)
+                            SecureField("Enter your API key", text: $apiKeyInput)
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 300)
-                            if !apiKey.isEmpty {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
+                                .onChange(of: apiKeyInput) { _, newValue in
+                                    let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    if newValue != trimmed {
+                                        apiKeyInput = trimmed
+                                    }
+                                    isValidAPIKey = validateAPIKey(trimmed)
+                                }
+                            if !apiKeyInput.isEmpty {
+                                if isValidAPIKey {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                } else {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
+                    }
+                    
+                    if !apiKeyInput.isEmpty && !isValidAPIKey {
+                        Text("Invalid API key format. Key should start with 'AIza' followed by 35 characters.")
+                            .font(.caption)
+                            .foregroundColor(.red)
                     }
                     
                     Text("Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
@@ -167,6 +191,9 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .padding()
         .frame(width: 450, height: 500)
+        .onAppear {
+            isValidAPIKey = validateAPIKey(apiKeyInput)
+        }
     }
 }
 

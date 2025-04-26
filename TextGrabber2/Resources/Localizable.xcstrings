@@ -232,6 +232,9 @@
         }
       }
     },
+    "Invalid API key format. Key should start with 'AIza' followed by 35 characters." : {
+
+    },
     "Join Directly" : {
       "comment" : "[Menu] Join all text directly",
       "localizations" : {
