@@ -1,10 +1,3 @@
-//
-//  Recognizer.swift
-//  TextGrabber2
-//
-//  Created by cyan on 2024/3/21.
-//
-
 import AppKit
 @preconcurrency import Vision
 

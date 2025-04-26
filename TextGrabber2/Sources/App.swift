@@ -1,10 +1,3 @@
-//
-//  App.swift
-//  TextGrabber2
-//
-//  Created by cyan on 2024/3/20.
-//
-
 import AppKit
 import ServiceManagement
 import Foundation
@@ -133,6 +126,7 @@ final class App: NSObject, NSApplicationDelegate {
     }()
 
     private let latexService = LatexAPIService()
+    private static let soundPath = "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/system/Screen Capture.aiff"
     
     func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
         guard let button = statusItem.button, let window = button.window else {
@@ -336,6 +330,15 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func showSuccessFeedback() {
+        // Play screenshot sound
+        if let soundURL = Bundle.main.url(forResource: "Screen Capture", withExtension: "aif"),
+           let screenshotSound = NSSound(contentsOf: soundURL, byReference: true) {
+            screenshotSound.play()
+        } else {
+            Logger.log(.error, "Could not load screenshot sound file from app bundle")
+        }
+        
+        // Update status item icon
         if let button = self.statusItem.button {
             let originalImage = button.image
             button.image = .with(symbolName: Icons.checkmark, pointSize: 15)

@@ -24,6 +24,7 @@
 		87E192F72BABD18900A87A4E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192F62BABD18900A87A4E /* Logger.swift */; };
 		87E192FB2BAC044E00A87A4E /* NSObject+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192FA2BAC044E00A87A4E /* NSObject+Extension.swift */; };
 		87E192FD2BAC1BD600A87A4E /* NSWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */; };
+		B9583C722DBD85E300F43550 /* Screen Capture.aif in Resources */ = {isa = PBXBuildFile; fileRef = B9583C712DBD85E300F43550 /* Screen Capture.aif */; };
 		B9634B0E2DBAEC1F00911E43 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B0D2DBAEC1F00911E43 /* Config.swift */; };
 		B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9634B0F2DBAEDA100911E43 /* Secrets.plist */; };
 		B9634B132DBAFAA800911E43 /* LatexAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9634B112DBAFAA800911E43 /* LatexAPIService.swift */; };
@@ -55,6 +56,7 @@
 		87E192F62BABD18900A87A4E /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		87E192FA2BAC044E00A87A4E /* NSObject+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Extension.swift"; sourceTree = "<group>"; };
 		87E192FC2BAC1BD600A87A4E /* NSWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extension.swift"; sourceTree = "<group>"; };
+		B9583C712DBD85E300F43550 /* Screen Capture.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Screen Capture.aif"; sourceTree = "<group>"; };
 		B9634B0D2DBAEC1F00911E43 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9634B0F2DBAEDA100911E43 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
 		B9634B112DBAFAA800911E43 /* LatexAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatexAPIService.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				87E192D22BAAE0CD00A87A4E /* Supporting Files */,
 				B9634B0F2DBAEDA100911E43 /* Secrets.plist */,
 				B99BF4FC2DBC542500B8BCCF /* Info.plist */,
+				B9583C712DBD85E300F43550 /* Screen Capture.aif */,
 			);
 			path = TextGrabber2;
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9583C722DBD85E300F43550 /* Screen Capture.aif in Resources */,
 				B9634B102DBAEDA100911E43 /* Secrets.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,10 +1,3 @@
-//
-//  Logger.swift
-//  TextGrabber2
-//
-//  Created by cyan on 2024/3/21.
-//
-
 import Foundation
 import os.log
 

@@ -1,9 +1,3 @@
-//
-//  NSMenuItem+Extension.swift
-//  LaTeXOCR
-//
-//  Created by cyan on 2024/3/20.
-
 import AppKit
 
 extension NSMenuItem {

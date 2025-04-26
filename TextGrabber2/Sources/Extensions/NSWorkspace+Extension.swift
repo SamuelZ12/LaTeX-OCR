@@ -1,9 +1,3 @@
-//
-//  NSWorkspace+Extension.swift
-//  TextGrabber2
-//
-//  Created by cyan on 2024/3/20.
-
 import AppKit
 
 extension NSWorkspace {
