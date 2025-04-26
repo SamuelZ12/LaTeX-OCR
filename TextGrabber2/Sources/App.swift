@@ -228,11 +228,6 @@ final class App: NSObject, NSApplicationDelegate {
             await captureViaSystemUI()
             if let image = NSPasteboard.general.image {
                 performExtraction(type: type, image: image)
-            } else {
-                NSAlert.showModalAlert(
-                    message: "Screenshot cancelled",
-                    informativeText: "Press ⌘3 for text or ⌘4 for LaTeX extraction."
-                )
             }
         }
     }
