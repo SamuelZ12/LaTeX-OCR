@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "87E192BE2BAADE1200A87A4E"
-               BuildableName = "TextGrabber2.app"
-               BlueprintName = "TextGrabber2"
-               ReferencedContainer = "container:TextGrabber2.xcodeproj">
+               BuildableName = "LaTeXOCR.app"
+               BlueprintName = "LaTeXOCR"
+               ReferencedContainer = "container:LaTeXOCR.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "87E192BE2BAADE1200A87A4E"
-            BuildableName = "TextGrabber2.app"
-            BlueprintName = "TextGrabber2"
-            ReferencedContainer = "container:TextGrabber2.xcodeproj">
+            BuildableName = "LaTeXOCR.app"
+            BlueprintName = "LaTeXOCR"
+            ReferencedContainer = "container:LaTeXOCR.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "87E192BE2BAADE1200A87A4E"
-            BuildableName = "TextGrabber2.app"
-            BlueprintName = "TextGrabber2"
-            ReferencedContainer = "container:TextGrabber2.xcodeproj">
+            BuildableName = "LaTeXOCR.app"
+            BlueprintName = "LaTeXOCR"
+            ReferencedContainer = "container:LaTeXOCR.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
