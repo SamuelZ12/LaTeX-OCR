@@ -11,6 +11,7 @@ import Foundation
 import Carbon
 import os.log
 import CoreGraphics
+import Combine
 
 struct HistoryEntry: Codable {
     let text: String
@@ -50,6 +51,7 @@ class HistoryManager {
 
 @MainActor
 final class App: NSObject, NSApplicationDelegate {
+    private var cancellables = Set<AnyCancellable>()
     private var currentResult: Recognizer.ResultData?
     private var pasteboardObserver: Timer?
     private var pasteboardChangeCount = 0
@@ -151,10 +153,8 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // 1) If we have never been granted, ask now…
         if !CGPreflightScreenCaptureAccess() {
             CGRequestScreenCaptureAccess()
-            // 2) Tell the user to restart
             NSAlert.showModalAlert(
             message: "TextGrabber2 needs screen-recording permission.\n\nPlease quit and re-launch the app after granting access."
             )
@@ -162,18 +162,53 @@ final class App: NSObject, NSApplicationDelegate {
             return
         }
 
-        // 3) Now that we already have permission, do your normal startup
         Services.initialize()
         clearMenuItems()
         statusItem.isVisible = true
+        
+        updateMenuItemKeyEquivalents()
+
         ShortcutMonitor.shared.startMonitoring { [weak self] type in
             self?.initiateCapture(for: type)
         }
+        
+        settingsManager.$textShortcut
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateMenuItemKeyEquivalents()
+            }
+            .store(in: &cancellables)
+        
+        settingsManager.$latexShortcut
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateMenuItemKeyEquivalents()
+            }
+            .store(in: &cancellables)
     }
 
     
     func applicationWillTerminate(_ notification: Notification) {
         ShortcutMonitor.shared.stopMonitoring()
+    }
+
+    @MainActor
+    private func updateMenuItemKeyEquivalents() {
+        if let shortcut = settingsManager.textShortcut {
+            extractTextItem.keyEquivalent = shortcut.keyEquivalentCharacter
+            extractTextItem.keyEquivalentModifierMask = shortcut.modifiers
+        } else {
+            extractTextItem.keyEquivalent = ""
+            extractTextItem.keyEquivalentModifierMask = []
+        }
+        
+        if let shortcut = settingsManager.latexShortcut {
+            extractLatexItem.keyEquivalent = shortcut.keyEquivalentCharacter
+            extractLatexItem.keyEquivalentModifierMask = shortcut.modifiers
+        } else {
+            extractLatexItem.keyEquivalent = ""
+            extractLatexItem.keyEquivalentModifierMask = []
+        }
     }
 
     @objc func menuWillOpen(_ menu: NSMenu) {
