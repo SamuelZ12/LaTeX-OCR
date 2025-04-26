@@ -76,19 +76,34 @@ struct ShortcutRecorderButton: View {
 
 struct GeneralSettingsView: View {
     @StateObject private var settings = SettingsManager.shared
-    @State private var apiKey: String = UserDefaults.standard.string(forKey: "geminiAPIKey") ?? ""
+    @AppStorage("geminiAPIKey") private var apiKey: String = ""
     
     var body: some View {
         Form {
             Section {
-                LabeledContent("API Key:") {
-                    SecureField("Enter your Gemini API Key", text: $apiKey)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 300)
-                        .onChange(of: apiKey) { _, newValue in
-                            UserDefaults.standard.set(newValue, forKey: "geminiAPIKey")
+                VStack(alignment: .leading) {
+                    LabeledContent("Gemini API Key:") {
+                        HStack {
+                            SecureField("Enter your API key", text: $apiKey)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 300)
+                            if !apiKey.isEmpty {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            }
                         }
+                    }
+                    
+                    Text("Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .tint(.blue)
                 }
+            } header: {
+                Text("API Configuration")
+            } footer: {
+                Text("The API key is required for LaTeX extraction")
+                    .foregroundStyle(.secondary)
             }
             
             Section {

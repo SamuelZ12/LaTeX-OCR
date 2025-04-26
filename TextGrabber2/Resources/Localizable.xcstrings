@@ -4,7 +4,7 @@
     "" : {
 
     },
-    "API Key:" : {
+    "API Configuration" : {
 
     },
     "Capture Screen to Detect" : {
@@ -149,7 +149,7 @@
         }
       }
     },
-    "Enter your Gemini API Key" : {
+    "Enter your API key" : {
 
     },
     "Extract LaTeX" : {
@@ -192,7 +192,13 @@
     "Format" : {
 
     },
+    "Gemini API Key:" : {
+
+    },
     "General" : {
+
+    },
+    "Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)" : {
 
     },
     "GitHub" : {
@@ -378,6 +384,9 @@
 
     },
     "Text Shortcut:" : {
+
+    },
+    "The API key is required for LaTeX extraction" : {
 
     },
     "Version" : {
