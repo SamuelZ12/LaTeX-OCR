@@ -29,20 +29,8 @@ A simple macOS menu bar application to perform OCR on screen captures, with a sp
 3.  **Install:** Drag the `LaTeXOCR.app` icon into your Applications folder.
 4.  **Eject:** You can eject the `.dmg` file in Finder after installation.
 
-**Important Note for macOS Users (Gatekeeper):**
-
-Because this application is distributed for free and is not registered with Apple through their paid developer program, macOS Gatekeeper will show a warning when you try to open it for the first time.
-
-* **First Launch Attempt:** When you double-click LaTeX OCR, you will likely see a message saying "`LaTeXOCR` cannot be opened because the developer cannot be verified." or similar. The only options might be "Move to Trash" or "Cancel".
-* **How to Open Anyway (Do this only the first time):**
-    1.  **Do not** double-click the app yet.
-    2.  Go to your **Applications folder** in **Finder**.
-    3.  Locate `LaTeXOCR.app`.
-    4.  **Right-click** (or hold **Control** and click) on the `LaTeXOCR.app` icon.
-    5.  Select **"Open"** from the menu that appears.
-    6.  A warning dialog will appear again, but this time it will have an **"Open"** button. Click it.
-
-* **Subsequent Launches:** After performing the "Right-click -> Open" step once, macOS remembers your choice, and you can launch LaTeX OCR normally by double-clicking it from your Applications folder or using Spotlight.
+**NOTE:**
+Because this application is not registered with Apple through their paid developer program, macOS Gatekeeper will show a warning when you try to open it for the first time. When you double-click LaTeX OCR, you will likely see a message saying "`LaTeXOCR` cannot be opened because the developer cannot be verified." The only options might be "Move to Trash" or "Cancel". Follow these [instructions](https://support.apple.com/en-ca/guide/mac-help/mh40616/mac) to open anyway. 
 
 **Using the App:**
 
