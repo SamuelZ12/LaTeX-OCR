@@ -330,20 +330,16 @@ final class App: NSObject, NSApplicationDelegate {
                 defer { isExtracting = false }
                 
                 do {
-                    let latex = try await latexService.extractLatex(from: base64Image, apiKey: apiKey)
+                    let copyFormat = settingsManager.extractLatexCopyFormat
+                    let latex = try await latexService.extractLatex(from: base64Image, apiKey: apiKey, format: copyFormat)
                     Logger.log(.info, "Raw LaTeX from API: \(latex)")
                     
                     let cleanedLatex = cleanLatexString(latex)
-                    let copyFormat = settingsManager.extractLatexCopyFormat
                     let textToCopy: String
                     
                     switch copyFormat {
-                        case "lineBreaks":
-                            textToCopy = cleanedLatex
                         case "spaces":
                             textToCopy = cleanedLatex.replacingOccurrences(of: "\n", with: " ")
-                        case "latexNewlines":
-                            textToCopy = cleanedLatex.replacingOccurrences(of: "\n", with: " \\\\ ")
                         default:
                             textToCopy = cleanedLatex
                     }
