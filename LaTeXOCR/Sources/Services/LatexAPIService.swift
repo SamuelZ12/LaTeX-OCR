@@ -52,18 +52,25 @@ struct LatexAPIService {
             throw LatexAPIError.apiKeyMissing
         }
         
-        let prompt = "Extract all mathematical expressions (if any) from this image and convert them to precise LaTeX notation. Carefully preserve all symbols, subscripts, superscripts, fractions, integrals, summations, and special characters. Ensure proper nesting of brackets and parentheses. For non-mathematical text, return it as plain text. Do not add any explanations, markdown formatting, or delimiters like $$ or ```latex. Return only the detected content with accurate LaTeX syntax."
-        
         let payload: [String: Any] = [
             "contents": [[
                 "parts": [
-                    ["text": prompt],
                     ["inline_data": [
                         "mime_type": "image/png",
                         "data": base64Image
                     ]]
                 ]
-            ]]
+            ]],
+            "systemInstruction": [
+                "parts": [
+                    ["text": "You are an advanced OCR engine specialized in accurately extracting text and mathematical notation from images. Your ONLY task is to process the provided image and output its content according to these strict rules:\n\n1. Convert all mathematical expressions and formulas into precise, syntactically correct LaTeX code. Maintain absolute fidelity to all original symbols, subscripts, superscripts, fractions, integrals, matrices, alignments, and other mathematical structures.\n2. Extract all non-mathematical text as plain text.\n3. Output *only* the extracted plain text and LaTeX code. Use newlines to separate distinct blocks of text, mathematical expressions, or formulas as they likely appeared in the image. \n\n**CRITICAL OUTPUT RULES:**\n* DO NOT include any conversational text, greetings, explanations, summaries, apologies, or introductory phrases.\n* DO NOT wrap LaTeX code in markdown fences (like ```latex).\n* DO NOT add surrounding math delimiters like `$` or `$$` to the LaTeX code. Output the raw LaTeX commands for each formula.\n* Your entire response must consist solely of the extracted content."]
+                ]
+            ],
+            "generationConfig": [
+                "temperature": 0,
+                "candidateCount": 1,
+                "maxOutputTokens": 2048
+            ]
         ]
         
         guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
