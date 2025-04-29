@@ -151,16 +151,27 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if !CGPreflightScreenCaptureAccess() {
-            CGRequestScreenCaptureAccess()
-            NSAlert.showModalAlert(
-            message: "TextGrabber2 needs screen-recording permission.\n\nPlease quit and re-launch the app after granting access."
-            )
+        guard CGPreflightScreenCaptureAccess() else {
+            let alert = NSAlert()
+            alert.messageText = "Screen Recording Permission Required"
+            alert.informativeText = "LaTeXOCR needs screen recording permission. Please grant access in System Settings."
+            alert.alertStyle = .informational
+            
+            alert.addButton(withTitle: "Open Settings")
+            alert.addButton(withTitle: "Quit")
+            
+            let response = alert.runModal()
+            
+            if response == .alertFirstButtonReturn {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            
             NSApp.terminate(nil)
             return
         }
 
-        
         clearMenuItems()
         statusItem.isVisible = true
         
