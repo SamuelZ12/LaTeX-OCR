@@ -157,26 +157,27 @@ struct SettingsView: View {
             }
             
             Section {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 8) {
                     LabeledContent("Text Format:") {
                         Picker("", selection: $settings.extractTextCopyFormat) {
-                            Text("Join with Line Breaks").tag("lineBreaks")
-                            Text("Join with Spaces").tag("spaces")
+                            Text("Line Breaks").tag("lineBreaks")
+                            Text("Spaces").tag("spaces")
                         }
                         .pickerStyle(.segmented)
-                        .frame(width: 250)
+                        .frame(width: 330)
                     }
                     Text("Choose how to join multiple text blocks")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                .padding(.vertical, 4)
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 8) {
                     LabeledContent("LaTeX Format:") {
                         Picker("", selection: $settings.extractLatexCopyFormat) {
                             Text("Line Breaks").tag("lineBreaks")
                             Text("Spaces").tag("spaces")
-                            Text("LaTeX \\\\").tag("latexNewlines")
+                            Text("LaTeX \\\\\\\\").tag("latexNewlines")
                         }
                         .pickerStyle(.segmented)
                         .frame(width: 330)
@@ -185,12 +186,13 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                .padding(.vertical, 4)
             } header: {
                 Text("Format Settings")
             }
         }
         .formStyle(.grouped)
-        .frame(width: 450, height: 500)
+        .frame(width: 450, height: 550)
         .onAppear {
             isValidAPIKey = validateAPIKey(apiKeyInput)
         }
