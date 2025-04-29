@@ -6,6 +6,10 @@ A simple macOS menu bar application to perform OCR on screen captures, with a sp
 
 ## Demo
 
+Watch the application in action:
+
+![LaTeX OCR Demo GIF](assets/demo.gif) 
+
 ### Menu Bar Access
 <img src="Menu_Bar.png" alt="LaTeX OCR Menu Bar" width="200"/>
 
