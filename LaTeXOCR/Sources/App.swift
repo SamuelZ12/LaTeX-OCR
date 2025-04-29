@@ -52,6 +52,10 @@ final class App: NSObject, NSApplicationDelegate {
     private let settingsManager = SettingsManager.shared
     private let historyManager = HistoryManager.shared
     
+    private var isExtracting = false
+    private var originalStatusImage: NSImage?
+    private var currentFeedbackTask: Task<Void, Never>?
+    
     private lazy var extractTextItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleExtractText)
         item.addAction { [weak self] in
@@ -256,14 +260,23 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     private func performExtraction(type: ExtractionType, image: NSImage?) {
+        guard !isExtracting else {
+            NSAlert.showModalAlert(message: "An extraction is already in progress. Please wait.")
+            return
+        }
+        
         guard let image = image else {
             Logger.log(.error, "performExtraction called with no image for type \(type).")
             return
         }
 
+        isExtracting = true
+
         switch type {
         case .text:
             Task {
+                defer { isExtracting = false }
+                
                 guard let cgImage = image.cgImage else {
                     NSAlert.showModalAlert(message: "Failed to process image")
                     return
@@ -285,6 +298,7 @@ final class App: NSObject, NSApplicationDelegate {
 
         case .latex:
             guard let apiKey = UserDefaults.standard.string(forKey: "geminiAPIKey"), !apiKey.isEmpty else {
+                isExtracting = false
                 NSAlert.showModalAlert(message: "Please set your Gemini API key in Settings")
                 showSettings()
                 return
@@ -293,6 +307,7 @@ final class App: NSObject, NSApplicationDelegate {
             guard let tiffData = image.tiffRepresentation,
                   let bitmapImage = NSBitmapImageRep(data: tiffData),
                   let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
+                isExtracting = false
                 Logger.log(.error, "Failed to convert image to PNG data for LaTeX extraction")
                 NSAlert.showModalAlert(message: "Failed to process image data.")
                 return
@@ -301,6 +316,8 @@ final class App: NSObject, NSApplicationDelegate {
             let base64Image = imageData.base64EncodedString()
 
             Task {
+                defer { isExtracting = false }
+                
                 do {
                     let latex = try await latexService.extractLatex(from: base64Image, apiKey: apiKey)
                     Logger.log(.info, "Raw LaTeX from API: \(latex)")
@@ -330,6 +347,9 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func showSuccessFeedback() {
+        // Cancel any existing feedback task
+        currentFeedbackTask?.cancel()
+        
         // Play screenshot sound
         if let soundURL = Bundle.main.url(forResource: "Screen Capture", withExtension: "aif"),
            let screenshotSound = NSSound(contentsOf: soundURL, byReference: true) {
@@ -338,12 +358,19 @@ final class App: NSObject, NSApplicationDelegate {
             Logger.log(.error, "Could not load screenshot sound file from app bundle")
         }
         
-        // Update status item icon
+        // Update status item icon with proper state management
         if let button = self.statusItem.button {
-            let originalImage = button.image
+            if originalStatusImage == nil {
+                originalStatusImage = button.image
+            }
             button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
-                button?.image = originalImage
+            
+            // Create new feedback restoration task
+            currentFeedbackTask = Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+                if !Task.isCancelled, let self = self {
+                    button.image = self.originalStatusImage
+                }
             }
         }
     }
