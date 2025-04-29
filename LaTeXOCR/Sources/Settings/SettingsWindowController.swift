@@ -9,7 +9,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         let hostingController = NSHostingController(rootView: settingsView)
         
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 450, height: 500),
+            contentRect: NSRect(x: 0, y: 0, width: 450, height: 550),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -18,7 +18,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         window.contentViewController = hostingController
         window.title = "Settings"
         window.isReleasedWhenClosed = false
-        window.minSize = NSSize(width: 450, height: 500)
+        window.minSize = NSSize(width: 450, height: 550)
         
         self.init(window: window)
         window.delegate = self
@@ -35,7 +35,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
             let hostingController = NSHostingController(rootView: settingsView)
             
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 450, height: 500),
+                contentRect: NSRect(x: 0, y: 0, width: 450, height: 550),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false
@@ -44,7 +44,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
             window.contentViewController = hostingController
             window.center()
             window.isReleasedWhenClosed = false
-            window.minSize = NSSize(width: 450, height: 500)
+            window.minSize = NSSize(width: 450, height: 550)
             self.window = window
         }
         

@@ -174,11 +174,12 @@ struct SettingsView: View {
                 VStack(alignment: .leading) {
                     LabeledContent("LaTeX Format:") {
                         Picker("", selection: $settings.extractLatexCopyFormat) {
-                            Text("Join with Line Breaks").tag("lineBreaks")
-                            Text("Join with Spaces").tag("spaces")
+                            Text("Line Breaks").tag("lineBreaks")
+                            Text("Spaces").tag("spaces")
+                            Text("LaTeX \\\\").tag("latexNewlines")
                         }
                         .pickerStyle(.segmented)
-                        .frame(width: 250)
+                        .frame(width: 330)
                     }
                     Text("Choose how to join multiple LaTeX expressions")
                         .font(.caption)

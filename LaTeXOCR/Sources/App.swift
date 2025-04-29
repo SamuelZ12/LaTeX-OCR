@@ -335,7 +335,18 @@ final class App: NSObject, NSApplicationDelegate {
                     
                     let cleanedLatex = cleanLatexString(latex)
                     let copyFormat = settingsManager.extractLatexCopyFormat
-                    let textToCopy = copyFormat == "lineBreaks" ? cleanedLatex : cleanedLatex.replacingOccurrences(of: "\n", with: " ")
+                    let textToCopy: String
+                    
+                    switch copyFormat {
+                        case "lineBreaks":
+                            textToCopy = cleanedLatex
+                        case "spaces":
+                            textToCopy = cleanedLatex.replacingOccurrences(of: "\n", with: " ")
+                        case "latexNewlines":
+                            textToCopy = cleanedLatex.replacingOccurrences(of: "\n", with: " \\\\ ")
+                        default:
+                            textToCopy = cleanedLatex
+                    }
                     
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(textToCopy, forType: .string)
