@@ -4,6 +4,14 @@
 
 A simple macOS menu bar application to perform OCR on screen captures, with a special focus on extracting mathematical equations into LaTeX format using the Google Gemini API.
 
+## Demo
+
+### Menu Bar Access
+<img src="Menu_Bar.png" alt="LaTeX OCR Menu Bar" width="200"/>
+
+### Settings Panel
+<img src="Settings_Window.png" alt="LaTeX OCR Settings Window" width="400"/>
+
 ## Features
 
 * **Menu Bar Convenience:** Lives in your menu bar for quick access.
