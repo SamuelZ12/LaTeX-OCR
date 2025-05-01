@@ -19,7 +19,7 @@ Watch the application in action:
 <img src="Assets/Menu_Bar.png" alt="LaTeX OCR Menu Bar" width="200"/>
 
 ### Settings Panel
-<img src="Assets/Settings_Window.png" alt="LaTeX OCR Settings Window" width="400"/>
+<img src="Assets/Settings_Panel.png" alt="LaTeX OCR Settings Window" width="400"/>
 
 ## Features
 
