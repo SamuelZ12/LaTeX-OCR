@@ -26,6 +26,15 @@ final class SettingsManager: ObservableObject {
         }
     }
     
+    @Published var selectedModel: String {
+        willSet {
+            objectWillChange.send()
+        }
+        didSet {
+            UserDefaults.standard.set(selectedModel, forKey: "geminiModel")
+        }
+    }
+    
     @Published var extractTextCopyFormat: String {
         willSet {
             objectWillChange.send()
@@ -49,6 +58,7 @@ final class SettingsManager: ObservableObject {
         latexShortcut = UserDefaults.standard.codable(forKey: "latexShortcut")
         extractTextCopyFormat = UserDefaults.standard.string(forKey: "extractTextCopyFormat") ?? "lineBreaks"
         extractLatexCopyFormat = UserDefaults.standard.string(forKey: "extractLatexCopyFormat") ?? "lineBreaks"
+        selectedModel = UserDefaults.standard.string(forKey: "geminiModel") ?? "gemini-2.0-flash"
         
         if textShortcut == nil {
             textShortcut = ShortcutMonitor.KeyboardShortcut(

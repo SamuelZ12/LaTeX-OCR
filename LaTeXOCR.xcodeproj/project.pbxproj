@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B9583CA62DBD8C8300F43550 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B9583C7C2DBD8C8300F43550 /* Icon.png */; };
 		B9583CA72DBD8C8300F43550 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9583C9C2DBD8C8300F43550 /* Secrets.plist */; };
 		B9583CA82DBD8C8300F43550 /* Build.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B9583C7B2DBD8C8300F43550 /* Build.xcconfig */; };
 		B9583CAC2DBD8C8300F43550 /* Screen Capture.aif in Resources */ = {isa = PBXBuildFile; fileRef = B9583C9B2DBD8C8300F43550 /* Screen Capture.aif */; };
@@ -36,11 +35,11 @@
 		B9583CC42DBD8C8300F43550 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C8E2DBD8C8300F43550 /* SettingsWindowController.swift */; };
 		B9583CC52DBD8C8300F43550 /* NSMenu+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C812DBD8C8300F43550 /* NSMenu+Extension.swift */; };
 		B9583CC62DBD8C8300F43550 /* SMAppService+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C872DBD8C8300F43550 /* SMAppService+Extension.swift */; };
+		B9FBEAA92DC2FE9200C587FD /* instructions.md in Resources */ = {isa = PBXBuildFile; fileRef = B9FBEAA82DC2FE9200C587FD /* instructions.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B9583C7B2DBD8C8300F43550 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
-		B9583C7C2DBD8C8300F43550 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		B9583C7D2DBD8C8300F43550 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
 		B9583C7E2DBD8C8300F43550 /* NSAlert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAlert+Extension.swift"; sourceTree = "<group>"; };
 		B9583C7F2DBD8C8300F43550 /* NSControl+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSControl+Extension.swift"; sourceTree = "<group>"; };
@@ -72,6 +71,7 @@
 		B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = LaTeXOCR.xcodeproj; sourceTree = "<group>"; };
 		B9583C9F2DBD8C8300F43550 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B9583CCA2DBD935300F43550 /* LaTeXOCR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LaTeXOCR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9FBEAA82DC2FE9200C587FD /* instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = instructions.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,11 +89,11 @@
 			isa = PBXGroup;
 			children = (
 				B9583C7B2DBD8C8300F43550 /* Build.xcconfig */,
-				B9583C7C2DBD8C8300F43550 /* Icon.png */,
 				B9583C9D2DBD8C8300F43550 /* LaTeXOCR */,
 				B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */,
 				B9583C9F2DBD8C8300F43550 /* LICENSE */,
 				B9583CCA2DBD935300F43550 /* LaTeXOCR.app */,
+				B9FBEAA82DC2FE9200C587FD /* instructions.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -235,8 +235,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B9583CA62DBD8C8300F43550 /* Icon.png in Resources */,
 				B9583CA72DBD8C8300F43550 /* Secrets.plist in Resources */,
+				B9FBEAA92DC2FE9200C587FD /* instructions.md in Resources */,
 				B9583CA82DBD8C8300F43550 /* Build.xcconfig in Resources */,
 				B9583CAC2DBD8C8300F43550 /* Screen Capture.aif in Resources */,
 				B9583CAE2DBD8C8300F43550 /* LICENSE in Resources */,

@@ -123,6 +123,20 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                         .tint(.blue)
                 }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    LabeledContent("Gemini Model:") {
+                        Picker("", selection: $settings.selectedModel) {
+                            ForEach(Config.availableGeminiModels) { model in
+                                Text(model.label).tag(model.id)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .frame(width: 330)
+                    }
+                    Text("Choose speed / cost trade-offs for LaTeX extraction")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
             } header: {
                 Text("API Configuration")
             } footer: {
@@ -192,7 +206,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 450, height: 550)
+        .frame(width: 450, height: 630)
         .onAppear {
             isValidAPIKey = validateAPIKey(apiKeyInput)
         }

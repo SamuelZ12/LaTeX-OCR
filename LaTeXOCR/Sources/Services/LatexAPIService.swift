@@ -57,6 +57,9 @@ struct LatexAPIService {
             throw LatexAPIError.apiKeyMissing
         }
         
+        // Get the selected model from UserDefaults
+        let model = UserDefaults.standard.string(forKey: "geminiModel") ?? "gemini-2.0-flash"
+        
         let lineSeparator = format == "latexNewlines" ? " \\\\\\\\ " : "\\n"
         
         // Define rules based on format
@@ -107,7 +110,8 @@ struct LatexAPIService {
             ]
         ]
         
-        guard let url = URL(string: "\(Config.geminiEndpoint)?key=\(apiKey)") else {
+        // Build URL with the specified model
+        guard let url = URL(string: "\(Config.geminiEndpoint(for: model))?key=\(apiKey)") else {
             throw LatexAPIError.invalidResponse
         }
         
