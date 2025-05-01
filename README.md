@@ -44,16 +44,16 @@ Watch the application in action:
 
 LaTeX OCR allows you to choose between the following Gemini models to optimize for your specific needs:
 
-| Model | Description | Free Tier Rate Limits |
-|-------|-------------|------------|
-| **Gemini 2.0 Flash** | Fast and accurate | 60 RPM (Requests Per Minute) |
-| **Gemini 2.0 Flash-Lite** | Low cost option | 60 RPM |
-| **Gemini 1.5 Pro** | Large context window (2M tokens) | 60 RPM |
-| **Gemini 1.5 Flash** | Balanced performance | A few RPM |
+| Model | Description |
+|-------|-------------|
+| **Gemini 2.5 Flash Preview** | Newest model with improved capabilities |
+| **Gemini 2.5 Pro Experimental** | Most advanced reasoning capabilities |
+| **Gemini 2.0 Flash** | Fast and accurate |
+| **Gemini 2.0 Flash-Lite** | Low cost option |
+| **Gemini 1.5 Pro** | Large context window (2M tokens) |
+| **Gemini 1.5 Flash** | Balanced performance |
 
-All models are available on the free tier with limited rate limits. For production usage with higher rate limits, you can upgrade to the paid tier through Google AI Studio.
-
-> Note: The free tier includes a generous usage allowance that should be sufficient for personal use. If you encounter rate limit errors, try selecting a different model or waiting a minute before trying again.
+> Note: All models are available on the free tier that includes a generous [usage limit](https://ai.google.dev/gemini-api/docs/rate-limits) that should be more than sufficient for personal use. 
 
 ## Installation & Usage
 
@@ -85,7 +85,7 @@ Because this application is not registered with Apple through their paid develop
 8.  **Settings:**
     * Click the menu bar icon and select "Settings".
     * **API Key:** Enter your Google Gemini API Key here for LaTeX extraction.
-    * **Gemini Model:** Select your preferred model (Flash, Flash-Lite, Pro, etc.).
+    * **Gemini Model:** Select your preferred model
     * **Shortcuts:** Configure your preferred global keyboard shortcuts.
     * **Formatting:** Choose how multi-line results should be joined when copied.
 
