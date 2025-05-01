@@ -36,6 +36,7 @@
 		B9583CC52DBD8C8300F43550 /* NSMenu+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C812DBD8C8300F43550 /* NSMenu+Extension.swift */; };
 		B9583CC62DBD8C8300F43550 /* SMAppService+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C872DBD8C8300F43550 /* SMAppService+Extension.swift */; };
 		B9FBEAA92DC2FE9200C587FD /* instructions.md in Resources */ = {isa = PBXBuildFile; fileRef = B9FBEAA82DC2FE9200C587FD /* instructions.md */; };
+		B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FBEAAE2DC3080000C587FD /* Config.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,7 @@
 		B9583C9F2DBD8C8300F43550 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B9583CCA2DBD935300F43550 /* LaTeXOCR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LaTeXOCR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9FBEAA82DC2FE9200C587FD /* instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = instructions.md; sourceTree = "<group>"; };
+		B9FBEAAE2DC3080000C587FD /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +149,7 @@
 				B9583C942DBD8C8300F43550 /* Logger.swift */,
 				B9583C952DBD8C8300F43550 /* Recognizer.swift */,
 				B9583C962DBD8C8300F43550 /* Resources.swift */,
+				B9FBEAAE2DC3080000C587FD /* Config.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				B9583CB82DBD8C8300F43550 /* SettingsManager.swift in Sources */,
 				B9583CB92DBD8C8300F43550 /* ShortcutMonitor.swift in Sources */,
 				B9583CBA2DBD8C8300F43550 /* NSImage+Extension.swift in Sources */,
+				B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */,
 				B9583CBB2DBD8C8300F43550 /* main.swift in Sources */,
 				B9583CBC2DBD8C8300F43550 /* App.swift in Sources */,
 				B9583CBD2DBD8C8300F43550 /* Detector.swift in Sources */,

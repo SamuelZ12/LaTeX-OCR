@@ -60,7 +60,6 @@ DerivedData/
 .env
 .env.local
 APIKeys.swift
-Config.swift
 Secrets.plist
 **/Secrets.plist
 TextGrabber2/Secrets.plist
