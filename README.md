@@ -2,6 +2,11 @@
 
 <img src="Assets/Icon.png" alt="LaTeX OCR Icon" width="64"/>
 
+[![macOS](https://img.shields.io/badge/macOS-14.0%2B-brightgreen)](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest)
+[![GitHub all releases](https://img.shields.io/github/downloads/SamuelZ12/LaTeX-OCR/total)](https://github.com/SamuelZ12/LaTeX-OCR/releases)
+[![License](https://img.shields.io/github/license/SamuelZ12/LaTeX-OCR)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/SamuelZ12/LaTeX-OCR)](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest)
+
 A simple macOS menu bar application to perform OCR on screen captures, with a special focus on extracting mathematical equations into LaTeX format using the Google Gemini API.
 
 ## Demo
@@ -22,6 +27,7 @@ Watch the application in action:
 * **Screen Capture:** Use a global keyboard shortcut or the menu bar item to capture any portion of your screen.
 * **Text Extraction (OCR):** Uses Apple's built-in Vision framework to accurately recognize and extract plain text from captures.
 * **LaTeX Extraction:** Leverages the Google Gemini API to convert mathematical equations within captures into LaTeX code.
+* **Gemini Model Selection:** Choose between different Gemini models to optimize for speed, cost, or accuracy.
 * **Clipboard Integration:** Automatically copies the extracted text or LaTeX to your clipboard.
 * **Customizable Shortcuts:** Set your own global keyboard shortcuts for both text and LaTeX extraction via the Settings panel.
 * **Configurable Formatting:** Choose whether multi-line text/LaTeX results are joined with spaces or line breaks.
@@ -33,6 +39,21 @@ Watch the application in action:
 * **macOS:** Version 14.0 (Sonoma) or later.
 * **Google Gemini API Key:** Required **only** for the LaTeX extraction feature. You can get a free key from [Google AI Studio](https://makersuite.google.com/app/apikey).
 * **Xcode:** Version 16.0 or later (if building from source).
+
+## Gemini API Models and Rate Limits
+
+LaTeX OCR allows you to choose between the following Gemini models to optimize for your specific needs:
+
+| Model | Description | Free Tier Rate Limits |
+|-------|-------------|------------|
+| **Gemini 2.0 Flash** | Fast and accurate | 60 RPM (Requests Per Minute) |
+| **Gemini 2.0 Flash-Lite** | Low cost option | 60 RPM |
+| **Gemini 1.5 Pro** | Large context window (2M tokens) | 60 RPM |
+| **Gemini 1.5 Flash** | Balanced performance | A few RPM |
+
+All models are available on the free tier with limited rate limits. For production usage with higher rate limits, you can upgrade to the paid tier through Google AI Studio.
+
+> Note: The free tier includes a generous usage allowance that should be sufficient for personal use. If you encounter rate limit errors, try selecting a different model or waiting a minute before trying again.
 
 ## Installation & Usage
 
@@ -48,18 +69,23 @@ Because this application is not registered with Apple through their paid develop
 
 1.  **Launch the App:** (After handling the Gatekeeper step above). LaTeX OCR will appear in your macOS menu bar.
 2.  **Grant Permissions:** On the first *successful* launch, you'll be prompted to grant Screen Recording permission. This is necessary for the screen capture functionality. Follow the prompts in System Settings.
-3.  **Capture:**
+3.  **Configure API and Model:**
+    * Click the menu bar icon and select "Settings".
+    * Enter your Google Gemini API Key.
+    * Select your preferred Gemini model based on your needs.
+4.  **Capture:**
     * Click the menu bar icon and select "Extract Text" or "Extract LaTeX".
     * Alternatively, use the configured global keyboard shortcuts (defaults are Cmd+T for Text, Cmd+L for LaTeX).
-4.  **Select Area:** Your cursor will turn into a crosshair. Click and drag to select the area of the screen you want to capture.
-5.  **Result:**
+5.  **Select Area:** Your cursor will turn into a crosshair. Click and drag to select the area of the screen you want to capture.
+6.  **Result:**
     * A sound will play upon successful capture and processing.
     * The extracted text or LaTeX code will be automatically copied to your clipboard.
     * The status bar icon will briefly change to a checkmark.
-6.  **History:** Click the menu bar icon, go to "Recent Captures" to view and re-copy previous results.
-7.  **Settings:**
+7.  **History:** Click the menu bar icon, go to "Recent Captures" to view and re-copy previous results.
+8.  **Settings:**
     * Click the menu bar icon and select "Settings".
     * **API Key:** Enter your Google Gemini API Key here for LaTeX extraction.
+    * **Gemini Model:** Select your preferred model (Flash, Flash-Lite, Pro, etc.).
     * **Shortcuts:** Configure your preferred global keyboard shortcuts.
     * **Formatting:** Choose how multi-line results should be joined when copied.
 
@@ -78,7 +104,7 @@ If you prefer to build the application yourself:
     ```
 3.  **Select Scheme:** Ensure the `LaTeXOCR` scheme is selected.
 4.  **Build/Run:** Press `Cmd+B` to build or `Cmd+R` to run the application directly on your Mac. (Apps you build yourself typically don't trigger the same Gatekeeper warnings on your own machine).
-5.  **(Required for LaTeX)** **Configure API Key:** After running the built app, open its Settings panel from the menu bar icon and enter your Google Gemini API key.
+5.  **(Required for LaTeX)** **Configure API Key and Model:** After running the built app, open its Settings panel from the menu bar icon, enter your Google Gemini API key, and select your preferred model.
 
 ## Code Structure Overview
 
