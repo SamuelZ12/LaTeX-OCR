@@ -35,7 +35,6 @@
 		B9583CC42DBD8C8300F43550 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C8E2DBD8C8300F43550 /* SettingsWindowController.swift */; };
 		B9583CC52DBD8C8300F43550 /* NSMenu+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C812DBD8C8300F43550 /* NSMenu+Extension.swift */; };
 		B9583CC62DBD8C8300F43550 /* SMAppService+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C872DBD8C8300F43550 /* SMAppService+Extension.swift */; };
-		B9FBEAA92DC2FE9200C587FD /* instructions.md in Resources */ = {isa = PBXBuildFile; fileRef = B9FBEAA82DC2FE9200C587FD /* instructions.md */; };
 		B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FBEAAE2DC3080000C587FD /* Config.swift */; };
 /* End PBXBuildFile section */
 
@@ -72,7 +71,6 @@
 		B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = LaTeXOCR.xcodeproj; sourceTree = "<group>"; };
 		B9583C9F2DBD8C8300F43550 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B9583CCA2DBD935300F43550 /* LaTeXOCR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LaTeXOCR.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B9FBEAA82DC2FE9200C587FD /* instructions.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = instructions.md; sourceTree = "<group>"; };
 		B9FBEAAE2DC3080000C587FD /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,7 +93,6 @@
 				B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */,
 				B9583C9F2DBD8C8300F43550 /* LICENSE */,
 				B9583CCA2DBD935300F43550 /* LaTeXOCR.app */,
-				B9FBEAA82DC2FE9200C587FD /* instructions.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -239,7 +236,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9583CA72DBD8C8300F43550 /* Secrets.plist in Resources */,
-				B9FBEAA92DC2FE9200C587FD /* instructions.md in Resources */,
 				B9583CA82DBD8C8300F43550 /* Build.xcconfig in Resources */,
 				B9583CAC2DBD8C8300F43550 /* Screen Capture.aif in Resources */,
 				B9583CAE2DBD8C8300F43550 /* LICENSE in Resources */,
