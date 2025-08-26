@@ -60,12 +60,29 @@ struct LatexAPIService {
         // Get the selected model from UserDefaults
         let model = UserDefaults.standard.string(forKey: "geminiModel") ?? "gemini-2.0-flash"
         
-        let lineSeparator = format == "latexNewlines" ? " \\\\\\\\ " : "\\n"
-        
-        // Define rules based on format
-        let mathDelimiterRule = format == "latexNewlines" ?
-            "- ALWAYS wrap mathematical expressions in $...$ for inline math or $$...$$ for display math based on the context. Inline formulas within text should use single $, while standalone formulas should use $$." :
-            "- DO NOT add surrounding math delimiters like `$` or `$$` to the LaTeX code. Output the raw LaTeX commands for each formula."
+        // Get custom system prompt from UserDefaults
+        let customPrompt = UserDefaults.standard.string(forKey: "customSystemPrompt") ?? ""
+                
+        // Use custom system prompt if available, otherwise use default
+        let systemPromptText: String
+        if !customPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            systemPromptText = customPrompt
+        } else {
+            systemPromptText = """
+            You are a specialized OCR engine that extracts text and mathematical notation from images with perfect accuracy. Your ONLY task is to process the provided image and output its content according to these strict rules:
+
+            1. Convert all mathematical expressions and formulas into precise, syntactically correct LaTeX code. Preserve all symbols, subscripts, superscripts, fractions, integrals, matrices, alignments, and other mathematical structures.
+            2. Extract all non-mathematical text as plain text. Critically analyze the layout: if a single sentence or paragraph of text is visually broken onto multiple lines solely due to spatial constraints or text wrapping within the image, you MUST join these lines with a single space to reconstruct the original coherent text block. 
+            3. Convert tables to proper LaTeX table format using the 'tabular' environment. Preserve column alignment (left, center, right), borders, and cell merging where applicable. Use appropriate LaTeX commands such as \\hline for horizontal lines and & for column separators. For complex tables with special formatting, include all necessary LaTeX commands to maintain the visual structure.
+            4. For figures, diagrams, and other non-text elements: Include a brief descriptor in [square brackets] such as [FIGURE: brief description of content] where the figure appears in the document flow. Do not attempt to recreate complex diagrams textually.
+            5. For handwritten content: Process clear handwritten text and equations to the best of your ability. If handwriting is present but illegible, indicate this with [ILLEGIBLE HANDWRITING] in the appropriate location. If partially legible, extract what you can and indicate uncertain portions with [?].
+
+            IMPORTANT OUTPUT RULES:
+            - DO NOT preserve existing LaTeX environments. Instead, convert all mathematical content to raw LaTeX commands without environment declarations.
+            - DO NOT wrap LaTeX code in markdown fences (like ```latex).
+            - Your entire response must consist solely of the extracted content.
+            """
+        }
         
         let payload: [String: Any] = [
             "contents": [[
@@ -78,29 +95,7 @@ struct LatexAPIService {
             ]],
             "systemInstruction": [
                 "parts": [
-                    ["text": """
-                    You are a specialized OCR engine that extracts text and mathematical notation from images with perfect accuracy. Your ONLY task is to process the provided image and output its content according to these strict rules:
-
-                    1. Convert all mathematical expressions and formulas into precise, syntactically correct LaTeX code. Preserve all symbols, subscripts, superscripts, fractions, integrals, matrices, alignments, and other mathematical structures.
-                    2. Extract all non-mathematical text as plain text. Critically analyze the layout: if a single sentence or paragraph of text is visually broken onto multiple lines solely due to spatial constraints or text wrapping within the image, you MUST join these lines with a single space to reconstruct the original coherent text block. Do NOT insert '\(lineSeparator)' in such cases.
-                    3. Convert tables to proper LaTeX table format using the 'tabular' environment. Preserve column alignment (left, center, right), borders, and cell merging where applicable. Use appropriate LaTeX commands such as \\hline for horizontal lines and & for column separators. For complex tables with special formatting, include all necessary LaTeX commands to maintain the visual structure.
-                    4. For figures, diagrams, and other non-text elements: Include a brief descriptor in [square brackets] such as [FIGURE: brief description of content] where the figure appears in the document flow. Do not attempt to recreate complex diagrams textually.
-                    5. For handwritten content: Process clear handwritten text and equations to the best of your ability. If handwriting is present but illegible, indicate this with [ILLEGIBLE HANDWRITING] in the appropriate location. If partially legible, extract what you can and indicate uncertain portions with [?].
-                    6. Use '\(lineSeparator)' ONLY to separate genuinely distinct blocks of content.
-
-                    Examples of distinct blocks include:
-                    - Separate paragraphs of text
-                    - Individual mathematical expressions that don't belong to a single multi-line structure (such as an align environment)
-                    - A text block followed by a standalone mathematical formula (or vice-versa)
-                    - Individual items within a list
-
-                    IMPORTANT OUTPUT RULES:
-                    \(mathDelimiterRule)
-                    - DO NOT preserve existing LaTeX environments like \\\\begin{align}...\\\\end{align}. Instead, convert all mathematical content to raw LaTeX commands without environment declarations.
-                    - DO NOT wrap LaTeX code in markdown fences (like ```latex).
-                    - Your entire response must consist solely of the extracted content.
-                    """
-                    ]
+                    ["text": systemPromptText]
                 ]
             ],
             "generationConfig": [
