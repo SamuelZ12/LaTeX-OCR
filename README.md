@@ -57,38 +57,60 @@ LaTeX OCR allows you to choose between the following Gemini models to optimize f
 
 > Note: All models are available on the free tier that includes a generous [usage limit](https://ai.google.dev/gemini-api/docs/rate-limits) that should be more than sufficient for personal use.
 
-## Installation & Usage
+## Installation
 
-1.  **Download:** Get the latest release `.dmg` file from the [**GitHub Releases page**](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest).
-2.  **Mount:** Open the downloaded `.dmg` file.
-3.  **Install:** Drag the `LaTeXOCR.app` icon into your Applications folder.
-4.  **Eject:** You can eject the `.dmg` file in Finder after installation.
+### Quick Install
 
-**NOTE:**
-Because this application is not registered with Apple through their paid developer program, macOS Gatekeeper will show a warning when you try to open it for the first time. When you double-click LaTeX OCR, you will likely see a message saying "`LaTeXOCR` cannot be opened because the developer cannot be verified." The only options might be "Move to Trash" or "Cancel". Follow these [instructions](https://support.apple.com/en-ca/guide/mac-help/mh40616/mac) to open anyway.
+1. **Download** the latest `.dmg` from [Releases](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest)
+2. **Open** the DMG and drag LaTeX OCR to Applications
+3. **Right-click** the app and select "Open" (required for first launch)
 
-**Using the App:**
+### Opening for the First Time
 
-1.  **Launch the App:** (After handling the Gatekeeper step above). LaTeX OCR will appear in your macOS menu bar.
-2.  **Grant Permissions:** On the first *successful* launch, you'll be prompted to grant Screen Recording permission. This is necessary for the screen capture functionality. Follow the prompts in System Settings.
-3.  **Configure API and Model:**
-    * Click the menu bar icon and select "Settings".
-    * Enter your Google Gemini API Key.
-    * Select your preferred Gemini model based on your needs.
-4.  **Capture:**
-    * Click the menu bar icon and select "Extract Text" for offline OCR, or choose a prompt (LaTeX, Markdown, or custom).
-    * Alternatively, use the configured global keyboard shortcuts (defaults are Cmd+T for Text, Cmd+L for your default prompt).
-5.  **Select Area:** Your cursor will turn into a crosshair. Click and drag to select the area of the screen you want to capture.
-6.  **Result:**
-    * A sound will play upon successful capture and processing.
-    * The extracted content will be automatically copied to your clipboard.
-    * The status bar icon will briefly change to a checkmark.
-7.  **History:** Click the menu bar icon, go to "Recent Captures" to view and re-copy previous results.
-8.  **Settings:**
-    * **API Key:** Enter your Google Gemini API Key for AI-powered extraction.
-    * **Gemini Model:** Select your preferred model.
-    * **Shortcuts:** Configure keyboard shortcuts for text extraction and your default prompt.
-    * **Prompts:** Manage prompts - create custom prompts, edit copy formats, and set your default.
+Since this app is not notarized with Apple, macOS will show a security warning. Here's how to open it:
+
+**Option 1: Right-click to Open (Recommended)**
+1. Open Finder and go to Applications
+2. Right-click (or Control-click) on LaTeX OCR
+3. Select "Open" from the context menu
+4. Click "Open" in the dialog that appears
+
+**Option 2: System Settings**
+1. Try to open the app normally (it will be blocked)
+2. Go to **System Settings > Privacy & Security**
+3. Scroll down to find the message about LaTeX OCR being blocked
+4. Click "Open Anyway"
+
+> This only needs to be done once. After the first successful launch, the app will open normally.
+
+### First Launch
+
+When you first open LaTeX OCR, a setup wizard will guide you through:
+1. **Screen Recording Permission** - Required for screen capture functionality
+2. **API Key Setup** - Optional, enables AI-powered extraction (LaTeX, Markdown, custom prompts)
+
+The app will appear in your menu bar after setup is complete.
+
+## Usage
+
+**Capture:**
+* Click the menu bar icon and select "Extract Text" for offline OCR, or choose a prompt (LaTeX, Markdown, or custom)
+* Use keyboard shortcuts: **Cmd+T** for text, **Cmd+L** for your default AI prompt
+
+**Select Area:** Your cursor will turn into a crosshair. Click and drag to select the screen region.
+
+**Result:**
+* A sound plays on successful capture
+* Content is automatically copied to your clipboard
+* Menu bar icon briefly shows a checkmark
+
+**History:** Access recent captures from the menu bar under "Recent Captures"
+
+**Settings:**
+* **API Key:** Enter your Google Gemini API Key for AI-powered extraction
+* **Gemini Model:** Select your preferred model (speed vs. accuracy trade-off)
+* **Shortcuts:** Customize keyboard shortcuts
+* **Prompts:** Create custom prompts, edit copy formats, set your default
 
 ## Custom Prompts
 

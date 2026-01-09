@@ -50,7 +50,9 @@ final class App: NSObject, NSApplicationDelegate {
     private var pasteboardObserver: Timer?
     private var pasteboardChangeCount = 0
     private var settingsWindowController: SettingsWindowController?
+    private var onboardingWindowController: OnboardingWindowController?
     private let settingsManager = SettingsManager.shared
+    private let onboardingManager = OnboardingManager.shared
     private let historyManager = HistoryManager.shared
     private let promptManager = PromptManager.shared
     private let permissionManager = ScreenCapturePermissionManager.shared
@@ -208,11 +210,40 @@ final class App: NSObject, NSApplicationDelegate {
         // Always show the status item
         statusItem.isVisible = true
 
+        // Check if onboarding is needed
+        if onboardingManager.shouldShowOnboarding {
+            showOnboarding()
+            return
+        }
+
+        // Normal startup flow (no onboarding needed)
+        proceedWithNormalStartup()
+    }
+
+    /// Show the onboarding wizard for first-time users
+    private func showOnboarding() {
+        if onboardingWindowController == nil {
+            onboardingWindowController = OnboardingWindowController()
+        }
+        onboardingWindowController?.showWindow(nil)
+
+        // Subscribe to onboarding completion
+        onboardingManager.$isOnboardingComplete
+            .filter { $0 }
+            .first()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.onboardingWindowController?.close()
+                self?.onboardingWindowController = nil
+                self?.proceedWithNormalStartup()
+            }
+            .store(in: &cancellables)
+    }
+
+    /// Normal startup procedure (called after onboarding or directly if not needed)
+    private func proceedWithNormalStartup() {
         // Check permission status
         if !permissionManager.checkPermission() {
-            // Show minimal, clean alert
-            showPermissionRequiredAlert()
-
             // Request permission (triggers system dialog) and start polling
             permissionManager.requestPermissionAndStartMonitoring()
 
