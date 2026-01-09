@@ -131,6 +131,32 @@ final class App: NSObject, NSApplicationDelegate {
 
     private let latexService = LatexAPIService()
     private static let soundPath = "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/system/Screen Capture.aiff"
+
+    private func setupMainMenu() {
+        let mainMenu = NSMenu()
+
+        // Application menu (required even if empty)
+        let appMenuItem = NSMenuItem()
+        mainMenu.addItem(appMenuItem)
+        let appMenu = NSMenu()
+        appMenuItem.submenu = appMenu
+
+        // Edit menu with standard items
+        let editMenuItem = NSMenuItem()
+        editMenuItem.submenu = NSMenu(title: "Edit")
+        mainMenu.addItem(editMenuItem)
+
+        let editMenu = editMenuItem.submenu!
+        editMenu.addItem(NSMenuItem(title: "Undo", action: Selector(("undo:")), keyEquivalent: "z"))
+        editMenu.addItem(NSMenuItem(title: "Redo", action: Selector(("redo:")), keyEquivalent: "Z"))
+        editMenu.addItem(NSMenuItem.separator())
+        editMenu.addItem(NSMenuItem(title: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x"))
+        editMenu.addItem(NSMenuItem(title: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c"))
+        editMenu.addItem(NSMenuItem(title: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
+        editMenu.addItem(NSMenuItem(title: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
+
+        NSApp.mainMenu = mainMenu
+    }
     
     func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
         guard let button = statusItem.button, let window = button.window else {
@@ -151,6 +177,8 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        setupMainMenu()
+
         guard CGPreflightScreenCaptureAccess() else {
             let alert = NSAlert()
             alert.messageText = "Screen Recording Permission Required"
