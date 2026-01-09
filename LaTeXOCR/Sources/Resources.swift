@@ -34,6 +34,9 @@ enum Localized {
   static let menuTitleNoHistory = String(localized: "No Recent Captures", comment: "[Menu] When no captures are available")
   static let menuTitleCopy = String(localized: "Copy", comment: "[Menu] Copy text to clipboard")
   static let menuTitleClearHistory = String(localized: "Clear History", comment: "[Menu] Clear capture history")
+  static let permissionAlertTitle = String(localized: "Screen Recording Permission", comment: "[Alert] Permission request title")
+  static let permissionAlertMessage = String(localized: "LaTeX OCR needs screen recording permission to capture screen regions.\n\nPlease grant access when prompted, or enable it in System Settings.", comment: "[Alert] Permission request message")
+  static let permissionRequired = String(localized: " (Permission Required)", comment: "[Menu] Suffix for disabled menu items")
 }
 
 // Icon set used in the app: https://developer.apple.com/sf-symbols/

@@ -35,6 +35,7 @@
 		B9583CC42DBD8C8300F43550 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C8E2DBD8C8300F43550 /* SettingsWindowController.swift */; };
 		B9583CC52DBD8C8300F43550 /* NSMenu+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C812DBD8C8300F43550 /* NSMenu+Extension.swift */; };
 		B9583CC62DBD8C8300F43550 /* SMAppService+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C872DBD8C8300F43550 /* SMAppService+Extension.swift */; };
+		B9F54FE92F10866C0070D1C2 /* ScreenCapturePermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F54FE82F10866C0070D1C2 /* ScreenCapturePermissionManager.swift */; };
 		B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FBEAAE2DC3080000C587FD /* Config.swift */; };
 		C1000001000000000000000A /* Prompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000001000000000000000B /* Prompt.swift */; };
 		C1000002000000000000000A /* PromptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000002000000000000000B /* PromptManager.swift */; };
@@ -75,6 +76,7 @@
 		B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = LaTeXOCR.xcodeproj; sourceTree = "<group>"; };
 		B9583C9F2DBD8C8300F43550 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B9583CCA2DBD935300F43550 /* LaTeXOCR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LaTeXOCR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9F54FE82F10866C0070D1C2 /* ScreenCapturePermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePermissionManager.swift; sourceTree = "<group>"; };
 		B9FBEAAE2DC3080000C587FD /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		C1000001000000000000000B /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
 		C1000002000000000000000B /* PromptManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptManager.swift; sourceTree = "<group>"; };
@@ -127,17 +129,10 @@
 			isa = PBXGroup;
 			children = (
 				B9583C8A2DBD8C8300F43550 /* GeminiService.swift */,
+				B9F54FE82F10866C0070D1C2 /* ScreenCapturePermissionManager.swift */,
 				C1000002000000000000000B /* PromptManager.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		C1000005000000000000000C /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				C1000001000000000000000B /* Prompt.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		B9583C902DBD8C8300F43550 /* Settings */ = {
@@ -187,6 +182,14 @@
 		B9583CA42DBD8C8300F43550 /* Products */ = {
 			isa = PBXGroup;
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C1000005000000000000000C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C1000001000000000000000B /* Prompt.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -282,6 +285,7 @@
 				B9583CB92DBD8C8300F43550 /* ShortcutMonitor.swift in Sources */,
 				B9583CBA2DBD8C8300F43550 /* NSImage+Extension.swift in Sources */,
 				B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */,
+				B9F54FE92F10866C0070D1C2 /* ScreenCapturePermissionManager.swift in Sources */,
 				B9583CBB2DBD8C8300F43550 /* main.swift in Sources */,
 				B9583CBC2DBD8C8300F43550 /* App.swift in Sources */,
 				B9583CBD2DBD8C8300F43550 /* Detector.swift in Sources */,

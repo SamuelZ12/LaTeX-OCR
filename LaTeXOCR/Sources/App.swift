@@ -53,8 +53,10 @@ final class App: NSObject, NSApplicationDelegate {
     private let settingsManager = SettingsManager.shared
     private let historyManager = HistoryManager.shared
     private let promptManager = PromptManager.shared
+    private let permissionManager = ScreenCapturePermissionManager.shared
 
     private var isExtracting = false
+    private var isFullySetup = false
     private var originalStatusImage: NSImage?
     private var currentFeedbackTask: Task<Void, Never>?
 
@@ -203,28 +205,105 @@ final class App: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupMainMenu()
 
-        guard CGPreflightScreenCaptureAccess() else {
-            let alert = NSAlert()
-            alert.messageText = "Screen Recording Permission Required"
-            alert.informativeText = "This app needs screen recording permission. Please grant access in System Settings."
-            alert.alertStyle = .informational
+        // Always show the status item
+        statusItem.isVisible = true
 
-            alert.addButton(withTitle: "Open Settings")
-            alert.addButton(withTitle: "Quit")
+        // Check permission status
+        if !permissionManager.checkPermission() {
+            // Show minimal, clean alert
+            showPermissionRequiredAlert()
 
-            let response = alert.runModal()
+            // Request permission (triggers system dialog) and start polling
+            permissionManager.requestPermissionAndStartMonitoring()
 
-            if response == .alertFirstButtonReturn {
-                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-                    NSWorkspace.shared.open(url)
-                }
-            }
-
-            NSApp.terminate(nil)
-            return
+            // Update menu to show limited state
+            updateMenuForLimitedState()
+        } else {
+            // Permission already granted, proceed normally
+            setupFullFunctionality()
         }
 
-        statusItem.isVisible = true
+        // Subscribe to permission changes
+        permissionManager.$hasPermission
+            .dropFirst() // Skip the initial value
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] granted in
+                if granted {
+                    self?.onPermissionGranted()
+                }
+            }
+            .store(in: &cancellables)
+
+        // Observe prompt changes to rebuild menu (needed regardless of permission)
+        promptManager.$prompts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.rebuildMenu()
+            }
+            .store(in: &cancellables)
+
+        promptManager.$defaultPrompt
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.rebuildMenu()
+            }
+            .store(in: &cancellables)
+    }
+
+
+    func applicationWillTerminate(_ notification: Notification) {
+        ShortcutMonitor.shared.stopMonitoring()
+        permissionManager.stopPolling()
+    }
+
+    // MARK: - Permission Handling
+
+    /// Show a clean, minimal alert explaining the permission requirement
+    private func showPermissionRequiredAlert() {
+        let alert = NSAlert()
+        alert.messageText = Localized.permissionAlertTitle
+        alert.informativeText = Localized.permissionAlertMessage
+        alert.alertStyle = .informational
+
+        alert.addButton(withTitle: "Continue")
+        alert.addButton(withTitle: "Open System Settings")
+
+        NSApp.activate(ignoringOtherApps: true)
+        let response = alert.runModal()
+
+        if response == .alertSecondButtonReturn {
+            permissionManager.openSystemSettings()
+        }
+    }
+
+    /// Update menu items to reflect limited state (no capture ability)
+    private func updateMenuForLimitedState() {
+        extractTextItem.isEnabled = false
+        extractTextItem.title = Localized.menuTitleExtractText + Localized.permissionRequired
+
+        for item in promptMenuItems {
+            item.isEnabled = false
+        }
+    }
+
+    /// Called when permission is granted (either immediately or after polling)
+    private func onPermissionGranted() {
+        // Restore menu items
+        extractTextItem.isEnabled = true
+        extractTextItem.title = Localized.menuTitleExtractText
+
+        for item in promptMenuItems {
+            item.isEnabled = true
+        }
+
+        // Setup full functionality if not already done
+        setupFullFunctionality()
+    }
+
+    /// Setup shortcuts and observers (called after permission granted)
+    private func setupFullFunctionality() {
+        guard !isFullySetup else { return }
+        isFullySetup = true
 
         updateMenuItemKeyEquivalents()
 
@@ -250,26 +329,6 @@ final class App: NSObject, NSApplicationDelegate {
                 self?.updateMenuItemKeyEquivalents()
             }
             .store(in: &cancellables)
-
-        // Observe prompt changes to rebuild menu
-        promptManager.$prompts
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.rebuildMenu()
-            }
-            .store(in: &cancellables)
-
-        promptManager.$defaultPrompt
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.rebuildMenu()
-            }
-            .store(in: &cancellables)
-    }
-
-
-    func applicationWillTerminate(_ notification: Notification) {
-        ShortcutMonitor.shared.stopMonitoring()
     }
 
     @MainActor
