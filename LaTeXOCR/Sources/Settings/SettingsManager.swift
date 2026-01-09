@@ -58,7 +58,13 @@ final class SettingsManager: ObservableObject {
         latexShortcut = UserDefaults.standard.codable(forKey: "latexShortcut")
         extractTextCopyFormat = UserDefaults.standard.string(forKey: "extractTextCopyFormat") ?? "lineBreaks"
         extractLatexCopyFormat = UserDefaults.standard.string(forKey: "extractLatexCopyFormat") ?? "lineBreaks"
-        selectedModel = UserDefaults.standard.string(forKey: "geminiModel") ?? "gemini-2.0-flash"
+        let defaultModel = "gemini-3-flash-preview"
+        let storedModel = UserDefaults.standard.string(forKey: "geminiModel") ?? defaultModel
+        if Config.availableGeminiModels.contains(where: { $0.id == storedModel }) {
+            selectedModel = storedModel
+        } else {
+            selectedModel = defaultModel
+        }
         
         if textShortcut == nil {
             textShortcut = ShortcutMonitor.KeyboardShortcut(

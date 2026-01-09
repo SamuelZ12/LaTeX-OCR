@@ -47,13 +47,9 @@ enum Config {
     
     /// Available Gemini models to choose from
     static let availableGeminiModels: [GeminiModel] = [
-        .init(id: "gemini-2.5-flash", label: "Gemini 2.5 Flash", note: nil),
-        .init(id: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite", note: nil),
-        .init(id: "gemini-2.5-pro", label: "Gemini 2.5 Pro", note: nil),
-        .init(id: "gemini-2.0-flash", label: "Gemini 2.0 Flash", note: nil),
-        .init(id: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash-Lite", note: nil),
-        .init(id: "gemini-1.5-pro", label: "Gemini 1.5 Pro", note: nil),
-        .init(id: "gemini-1.5-flash", label: "Gemini 1.5 Flash", note: nil)
+        .init(id: "gemini-3-flash-preview", label: "Gemini 3 Flash", note: "Best balance"),
+        .init(id: "gemini-3-pro-preview", label: "Gemini 3 Pro", note: "Most capable"),
+        .init(id: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite", note: "Fastest"),
     ]
     
     /// Get the Gemini API endpoint for the specified model

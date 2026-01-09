@@ -46,13 +46,9 @@ LaTeX OCR allows you to choose between the following Gemini models to optimize f
 
 | Model | Description |
 |-------|-------------|
-| **Gemini 2.5 Flash** | Latest model with improved capabilities |
-| **Gemini 2.5 Flash-Lite** | Low cost version of 2.5 Flash |
-| **Gemini 2.5 Pro** | Most advanced reasoning capabilities |
-| **Gemini 2.0 Flash** | Fast and accurate |
-| **Gemini 2.0 Flash-Lite** | Low cost option |
-| **Gemini 1.5 Pro** | Large context window (2M tokens) |
-| **Gemini 1.5 Flash** | Balanced performance |
+| **Gemini 3 Flash** | Best balance of speed, cost, and accuracy |
+| **Gemini 3 Pro** | Most capable model for complex equations |
+| **Gemini 2.5 Flash-Lite** | Fastest and most cost-effective option |
 
 > Note: All models are available on the free tier that includes a generous [usage limit](https://ai.google.dev/gemini-api/docs/rate-limits) that should be more than sufficient for personal use. 
 
