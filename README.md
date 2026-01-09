@@ -1,11 +1,13 @@
-# LaTeX OCR
+# ScreenScribe
 
-<img src="Assets/Icon.png" alt="LaTeX OCR Icon" width="64"/>
+*Capture. Extract. Format.*
 
-[![macOS](https://img.shields.io/badge/macOS-14.0%2B-brightgreen)](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest)
-[![GitHub all releases](https://img.shields.io/github/downloads/SamuelZ12/LaTeX-OCR/total)](https://github.com/SamuelZ12/LaTeX-OCR/releases)
-[![License](https://img.shields.io/github/license/SamuelZ12/LaTeX-OCR)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/release/SamuelZ12/LaTeX-OCR)](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest)
+<img src="Assets/Icon.png" alt="ScreenScribe Icon" width="64"/>
+
+[![macOS](https://img.shields.io/badge/macOS-14.0%2B-brightgreen)](https://github.com/SamuelZ12/screen-scribe/releases/latest)
+[![GitHub all releases](https://img.shields.io/github/downloads/SamuelZ12/screen-scribe/total)](https://github.com/SamuelZ12/screen-scribe/releases)
+[![License](https://img.shields.io/github/license/SamuelZ12/screen-scribe)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/SamuelZ12/screen-scribe)](https://github.com/SamuelZ12/screen-scribe/releases/latest)
 
 A macOS menu bar application for capturing screen regions and extracting content using AI-powered prompts. Features built-in support for LaTeX and Markdown extraction, plus the ability to create your own custom prompts.
 
@@ -13,13 +15,13 @@ A macOS menu bar application for capturing screen regions and extracting content
 
 Watch the application in action:
 
-![LaTeX OCR Demo GIF](Assets/demo.gif)
+![ScreenScribe Demo GIF](Assets/demo.gif)
 
 ### Menu Bar Access
-<img src="Assets/Menu_Bar.png" alt="LaTeX OCR Menu Bar" width="200"/>
+<img src="Assets/Menu_Bar.png" alt="ScreenScribe Menu Bar" width="200"/>
 
 ### Settings Panel
-<img src="Assets/Settings_Panel.png" alt="LaTeX OCR Settings Window" width="400"/>
+<img src="Assets/Settings_Panel.png" alt="ScreenScribe Settings Window" width="400"/>
 
 ## Features
 
@@ -47,7 +49,7 @@ Watch the application in action:
 
 ## Gemini API Models and Rate Limits
 
-LaTeX OCR allows you to choose between the following Gemini models to optimize for your specific needs:
+ScreenScribe allows you to choose between the following Gemini models to optimize for your specific needs:
 
 | Model | Description |
 |-------|-------------|
@@ -61,8 +63,8 @@ LaTeX OCR allows you to choose between the following Gemini models to optimize f
 
 ### Quick Install
 
-1. **Download** the latest `.dmg` from [Releases](https://github.com/SamuelZ12/LaTeX-OCR/releases/latest)
-2. **Open** the DMG and drag LaTeX OCR to Applications
+1. **Download** the latest `.dmg` from [Releases](https://github.com/SamuelZ12/screen-scribe/releases/latest)
+2. **Open** the DMG and drag ScreenScribe to Applications
 3. **Right-click** the app and select "Open" (required for first launch)
 
 ### Opening for the First Time
@@ -71,21 +73,21 @@ Since this app is not notarized with Apple, macOS will show a security warning. 
 
 **Option 1: Right-click to Open (Recommended)**
 1. Open Finder and go to Applications
-2. Right-click (or Control-click) on LaTeX OCR
+2. Right-click (or Control-click) on ScreenScribe
 3. Select "Open" from the context menu
 4. Click "Open" in the dialog that appears
 
 **Option 2: System Settings**
 1. Try to open the app normally (it will be blocked)
 2. Go to **System Settings > Privacy & Security**
-3. Scroll down to find the message about LaTeX OCR being blocked
+3. Scroll down to find the message about ScreenScribe being blocked
 4. Click "Open Anyway"
 
 > This only needs to be done once. After the first successful launch, the app will open normally.
 
 ### First Launch
 
-When you first open LaTeX OCR, a setup wizard will guide you through:
+When you first open ScreenScribe, a setup wizard will guide you through:
 1. **Screen Recording Permission** - Required for screen capture functionality
 2. **API Key Setup** - Optional, enables AI-powered extraction (LaTeX, Markdown, custom prompts)
 
@@ -132,28 +134,28 @@ If you prefer to build the application yourself:
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/SamuelZ12/LaTeX-OCR.git
-    cd LaTeX-OCR
+    git clone https://github.com/SamuelZ12/screen-scribe.git
+    cd screen-scribe
     ```
 2.  **Open in Xcode:**
     ```bash
-    open LaTeXOCR.xcodeproj
+    open ScreenScribe.xcodeproj
     ```
-3.  **Select Scheme:** Ensure the `LaTeXOCR` scheme is selected.
+3.  **Select Scheme:** Ensure the `ScreenScribe` scheme is selected.
 4.  **Build/Run:** Press `Cmd+B` to build or `Cmd+R` to run the application directly on your Mac. (Apps you build yourself typically don't trigger the same Gatekeeper warnings on your own machine).
 5.  **(Required for AI extraction)** **Configure API Key and Model:** After running the built app, open its Settings panel from the menu bar icon, enter your Google Gemini API key, and select your preferred model.
 
 ## Code Structure Overview
 
-* `LaTeXOCR/Sources/App.swift`: Main application delegate, menu bar setup, capture initiation, and result handling.
-* `LaTeXOCR/Sources/Recognizer.swift`: Handles text OCR using Apple's Vision framework.
-* `LaTeXOCR/Sources/Models/Prompt.swift`: Prompt data model with built-in LaTeX and Markdown prompts.
-* `LaTeXOCR/Sources/Services/GeminiService.swift`: Manages interaction with the Google Gemini API.
-* `LaTeXOCR/Sources/Services/PromptManager.swift`: CRUD operations for prompts and persistence.
-* `LaTeXOCR/Sources/Settings/`: Contains SwiftUI views for settings and prompt management.
-* `LaTeXOCR/Sources/Extensions/`: Utility extensions for various AppKit/Foundation classes.
-* `LaTeXOCR/Info.plist`: Application metadata and permission descriptions.
-* `LaTeXOCR.xcodeproj`: Xcode project file.
+* `ScreenScribe/Sources/App.swift`: Main application delegate, menu bar setup, capture initiation, and result handling.
+* `ScreenScribe/Sources/Recognizer.swift`: Handles text OCR using Apple's Vision framework.
+* `ScreenScribe/Sources/Models/Prompt.swift`: Prompt data model with built-in LaTeX and Markdown prompts.
+* `ScreenScribe/Sources/Services/GeminiService.swift`: Manages interaction with the Google Gemini API.
+* `ScreenScribe/Sources/Services/PromptManager.swift`: CRUD operations for prompts and persistence.
+* `ScreenScribe/Sources/Settings/`: Contains SwiftUI views for settings and prompt management.
+* `ScreenScribe/Sources/Extensions/`: Utility extensions for various AppKit/Foundation classes.
+* `ScreenScribe/Info.plist`: Application metadata and permission descriptions.
+* `ScreenScribe.xcodeproj`: Xcode project file.
 
 ## License
 

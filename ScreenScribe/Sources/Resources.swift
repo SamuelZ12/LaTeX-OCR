@@ -23,7 +23,7 @@ enum Localized {
   static let menuTitleClipboard = String(localized: "Clipboard", comment: "[Menu] Clipboard options")
   static let menuTitleSaveAsFile = String(localized: "Save as File", comment: "[Menu] Save the clipboard as file")
   static let menuTitleClearContents = String(localized: "Clear Contents", comment: "[Menu] Clear the clipboard")
-  static let menuTitleGitHub = String(localized: "GitHub", comment: "[Menu] Open the LaTeXOCR repository on GitHub")
+  static let menuTitleGitHub = String(localized: "GitHub", comment: "[Menu] Open the ScreenScribe repository on GitHub")
   static let menuTitleLaunchAtLogin = String(localized: "Launch at Login", comment: "[Menu] Automatically start the app at login")
   static let menuTitleVersion = String(localized: "Version", comment: "[Menu] Version number label")
   static let menuTitleQuitTextGrabber2 = String(localized: "Quit", comment: "[Menu] Quit the app")
@@ -35,7 +35,7 @@ enum Localized {
   static let menuTitleCopy = String(localized: "Copy", comment: "[Menu] Copy text to clipboard")
   static let menuTitleClearHistory = String(localized: "Clear History", comment: "[Menu] Clear capture history")
   static let permissionAlertTitle = String(localized: "Screen Recording Permission", comment: "[Alert] Permission request title")
-  static let permissionAlertMessage = String(localized: "LaTeX OCR needs screen recording permission to capture screen regions.\n\nPlease grant access when prompted, or enable it in System Settings.", comment: "[Alert] Permission request message")
+  static let permissionAlertMessage = String(localized: "ScreenScribe needs screen recording permission to capture screen regions.\n\nPlease grant access when prompted, or enable it in System Settings.", comment: "[Alert] Permission request message")
   static let permissionRequired = String(localized: " (Permission Required)", comment: "[Menu] Suffix for disabled menu items")
 }
 
@@ -48,5 +48,5 @@ enum Icons {
 }
 
 enum Links {
-  static let github = "https://github.com/samuelz12/LaTeX-OCR"
+  static let github = "https://github.com/samuelz12/screen-scribe"
 }

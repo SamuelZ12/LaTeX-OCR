@@ -4,21 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LaTeX OCR is a macOS menu bar application for screen capture and AI-powered content extraction. It uses customizable prompts with the Google Gemini API to extract content in various formats (LaTeX, Markdown, or custom). Built with Swift and SwiftUI, it's an Xcode project that creates a menu bar-only application.
+ScreenScribe is a macOS menu bar application for screen capture and AI-powered content extraction. It uses customizable prompts with the Google Gemini API to extract content in various formats (LaTeX, Markdown, or custom). Built with Swift and SwiftUI, it's an Xcode project that creates a menu bar-only application.
 
 ## Development Commands
 
 ### Building and Running
-- **Open project:** `open LaTeXOCR.xcodeproj`
+- **Open project:** `open ScreenScribe.xcodeproj`
 - **Build:** Use Xcode's `Cmd+B` or select Product > Build
 - **Run/Debug:** Use Xcode's `Cmd+R` or select Product > Run
 - **Archive for distribution:** Product > Archive (creates .dmg for distribution)
 
 ### Project Structure
-- **Main scheme:** `LaTeXOCR` (ensure this is selected in Xcode)
+- **Main scheme:** `ScreenScribe` (ensure this is selected in Xcode)
 - **Target:** macOS 14.0+
-- **Bundle ID:** `app.samuelz12.latexocr-dev` (defined in Build.xcconfig)
-- **Current version:** 1.2.0 (MARKETING_VERSION in Build.xcconfig)
+- **Bundle ID:** `app.samuelz12.screenscribe-dev` (defined in Build.xcconfig)
+- **Current version:** 1.2.2 (MARKETING_VERSION in Build.xcconfig)
 
 ## Architecture
 
@@ -44,7 +44,7 @@ LaTeX OCR is a macOS menu bar application for screen capture and AI-powered cont
 
 ### Directory Structure
 ```
-LaTeXOCR/Sources/
+ScreenScribe/Sources/
 ├── App.swift                    # Main app delegate and menu bar logic
 ├── Config.swift                 # Configuration and Gemini model definitions
 ├── Recognizer.swift             # OCR using Vision framework

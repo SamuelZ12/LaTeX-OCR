@@ -16,7 +16,7 @@ struct PermissionStepView: View {
             Text("Screen Recording Permission")
                 .font(.system(size: 24, weight: .bold))
 
-            Text("LaTeX OCR needs screen recording permission to capture screen regions for text extraction.")
+            Text("ScreenScribe needs screen recording permission to capture screen regions for text extraction.")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

@@ -16,7 +16,7 @@ class OnboardingWindowController: NSWindowController, NSWindowDelegate {
         )
         window.center()
         window.contentViewController = hostingController
-        window.title = "Welcome to LaTeX OCR"
+        window.title = "Welcome to ScreenScribe"
         window.isReleasedWhenClosed = false
         window.minSize = NSSize(width: 520, height: 480)
         window.maxSize = NSSize(width: 520, height: 480)
@@ -40,7 +40,7 @@ class OnboardingWindowController: NSWindowController, NSWindowDelegate {
                 backing: .buffered,
                 defer: false
             )
-            window.title = "Welcome to LaTeX OCR"
+            window.title = "Welcome to ScreenScribe"
             window.contentViewController = hostingController
             window.center()
             window.isReleasedWhenClosed = false

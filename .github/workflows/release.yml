@@ -48,8 +48,8 @@ jobs:
       - name: Build for Release
         run: |
           xcodebuild \
-            -project LaTeXOCR.xcodeproj \
-            -scheme LaTeXOCR \
+            -project ScreenScribe.xcodeproj \
+            -scheme ScreenScribe \
             -configuration Release \
             -derivedDataPath build \
             -destination 'generic/platform=macOS' \
@@ -61,7 +61,7 @@ jobs:
 
       - name: Verify build output
         run: |
-          APP_PATH="build/Build/Products/Release/LaTeXOCR.app"
+          APP_PATH="build/Build/Products/Release/ScreenScribe.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "Error: App not found at $APP_PATH"
             ls -la build/Build/Products/Release/ || echo "Release directory not found"
@@ -72,13 +72,13 @@ jobs:
 
       - name: Create DMG
         run: |
-          DMG_NAME="LaTeXOCR-${{ env.VERSION }}.dmg"
+          DMG_NAME="ScreenScribe-${{ env.VERSION }}.dmg"
 
           mkdir -p dmg_contents
           cp -R "${{ env.APP_PATH }}" dmg_contents/
           ln -s /Applications dmg_contents/Applications
 
-          hdiutil create -volname "LaTeXOCR ${{ env.VERSION }}" \
+          hdiutil create -volname "ScreenScribe ${{ env.VERSION }}" \
             -srcfolder dmg_contents \
             -ov -format UDZO \
             "$DMG_NAME"
@@ -104,7 +104,7 @@ jobs:
             ${{ env.DMG_NAME }}
             ${{ env.DMG_NAME }}.sha256
           tag_name: v${{ env.VERSION }}
-          name: LaTeXOCR v${{ env.VERSION }}
+          name: ScreenScribe v${{ env.VERSION }}
           draft: false
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           generate_release_notes: true
@@ -113,7 +113,7 @@ jobs:
 
             1. Download `${{ env.DMG_NAME }}`
             2. Open the DMG file
-            3. Drag LaTeXOCR to your Applications folder
+            3. Drag ScreenScribe to your Applications folder
             4. See [README](https://github.com/${{ github.repository }}#installation--usage) for first-run instructions
 
             **Note:** This app is not notarized. macOS Gatekeeper will show a warning on first launch. Right-click the app and select "Open" to bypass the warning.

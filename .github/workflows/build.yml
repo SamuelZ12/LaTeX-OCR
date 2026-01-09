@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'LaTeXOCR/**'
+      - 'ScreenScribe/**'
       - 'Build.xcconfig'
       - '*.xcodeproj/**'
       - '.github/workflows/build.yml'
@@ -25,8 +25,8 @@ jobs:
       - name: Build
         run: |
           xcodebuild \
-            -project LaTeXOCR.xcodeproj \
-            -scheme LaTeXOCR \
+            -project ScreenScribe.xcodeproj \
+            -scheme ScreenScribe \
             -configuration Release \
             -derivedDataPath build \
             -destination 'generic/platform=macOS' \
@@ -38,7 +38,7 @@ jobs:
 
       - name: Verify app bundle
         run: |
-          APP_PATH="build/Build/Products/Release/LaTeXOCR.app"
+          APP_PATH="build/Build/Products/Release/ScreenScribe.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "Error: Could not find built app at $APP_PATH"
             exit 1

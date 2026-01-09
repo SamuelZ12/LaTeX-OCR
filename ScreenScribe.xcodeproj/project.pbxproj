@@ -80,9 +80,9 @@
 		B9583C9A2DBD8C8300F43550 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		B9583C9B2DBD8C8300F43550 /* Screen Capture.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Screen Capture.aif"; sourceTree = "<group>"; };
 		B9583C9C2DBD8C8300F43550 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Secrets.plist; sourceTree = "<group>"; };
-		B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = LaTeXOCR.xcodeproj; sourceTree = "<group>"; };
+		B9583C9E2DBD8C8300F43550 /* ScreenScribe.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ScreenScribe.xcodeproj; sourceTree = "<group>"; };
 		B9583C9F2DBD8C8300F43550 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		B9583CCA2DBD935300F43550 /* LaTeXOCR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LaTeXOCR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9583CCA2DBD935300F43550 /* ScreenScribe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScreenScribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9F54FE82F10866C0070D1C2 /* ScreenCapturePermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePermissionManager.swift; sourceTree = "<group>"; };
 		C2000001000000000000000B /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingManager.swift; sourceTree = "<group>"; };
 		C2000002000000000000000B /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
@@ -113,10 +113,10 @@
 			isa = PBXGroup;
 			children = (
 				B9583C7B2DBD8C8300F43550 /* Build.xcconfig */,
-				B9583C9D2DBD8C8300F43550 /* LaTeXOCR */,
-				B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */,
+				B9583C9D2DBD8C8300F43550 /* ScreenScribe */,
+				B9583C9E2DBD8C8300F43550 /* ScreenScribe.xcodeproj */,
 				B9583C9F2DBD8C8300F43550 /* LICENSE */,
-				B9583CCA2DBD935300F43550 /* LaTeXOCR.app */,
+				B9583CCA2DBD935300F43550 /* ScreenScribe.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -181,7 +181,7 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		B9583C9D2DBD8C8300F43550 /* LaTeXOCR */ = {
+		B9583C9D2DBD8C8300F43550 /* ScreenScribe */ = {
 			isa = PBXGroup;
 			children = (
 				B9583C972DBD8C8300F43550 /* Sources */,
@@ -191,7 +191,7 @@
 				B9583C9B2DBD8C8300F43550 /* Screen Capture.aif */,
 				B9583C9C2DBD8C8300F43550 /* Secrets.plist */,
 			);
-			path = LaTeXOCR;
+			path = ScreenScribe;
 			sourceTree = "<group>";
 		};
 		B9583CA42DBD8C8300F43550 /* Products */ = {
@@ -224,9 +224,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		87E192BE2BAADE1200A87A4E /* LaTeXOCR */ = {
+		87E192BE2BAADE1200A87A4E /* ScreenScribe */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 87E192CE2BAADE1400A87A4E /* Build configuration list for PBXNativeTarget "LaTeXOCR" */;
+			buildConfigurationList = 87E192CE2BAADE1400A87A4E /* Build configuration list for PBXNativeTarget "ScreenScribe" */;
 			buildPhases = (
 				87E192BB2BAADE1200A87A4E /* Sources */,
 				87E192BC2BAADE1200A87A4E /* Frameworks */,
@@ -236,9 +236,9 @@
 			);
 			dependencies = (
 			);
-			name = LaTeXOCR;
+			name = ScreenScribe;
 			productName = TextGrabber2;
-			productReference = B9583CCA2DBD935300F43550 /* LaTeXOCR.app */;
+			productReference = B9583CCA2DBD935300F43550 /* ScreenScribe.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -256,7 +256,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 87E192BA2BAADE1200A87A4E /* Build configuration list for PBXProject "LaTeXOCR" */;
+			buildConfigurationList = 87E192BA2BAADE1200A87A4E /* Build configuration list for PBXProject "ScreenScribe" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -272,12 +272,12 @@
 			projectReferences = (
 				{
 					ProductGroup = B9583CA42DBD8C8300F43550 /* Products */;
-					ProjectRef = B9583C9E2DBD8C8300F43550 /* LaTeXOCR.xcodeproj */;
+					ProjectRef = B9583C9E2DBD8C8300F43550 /* ScreenScribe.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				87E192BE2BAADE1200A87A4E /* LaTeXOCR */,
+				87E192BE2BAADE1200A87A4E /* ScreenScribe */,
 			);
 		};
 /* End PBXProject section */
@@ -481,7 +481,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
-				CODE_SIGN_ENTITLEMENTS = LaTeXOCR/Info.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ScreenScribe/Info.entitlements;
 				CODE_SIGN_IDENTITY = "$(inherited)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -491,8 +491,8 @@
 				DEVELOPMENT_TEAM = LC98XFTQS7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = LaTeXOCR/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = LaTeXOCR;
+				INFOPLIST_FILE = ScreenScribe/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ScreenScribe;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -502,7 +502,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "app.samuelz12.latexocr-dev";
+				PRODUCT_BUNDLE_IDENTIFIER = "app.samuelz12.screenscribe-dev";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -515,7 +515,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
-				CODE_SIGN_ENTITLEMENTS = LaTeXOCR/Info.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ScreenScribe/Info.entitlements;
 				CODE_SIGN_IDENTITY = "$(inherited)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -525,8 +525,8 @@
 				DEVELOPMENT_TEAM = LC98XFTQS7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = LaTeXOCR/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = LaTeXOCR;
+				INFOPLIST_FILE = ScreenScribe/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ScreenScribe;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -536,7 +536,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "app.samuelz12.latexocr-dev";
+				PRODUCT_BUNDLE_IDENTIFIER = "app.samuelz12.screenscribe-dev";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -546,7 +546,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		87E192BA2BAADE1200A87A4E /* Build configuration list for PBXProject "LaTeXOCR" */ = {
+		87E192BA2BAADE1200A87A4E /* Build configuration list for PBXProject "ScreenScribe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				87E192CC2BAADE1400A87A4E /* Debug */,
@@ -555,7 +555,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		87E192CE2BAADE1400A87A4E /* Build configuration list for PBXNativeTarget "LaTeXOCR" */ = {
+		87E192CE2BAADE1400A87A4E /* Build configuration list for PBXNativeTarget "ScreenScribe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				87E192CF2BAADE1400A87A4E /* Debug */,

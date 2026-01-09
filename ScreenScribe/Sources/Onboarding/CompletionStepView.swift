@@ -34,7 +34,7 @@ struct CompletionStepView: View {
             Button(action: {
                 manager.completeOnboarding()
             }) {
-                Text("Start Using LaTeX OCR")
+                Text("Start Using ScreenScribe")
                     .frame(width: 220)
             }
             .buttonStyle(.borderedProminent)

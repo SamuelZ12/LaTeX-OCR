@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "87E192BE2BAADE1200A87A4E"
-               BuildableName = "LaTeXOCR.app"
-               BlueprintName = "LaTeXOCR"
-               ReferencedContainer = "container:LaTeXOCR.xcodeproj">
+               BuildableName = "ScreenScribe.app"
+               BlueprintName = "ScreenScribe"
+               ReferencedContainer = "container:ScreenScribe.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "87E192BE2BAADE1200A87A4E"
-            BuildableName = "LaTeXOCR.app"
-            BlueprintName = "LaTeXOCR"
-            ReferencedContainer = "container:LaTeXOCR.xcodeproj">
+            BuildableName = "ScreenScribe.app"
+            BlueprintName = "ScreenScribe"
+            ReferencedContainer = "container:ScreenScribe.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "87E192BE2BAADE1200A87A4E"
-            BuildableName = "LaTeXOCR.app"
-            BlueprintName = "LaTeXOCR"
-            ReferencedContainer = "container:LaTeXOCR.xcodeproj">
+            BuildableName = "ScreenScribe.app"
+            BlueprintName = "ScreenScribe"
+            ReferencedContainer = "container:ScreenScribe.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

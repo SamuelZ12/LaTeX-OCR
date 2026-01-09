@@ -12,7 +12,7 @@ struct WelcomeStepView: View {
                 .resizable()
                 .frame(width: 128, height: 128)
 
-            Text("Welcome to LaTeX OCR")
+            Text("Welcome to ScreenScribe")
                 .font(.system(size: 28, weight: .bold))
 
             Text("Capture any screen region and extract text, LaTeX, or Markdown using AI.")

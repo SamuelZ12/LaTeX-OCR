@@ -19,6 +19,6 @@
 
   <!-- privacy -->
   <key>NSPrivacyScreenCaptureUsageDescription</key>
-  <string>LaTeXOCR needs screen-recording permission to capture screenshots for text and LaTeX recognition.</string>
+  <string>ScreenScribe needs screen-recording permission to capture screenshots for content extraction.</string>
 </dict>
 </plist>
