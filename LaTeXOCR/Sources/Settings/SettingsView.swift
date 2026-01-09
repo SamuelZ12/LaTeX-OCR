@@ -3,11 +3,11 @@ import Carbon
 
 private class EventMonitor {
     var monitor: Any?
-    
+
     init(eventMask: NSEvent.EventTypeMask, handler: @escaping (NSEvent) -> NSEvent?) {
         self.monitor = NSEvent.addLocalMonitorForEvents(matching: eventMask, handler: handler)
     }
-    
+
     deinit {
         if let monitor = self.monitor {
             NSEvent.removeMonitor(monitor)
@@ -20,7 +20,7 @@ struct ShortcutRecorderButton: View {
     @Binding var shortcut: ShortcutMonitor.KeyboardShortcut?
     @State private var isRecording = false
     @State private var eventMonitor: EventMonitor?
-    
+
     var body: some View {
         Button {
             if isRecording {
@@ -46,7 +46,7 @@ struct ShortcutRecorderButton: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     private func startRecording() {
         DispatchQueue.main.async {
             self.eventMonitor = nil
@@ -78,12 +78,12 @@ struct SettingsView: View {
     @StateObject private var settings = SettingsManager.shared
     @AppStorage("geminiAPIKey") private var apiKeyInput: String = ""
     @State private var isValidAPIKey: Bool = false
-    
+
     private func validateAPIKey(_ key: String) -> Bool {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.starts(with: "AIza") && trimmed.count == 39
     }
-    
+
     var body: some View {
         Form {
             Section {
@@ -111,19 +111,19 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    
+
                     if !apiKeyInput.isEmpty && !isValidAPIKey {
                         Text("Invalid API key format. Key should start with 'AIza' followed by 35 characters.")
                             .font(.caption)
                             .foregroundColor(.red)
                     }
-                    
+
                     Text("Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .tint(.blue)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     LabeledContent("Gemini Model:") {
                         Picker("", selection: $settings.selectedModel) {
@@ -134,16 +134,16 @@ struct SettingsView: View {
                         .pickerStyle(.menu)
                         .frame(width: 330)
                     }
-                    Text("Choose speed / cost trade-offs for LaTeX extraction")
+                    Text("Choose speed / cost trade-offs for AI extraction")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             } header: {
                 Text("API Configuration")
             } footer: {
-                Text("The API key is required for LaTeX extraction")
+                Text("The API key is required for AI-powered extraction")
                     .foregroundStyle(.secondary)
             }
-            
+
             Section {
                 LabeledContent("Text Shortcut:") {
                     ShortcutRecorderButton(
@@ -155,58 +155,36 @@ struct SettingsView: View {
                     )
                     .frame(width: 200)
                 }
-                
-                LabeledContent("LaTeX Shortcut:") {
+
+                LabeledContent("Default Prompt:") {
                     ShortcutRecorderButton(
-                        label: "LaTeX Shortcut",
+                        label: "Default Prompt Shortcut",
                         shortcut: Binding(
-                            get: { settings.latexShortcut },
-                            set: { settings.latexShortcut = $0 }
+                            get: { settings.defaultPromptShortcut },
+                            set: { settings.defaultPromptShortcut = $0 }
                         )
                     )
                     .frame(width: 200)
                 }
             } header: {
                 Text("Keyboard Shortcuts")
+            } footer: {
+                Text("Text uses offline Vision OCR. Default Prompt uses your selected AI prompt.")
+                    .foregroundStyle(.secondary)
             }
-            
+
             Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    LabeledContent("Text Format:") {
-                        Picker("", selection: $settings.extractTextCopyFormat) {
-                            Text("Line Breaks").tag("lineBreaks")
-                            Text("Spaces").tag("spaces")
-                        }
-                        .pickerStyle(.segmented)
-                        .frame(width: 330)
-                    }
-                    Text("Choose how to join multiple text blocks")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.vertical, 4)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    LabeledContent("LaTeX Format:") {
-                        Picker("", selection: $settings.extractLatexCopyFormat) {
-                            Text("Line Breaks").tag("lineBreaks")
-                            Text("Spaces").tag("spaces")
-                            Text("LaTeX \\\\\\\\").tag("latexNewlines")
-                        }
-                        .pickerStyle(.segmented)
-                        .frame(width: 330)
-                    }
-                    Text("Choose how to join multiple LaTeX expressions")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.vertical, 4)
+                PromptListView()
+                    .frame(height: 280)
             } header: {
-                Text("Format Settings")
+                Text("Prompts")
+            } footer: {
+                Text("Manage AI prompts for extraction. Set a default prompt for the keyboard shortcut.")
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-        .frame(width: 450, height: 630)
+        .frame(width: 500, height: 700)
         .onAppear {
             isValidAPIKey = validateAPIKey(apiKeyInput)
         }

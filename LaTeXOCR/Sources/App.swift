@@ -8,9 +8,10 @@ import Combine
 
 struct HistoryEntry: Codable {
     let text: String
-    let type: ExtractionType
+    let promptId: UUID?        // nil for Vision OCR
+    let promptName: String     // "Text (OCR)" or prompt name
     let timestamp: Date
-    
+
     var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
@@ -24,19 +25,19 @@ class HistoryManager {
     static let shared = HistoryManager()
     private let maxEntries = 10
     private var entries: [HistoryEntry] = []
-    
-    func addEntry(_ text: String, type: ExtractionType) {
-        let entry = HistoryEntry(text: text, type: type, timestamp: Date())
+
+    func addEntry(_ text: String, promptId: UUID?, promptName: String) {
+        let entry = HistoryEntry(text: text, promptId: promptId, promptName: promptName, timestamp: Date())
         entries.insert(entry, at: 0)
         if entries.count > maxEntries {
             entries.removeLast()
         }
     }
-    
+
     func clearHistory() {
         entries.removeAll()
     }
-    
+
     var recentEntries: [HistoryEntry] {
         return entries
     }
@@ -51,26 +52,21 @@ final class App: NSObject, NSApplicationDelegate {
     private var settingsWindowController: SettingsWindowController?
     private let settingsManager = SettingsManager.shared
     private let historyManager = HistoryManager.shared
-    
+    private let promptManager = PromptManager.shared
+
     private var isExtracting = false
     private var originalStatusImage: NSImage?
     private var currentFeedbackTask: Task<Void, Never>?
-    
+
     private lazy var extractTextItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleExtractText)
         item.addAction { [weak self] in
-            self?.initiateCapture(for: .text)
+            self?.initiateCaptureForText()
         }
         return item
     }()
 
-    private lazy var extractLatexItem: NSMenuItem = {
-        let item = NSMenuItem(title: Localized.menuTitleExtractLaTeX)
-        item.addAction { [weak self] in
-            self?.initiateCapture(for: .latex)
-        }
-        return item
-    }()
+    private var promptMenuItems: [NSMenuItem] = []
 
     private lazy var settingsItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleSettings)
@@ -93,13 +89,13 @@ final class App: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         return menu
     }()
-    
+
     private lazy var historyItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleHistory)
         item.submenu = historyMenu
         return item
     }()
-    
+
     private lazy var clearHistoryItem: NSMenuItem = {
         let item = NSMenuItem(title: Localized.menuTitleClearHistory)
         item.addAction { [weak self] in
@@ -107,6 +103,8 @@ final class App: NSObject, NSApplicationDelegate {
         }
         return item
     }()
+
+    private var statusItemMenu: NSMenu?
 
     private lazy var statusItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -116,21 +114,47 @@ final class App: NSObject, NSApplicationDelegate {
 
         let menu = NSMenu()
         menu.delegate = self
+        statusItemMenu = menu
 
+        rebuildMenu()
+
+        item.menu = menu
+        return item
+    }()
+
+    private let geminiService = GeminiService()
+    private static let soundPath = "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/system/Screen Capture.aiff"
+
+    private func rebuildMenu() {
+        guard let menu = statusItemMenu else { return }
+        menu.removeAllItems()
+
+        // Extract Text (Vision OCR)
         menu.addItem(extractTextItem)
-        menu.addItem(extractLatexItem)
+        menu.addItem(.separator())
+
+        // Prompts section
+        promptMenuItems.removeAll()
+        for prompt in promptManager.prompts {
+            let item = NSMenuItem(title: prompt.name)
+            if prompt.isDefault {
+                item.state = .on
+            }
+            item.addAction { [weak self] in
+                self?.initiateCapture(with: prompt)
+            }
+            promptMenuItems.append(item)
+            menu.addItem(item)
+        }
+
         menu.addItem(.separator())
         menu.addItem(historyItem)
         menu.addItem(.separator())
         menu.addItem(settingsItem)
         menu.addItem(quitItem)
 
-        item.menu = menu
-        return item
-    }()
-
-    private let latexService = LatexAPIService()
-    private static let soundPath = "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/system/Screen Capture.aiff"
+        updateMenuItemKeyEquivalents()
+    }
 
     private func setupMainMenu() {
         let mainMenu = NSMenu()
@@ -157,7 +181,7 @@ final class App: NSObject, NSApplicationDelegate {
 
         NSApp.mainMenu = mainMenu
     }
-    
+
     func statusItemInfo() -> (rect: CGRect, screen: NSScreen?)? {
         guard let button = statusItem.button, let window = button.window else {
             Logger.log(.error, "Missing button or window to provide positioning info")
@@ -182,55 +206,75 @@ final class App: NSObject, NSApplicationDelegate {
         guard CGPreflightScreenCaptureAccess() else {
             let alert = NSAlert()
             alert.messageText = "Screen Recording Permission Required"
-            alert.informativeText = "LaTeXOCR needs screen recording permission. Please grant access in System Settings."
+            alert.informativeText = "This app needs screen recording permission. Please grant access in System Settings."
             alert.alertStyle = .informational
-            
+
             alert.addButton(withTitle: "Open Settings")
             alert.addButton(withTitle: "Quit")
-            
+
             let response = alert.runModal()
-            
+
             if response == .alertFirstButtonReturn {
                 if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
                     NSWorkspace.shared.open(url)
                 }
             }
-            
+
             NSApp.terminate(nil)
             return
         }
 
-        clearMenuItems()
         statusItem.isVisible = true
-        
+
         updateMenuItemKeyEquivalents()
 
-        ShortcutMonitor.shared.startMonitoring { [weak self] type in
-            self?.initiateCapture(for: type)
+        ShortcutMonitor.shared.startMonitoring { [weak self] action in
+            switch action {
+            case .visionOCR:
+                self?.initiateCaptureForText()
+            case .defaultPrompt:
+                self?.initiateCapture(with: PromptManager.shared.defaultPrompt)
+            }
         }
-        
+
         settingsManager.$textShortcut
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.updateMenuItemKeyEquivalents()
             }
             .store(in: &cancellables)
-        
-        settingsManager.$latexShortcut
+
+        settingsManager.$defaultPromptShortcut
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.updateMenuItemKeyEquivalents()
             }
             .store(in: &cancellables)
+
+        // Observe prompt changes to rebuild menu
+        promptManager.$prompts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.rebuildMenu()
+            }
+            .store(in: &cancellables)
+
+        promptManager.$defaultPrompt
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.rebuildMenu()
+            }
+            .store(in: &cancellables)
     }
 
-    
+
     func applicationWillTerminate(_ notification: Notification) {
         ShortcutMonitor.shared.stopMonitoring()
     }
 
     @MainActor
     private func updateMenuItemKeyEquivalents() {
+        // Text shortcut
         if let shortcut = settingsManager.textShortcut {
             extractTextItem.keyEquivalent = shortcut.keyEquivalentCharacter
             extractTextItem.keyEquivalentModifierMask = shortcut.modifiers
@@ -238,37 +282,60 @@ final class App: NSObject, NSApplicationDelegate {
             extractTextItem.keyEquivalent = ""
             extractTextItem.keyEquivalentModifierMask = []
         }
-        
-        if let shortcut = settingsManager.latexShortcut {
-            extractLatexItem.keyEquivalent = shortcut.keyEquivalentCharacter
-            extractLatexItem.keyEquivalentModifierMask = shortcut.modifiers
-        } else {
-            extractLatexItem.keyEquivalent = ""
-            extractLatexItem.keyEquivalentModifierMask = []
+
+        // Default prompt shortcut - apply to the default prompt's menu item
+        let defaultPromptId = promptManager.defaultPrompt.id
+        for (index, prompt) in promptManager.prompts.enumerated() {
+            guard index < promptMenuItems.count else { continue }
+            let item = promptMenuItems[index]
+
+            if prompt.id == defaultPromptId {
+                item.state = .on
+                if let shortcut = settingsManager.defaultPromptShortcut {
+                    item.keyEquivalent = shortcut.keyEquivalentCharacter
+                    item.keyEquivalentModifierMask = shortcut.modifiers
+                } else {
+                    item.keyEquivalent = ""
+                    item.keyEquivalentModifierMask = []
+                }
+            } else {
+                item.state = .off
+                item.keyEquivalent = ""
+                item.keyEquivalentModifierMask = []
+            }
         }
     }
 
     @objc func menuWillOpen(_ menu: NSMenu) {
-        extractLatexItem.isHidden = false
-        extractTextItem.isHidden = false
-        
         updateHistoryMenu()
         startDetection()
     }
 
     func menuDidClose(_ menu: NSMenu) {
-        clearMenuItems()
     }
 
-    func initiateCapture(for type: ExtractionType) {
+    // MARK: - Capture Methods
+
+    /// Initiate capture for Vision OCR (text extraction)
+    func initiateCaptureForText() {
         Task { @MainActor in
             await captureViaSystemUI()
             if let image = NSPasteboard.general.image {
-                performExtraction(type: type, image: image)
+                performVisionExtraction(image: image)
             }
         }
     }
-    
+
+    /// Initiate capture with a specific prompt
+    func initiateCapture(with prompt: Prompt) {
+        Task { @MainActor in
+            await captureViaSystemUI()
+            if let image = NSPasteboard.general.image {
+                performAIExtraction(image: image, prompt: prompt)
+            }
+        }
+    }
+
     private func captureViaSystemUI() async {
         await withCheckedContinuation { continuation in
             let task = Process()
@@ -288,106 +355,109 @@ final class App: NSObject, NSApplicationDelegate {
 
         currentResult = nil
         pasteboardChangeCount = NSPasteboard.general.changeCount
-
-        if NSPasteboard.general.image?.cgImage != nil {
-            extractLatexItem.isHidden = false
-            extractTextItem.isHidden = false
-        }
     }
 
     func showResult(_ resultData: Recognizer.ResultData, in menu: NSMenu) {
     }
 
-    private func performExtraction(type: ExtractionType, image: NSImage?) {
+    // MARK: - Extraction Methods
+
+    /// Perform Vision OCR extraction (offline, text only)
+    private func performVisionExtraction(image: NSImage) {
         guard !isExtracting else {
             NSAlert.showModalAlert(message: "An extraction is already in progress. Please wait.")
-            return
-        }
-        
-        guard let image = image else {
-            Logger.log(.error, "performExtraction called with no image for type \(type).")
             return
         }
 
         isExtracting = true
 
-        switch type {
-        case .text:
-            Task {
-                defer { isExtracting = false }
-                
-                guard let cgImage = image.cgImage else {
-                    NSAlert.showModalAlert(message: "Failed to process image")
-                    return
-                }
+        Task {
+            defer { isExtracting = false }
 
-                let result = await Recognizer.detect(image: cgImage, level: .accurate)
-                let copyFormat = settingsManager.extractTextCopyFormat
-                let textToCopy = copyFormat == "lineBreaks" ? result.lineBreaksJoined : result.spacesJoined
-
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()
-                let copied = pasteboard.setString(textToCopy, forType: .string)
-
-                if copied {
-                    showSuccessFeedback()
-                    historyManager.addEntry(textToCopy, type: .text)
-                }
-            }
-
-        case .latex:
-            guard let apiKey = UserDefaults.standard.string(forKey: "geminiAPIKey"), !apiKey.isEmpty else {
-                isExtracting = false
-                NSAlert.showModalAlert(message: "Please set your Gemini API key in Settings")
-                showSettings()
+            guard let cgImage = image.cgImage else {
+                NSAlert.showModalAlert(message: "Failed to process image")
                 return
             }
 
-            guard let tiffData = image.tiffRepresentation,
-                  let bitmapImage = NSBitmapImageRep(data: tiffData),
-                  let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
-                isExtracting = false
-                Logger.log(.error, "Failed to convert image to PNG data for LaTeX extraction")
-                NSAlert.showModalAlert(message: "Failed to process image data.")
-                return
-            }
+            let result = await Recognizer.detect(image: cgImage, level: .accurate)
+            // For Vision OCR, always use line breaks format
+            let textToCopy = result.lineBreaksJoined
 
-            let base64Image = imageData.base64EncodedString()
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            let copied = pasteboard.setString(textToCopy, forType: .string)
 
-            Task {
-                defer { isExtracting = false }
-                
-                do {
-                    let copyFormat = settingsManager.extractLatexCopyFormat
-                    let latex = try await latexService.extractLatex(from: base64Image, apiKey: apiKey, format: copyFormat)
-                    Logger.log(.info, "Raw LaTeX from API: \(latex)")
-                    
-                    let cleanedLatex = cleanLatexString(latex)
-                    let textToCopy: String
-                    
-                    switch copyFormat {
-                        case "spaces":
-                            textToCopy = cleanedLatex.replacingOccurrences(of: "\n", with: " ")
-                        default:
-                            textToCopy = cleanedLatex
-                    }
-                    
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(textToCopy, forType: .string)
-                    Logger.log(.info, "Copied LaTeX to clipboard (format: \(copyFormat))")
-                    showSuccessFeedback()
-                    historyManager.addEntry(textToCopy, type: .latex)
-                } catch let error as LatexAPIError {
-                    handleLatexError(error)
-                } catch {
-                    NSAlert.showModalAlert(message: "Failed to extract LaTeX: \(error.localizedDescription)")
-                    Logger.log(.error, "LaTeX extraction failed: \(error)")
-                }
+            if copied {
+                showSuccessFeedback()
+                historyManager.addEntry(textToCopy, promptId: nil, promptName: "Text (OCR)")
             }
         }
     }
 
-    private func cleanLatexString(_ rawString: String) -> String {
+    /// Perform AI extraction using a prompt
+    private func performAIExtraction(image: NSImage, prompt: Prompt) {
+        guard !isExtracting else {
+            NSAlert.showModalAlert(message: "An extraction is already in progress. Please wait.")
+            return
+        }
+
+        guard let apiKey = UserDefaults.standard.string(forKey: "geminiAPIKey"), !apiKey.isEmpty else {
+            NSAlert.showModalAlert(message: "Please set your Gemini API key in Settings")
+            showSettings()
+            return
+        }
+
+        guard let tiffData = image.tiffRepresentation,
+              let bitmapImage = NSBitmapImageRep(data: tiffData),
+              let imageData = bitmapImage.representation(using: .png, properties: [:]) else {
+            Logger.log(.error, "Failed to convert image to PNG data for extraction")
+            NSAlert.showModalAlert(message: "Failed to process image data.")
+            return
+        }
+
+        let base64Image = imageData.base64EncodedString()
+
+        isExtracting = true
+
+        Task {
+            defer { isExtracting = false }
+
+            do {
+                let extractedContent = try await geminiService.extractContent(
+                    from: base64Image,
+                    apiKey: apiKey,
+                    promptContent: prompt.content
+                )
+                Logger.log(.info, "Raw content from API: \(extractedContent)")
+
+                let cleanedContent = cleanExtractedString(extractedContent)
+                let textToCopy: String
+
+                // Apply copy format based on prompt settings
+                switch prompt.copyFormat {
+                case .spaces:
+                    textToCopy = cleanedContent.replacingOccurrences(of: "\n", with: " ")
+                case .latexNewlines:
+                    textToCopy = cleanedContent.replacingOccurrences(of: "\n", with: " \\\\\n")
+                case .lineBreaks:
+                    textToCopy = cleanedContent
+                }
+
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(textToCopy, forType: .string)
+                Logger.log(.info, "Copied content to clipboard (format: \(prompt.copyFormat.rawValue))")
+                showSuccessFeedback()
+                historyManager.addEntry(textToCopy, promptId: prompt.id, promptName: prompt.name)
+            } catch let error as GeminiAPIError {
+                handleGeminiError(error)
+            } catch {
+                NSAlert.showModalAlert(message: "Failed to extract content: \(error.localizedDescription)")
+                Logger.log(.error, "Extraction failed: \(error)")
+            }
+        }
+    }
+
+    private func cleanExtractedString(_ rawString: String) -> String {
         let cleaned = rawString.trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned
     }
@@ -395,7 +465,7 @@ final class App: NSObject, NSApplicationDelegate {
     func showSuccessFeedback() {
         // Cancel any existing feedback task
         currentFeedbackTask?.cancel()
-        
+
         // Play screenshot sound
         if let soundURL = Bundle.main.url(forResource: "Screen Capture", withExtension: "aif"),
            let screenshotSound = NSSound(contentsOf: soundURL, byReference: true) {
@@ -403,14 +473,14 @@ final class App: NSObject, NSApplicationDelegate {
         } else {
             Logger.log(.error, "Could not load screenshot sound file from app bundle")
         }
-        
+
         // Update status item icon with proper state management
         if let button = self.statusItem.button {
             if originalStatusImage == nil {
                 originalStatusImage = button.image
             }
             button.image = .with(symbolName: Icons.checkmark, pointSize: 15)
-            
+
             // Create new feedback restoration task
             currentFeedbackTask = Task { [weak self] in
                 try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
@@ -421,7 +491,7 @@ final class App: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func handleLatexError(_ error: LatexAPIError) {
+    private func handleGeminiError(_ error: GeminiAPIError) {
         switch error {
         case .apiKeyMissing:
             NSAlert.showModalAlert(message: "Gemini API key is missing. Please set it in Settings.")
@@ -442,12 +512,12 @@ final class App: NSObject, NSApplicationDelegate {
         case .parsingError:
             NSAlert.showModalAlert(message: "Failed to parse the API response.")
         }
-        Logger.log(.error, "LaTeX extraction failed: \(error)")
+        Logger.log(.error, "Extraction failed: \(error)")
     }
 
     private func updateHistoryMenu() {
         historyMenu.removeAllItems()
-        
+
         let entries = historyManager.recentEntries
         if entries.isEmpty {
             let emptyItem = NSMenuItem(title: Localized.menuTitleNoHistory)
@@ -456,17 +526,18 @@ final class App: NSObject, NSApplicationDelegate {
         } else {
             for entry in entries {
                 let menuItem = NSMenuItem(
-                    title: "\(entry.formattedDate) - \(entry.type == .text ? "Text" : "LaTeX")",
+                    title: "\(entry.formattedDate) - \(entry.promptName)",
                     action: nil,
                     keyEquivalent: ""
                 )
-                
+
                 let submenu = NSMenu()
-                let previewItem = NSMenuItem(title: entry.text.prefix(50) + "...", action: nil, keyEquivalent: "")
+                let previewText = entry.text.prefix(50)
+                let previewItem = NSMenuItem(title: previewText + (entry.text.count > 50 ? "..." : ""), action: nil, keyEquivalent: "")
                 previewItem.isEnabled = false
                 submenu.addItem(previewItem)
                 submenu.addItem(.separator())
-                
+
                 let copyItem = NSMenuItem(title: Localized.menuTitleCopy)
                 copyItem.addAction { [weak self] in
                     NSPasteboard.general.clearContents()
@@ -474,28 +545,19 @@ final class App: NSObject, NSApplicationDelegate {
                     self?.showSuccessFeedback()
                 }
                 submenu.addItem(copyItem)
-                
+
                 menuItem.submenu = submenu
                 historyMenu.addItem(menuItem)
             }
-            
+
             historyMenu.addItem(.separator())
             historyMenu.addItem(clearHistoryItem)
         }
-    }
-
-    private func clearMenuItems() {
-        extractLatexItem.isHidden = true
     }
 }
 
 extension App: NSMenuDelegate {
     // No duplicate methods here - they're already defined in the main class
-}
-
-enum ExtractionType: String, Codable {
-    case text
-    case latex
 }
 
 extension NSAlert {

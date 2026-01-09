@@ -1,19 +1,25 @@
 import AppKit
 import Carbon
 
+/// Actions that can be triggered by keyboard shortcuts
+enum ShortcutAction {
+    case visionOCR       // Apple Vision offline text extraction
+    case defaultPrompt   // AI extraction with the user's default prompt
+}
+
 @MainActor
 final class ShortcutMonitor {
     static let shared = ShortcutMonitor()
-    
+
     private var textHotKeyRef: EventHotKeyRef?
-    private var latexHotKeyRef: EventHotKeyRef?
+    private var defaultPromptHotKeyRef: EventHotKeyRef?
     private var textHotKeyID = EventHotKeyID(signature: 0x4C544558, // 'LTEX'
                                             id: 1)
-    private var latexHotKeyID = EventHotKeyID(signature: 0x4C544558,
+    private var defaultPromptHotKeyID = EventHotKeyID(signature: 0x4C544558,
                                              id: 2)
-    private var callback: ((ExtractionType) -> Void)?
+    private var callback: ((ShortcutAction) -> Void)?
     private var textShortcut: KeyboardShortcut?
-    private var latexShortcut: KeyboardShortcut?
+    private var defaultPromptShortcut: KeyboardShortcut?
     
     struct KeyboardShortcut: Codable, Sendable {
         var keyCode: Int
@@ -181,8 +187,8 @@ final class ShortcutMonitor {
             
             Task { @MainActor in
                 switch hotKeyID.id {
-                case 1: monitor.callback?(.text)
-                case 2: monitor.callback?(.latex)
+                case 1: monitor.callback?(.visionOCR)
+                case 2: monitor.callback?(.defaultPrompt)
                 default: break
                 }
             }
@@ -195,28 +201,28 @@ final class ShortcutMonitor {
         nil)
     }
     
-    func startMonitoring(callback: @escaping (ExtractionType) -> Void) {
+    func startMonitoring(callback: @escaping (ShortcutAction) -> Void) {
         self.callback = callback
         registerHotKeys()
     }
-    
+
     func stopMonitoring() {
         if let ref = textHotKeyRef {
             UnregisterEventHotKey(ref)
             textHotKeyRef = nil
         }
-        if let ref = latexHotKeyRef {
+        if let ref = defaultPromptHotKeyRef {
             UnregisterEventHotKey(ref)
-            latexHotKeyRef = nil
+            defaultPromptHotKeyRef = nil
         }
     }
-    
+
     private func registerHotKeys() {
         if let textShortcut = textShortcut {
             if let currentRef = textHotKeyRef {
                 UnregisterEventHotKey(currentRef)
             }
-            
+
             var ref: EventHotKeyRef?
             RegisterEventHotKey(UInt32(textShortcut.keyCode),
                               textShortcut.carbonModifiers,
@@ -226,29 +232,29 @@ final class ShortcutMonitor {
                               &ref)
             textHotKeyRef = ref
         }
-        
-        if let latexShortcut = latexShortcut {
-            if let currentRef = latexHotKeyRef {
+
+        if let defaultPromptShortcut = defaultPromptShortcut {
+            if let currentRef = defaultPromptHotKeyRef {
                 UnregisterEventHotKey(currentRef)
             }
-            
+
             var ref: EventHotKeyRef?
-            RegisterEventHotKey(UInt32(latexShortcut.keyCode),
-                              latexShortcut.carbonModifiers,
-                              latexHotKeyID,
+            RegisterEventHotKey(UInt32(defaultPromptShortcut.keyCode),
+                              defaultPromptShortcut.carbonModifiers,
+                              defaultPromptHotKeyID,
                               GetApplicationEventTarget(),
                               0,
                               &ref)
-            latexHotKeyRef = ref
+            defaultPromptHotKeyRef = ref
         }
     }
-    
-    func setShortcut(_ shortcut: KeyboardShortcut?, for type: ExtractionType) {
-        switch type {
-        case .text:
+
+    func setShortcut(_ shortcut: KeyboardShortcut?, for action: ShortcutAction) {
+        switch action {
+        case .visionOCR:
             textShortcut = shortcut
-        case .latex:
-            latexShortcut = shortcut
+        case .defaultPrompt:
+            defaultPromptShortcut = shortcut
         }
         registerHotKeys()
     }

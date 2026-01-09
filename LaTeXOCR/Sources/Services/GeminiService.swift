@@ -1,7 +1,7 @@
 import Foundation
 
-/// Represents possible errors that can occur during LaTeX API operations
-enum LatexAPIError: Error, LocalizedError {
+/// Represents possible errors that can occur during Gemini API operations
+enum GeminiAPIError: Error, LocalizedError {
     case apiKeyMissing
     case apiKeyInvalid
     case apiError(String)
@@ -33,9 +33,9 @@ enum LatexAPIError: Error, LocalizedError {
     }
 }
 
-/// Service responsible for handling LaTeX extraction API requests
+/// Service responsible for handling AI-powered content extraction via Gemini API
 @MainActor
-struct LatexAPIService {
+struct GeminiService {
     private let session: URLSession
     private let maxRetries: Int
     private let initialDelay: UInt64
@@ -52,14 +52,20 @@ struct LatexAPIService {
         return statusCode >= 500 || error is URLError && (error as? URLError)?.code == .networkConnectionLost
     }
     
-    func extractLatex(from base64Image: String, apiKey: String, format: String = "lineBreaks") async throws -> String {
+    /// Extract content from an image using a customizable prompt
+    /// - Parameters:
+    ///   - base64Image: The image encoded as base64 PNG
+    ///   - apiKey: The Gemini API key
+    ///   - promptContent: The system prompt to use for extraction
+    /// - Returns: The extracted content as a string
+    func extractContent(from base64Image: String, apiKey: String, promptContent: String) async throws -> String {
         guard !apiKey.isEmpty else {
-            throw LatexAPIError.apiKeyMissing
+            throw GeminiAPIError.apiKeyMissing
         }
-        
+
         // Get the selected model from UserDefaults
         let model = UserDefaults.standard.string(forKey: "geminiModel") ?? "gemini-2.0-flash"
-                
+
         let payload: [String: Any] = [
             "contents": [[
                 "parts": [
@@ -71,21 +77,7 @@ struct LatexAPIService {
             ]],
             "systemInstruction": [
                 "parts": [
-                    ["text": """
-                        You are a specialized OCR engine that extracts text and mathematical notation from images with perfect accuracy. Your ONLY task is to process the provided image and output its content according to these strict rules:
-
-                        1. Convert all mathematical expressions and formulas into precise, syntactically correct LaTeX code. Preserve all symbols, subscripts, superscripts, fractions, integrals, matrices, alignments, and other mathematical structures.
-                        2. Extract all non-mathematical text as plain text. Critically analyze the layout: if a single sentence or paragraph of text is visually broken onto multiple lines solely due to spatial constraints or text wrapping within the image, you MUST join these lines with a single space to reconstruct the original coherent text block. 
-                        3. Convert tables to proper LaTeX table format using the 'tabular' environment. Preserve column alignment (left, center, right), borders, and cell merging where applicable. Use appropriate LaTeX commands such as \\hline for horizontal lines and & for column separators. For complex tables with special formatting, include all necessary LaTeX commands to maintain the visual structure.
-                        4. For figures, diagrams, and other non-text elements: Include a brief descriptor in [square brackets] such as [FIGURE: brief description of content] where the figure appears in the document flow. Do not attempt to recreate complex diagrams textually.
-                        5. For handwritten content: Process clear handwritten text and equations to the best of your ability. If handwriting is present but illegible, indicate this with [ILLEGIBLE HANDWRITING] in the appropriate location. If partially legible, extract what you can and indicate uncertain portions with [?].
-
-                        IMPORTANT OUTPUT RULES:
-                        - DO NOT preserve existing LaTeX environments. Instead, convert all mathematical content to raw LaTeX commands without environment declarations.
-                        - DO NOT wrap LaTeX code in markdown fences (like ```latex).
-                        - Your entire response must consist solely of the extracted content.
-                        """
-                    ]
+                    ["text": promptContent]
                 ]
             ],
             "generationConfig": [
@@ -97,7 +89,7 @@ struct LatexAPIService {
         
         // Build URL with the specified model
         guard let url = URL(string: "\(Config.geminiEndpoint(for: model))?key=\(apiKey)") else {
-            throw LatexAPIError.invalidResponse
+            throw GeminiAPIError.invalidResponse
         }
         
         var request = URLRequest(url: url)
@@ -111,16 +103,16 @@ struct LatexAPIService {
                 let (data, response) = try await session.data(for: request)
                 
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    throw LatexAPIError.invalidResponse
+                    throw GeminiAPIError.invalidResponse
                 }
                 
                 if httpResponse.statusCode != 200 {
                     if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                        let error = errorJson["error"] as? [String: Any],
                        let message = error["message"] as? String {
-                        throw LatexAPIError.apiError(message)
+                        throw GeminiAPIError.apiError(message)
                     } else {
-                        throw LatexAPIError.apiError("API request failed with status \(httpResponse.statusCode)")
+                        throw GeminiAPIError.apiError("API request failed with status \(httpResponse.statusCode)")
                     }
                 }
                 
@@ -131,22 +123,22 @@ struct LatexAPIService {
                       let parts = content["parts"] as? [[String: Any]],
                       let firstPart = parts.first,
                       let text = firstPart["text"] as? String else {
-                    throw LatexAPIError.parsingError
+                    throw GeminiAPIError.parsingError
                 }
                 
                 return text.trimmingCharacters(in: .whitespacesAndNewlines)
-            } catch let error as LatexAPIError {
+            } catch let error as GeminiAPIError {
                 throw error
             } catch {
                 if shouldRetry(statusCode: 0, error: error) {
                     retryCount += 1
                     try await Task.sleep(nanoseconds: initialDelay * UInt64(retryCount))
                 } else {
-                    throw LatexAPIError.networkError(error)
+                    throw GeminiAPIError.networkError(error)
                 }
             }
         }
         
-        throw LatexAPIError.networkError(NSError(domain: "com.example.error", code: 0, userInfo: nil))
+        throw GeminiAPIError.networkError(NSError(domain: "com.example.error", code: 0, userInfo: nil))
     }
 }
