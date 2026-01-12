@@ -255,7 +255,9 @@ final class App: NSObject, NSApplicationDelegate {
         // Check permission status
         if !permissionManager.checkPermission() {
             // Request permission (triggers system dialog) and start polling
-            permissionManager.requestPermissionAndStartMonitoring()
+            Task {
+                await permissionManager.requestPermissionAndStartMonitoring()
+            }
 
             // Update menu to show limited state
             updateMenuForLimitedState()

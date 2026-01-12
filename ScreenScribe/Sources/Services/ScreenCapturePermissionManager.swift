@@ -22,28 +22,50 @@ final class ScreenCapturePermissionManager: ObservableObject {
         hasPermission = CGPreflightScreenCaptureAccess()
 
         // If standard API says no permission, verify with ScreenCaptureKit
-        // (CGPreflightScreenCaptureAccess can return false even when permission is granted)
+        // (CGPreflightScreenCaptureAccess can return false even when permission is granted on macOS Sequoia)
         if !hasPermission {
             Task {
-                await verifyPermissionViaScreenCaptureKit()
+                _ = await verifyPermissionViaScreenCaptureKit(maxAttempts: 3, delaySeconds: 0.5)
             }
         }
     }
 
-    /// Verify permission using ScreenCaptureKit (more reliable than CGPreflightScreenCaptureAccess)
-    private func verifyPermissionViaScreenCaptureKit() async {
-        do {
-            _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-            hasPermission = true
-            stopPolling()
-        } catch {
-            // Permission not granted
+    /// Verify permission using ScreenCaptureKit with retry logic
+    /// Returns true if permission is confirmed, false if all attempts fail
+    /// On macOS Sequoia, ScreenCaptureKit can throw errors at app launch even when permission is granted
+    private func verifyPermissionViaScreenCaptureKit(maxAttempts: Int = 3, delaySeconds: Double = 0.5) async -> Bool {
+        for attempt in 1...maxAttempts {
+            do {
+                _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+                hasPermission = true
+                stopPolling()
+                Logger.log(.info, "ScreenCaptureKit permission verified on attempt \(attempt)")
+                return true
+            } catch {
+                Logger.log(.info, "ScreenCaptureKit attempt \(attempt) failed: \(error.localizedDescription)")
+                if attempt < maxAttempts {
+                    try? await Task.sleep(nanoseconds: UInt64(delaySeconds * 1_000_000_000))
+                }
+            }
         }
+        return false
     }
 
     /// Request permission and start monitoring for changes
-    func requestPermissionAndStartMonitoring() {
-        // Trigger the system permission dialog
+    func requestPermissionAndStartMonitoring() async {
+        // First, check via ScreenCaptureKit with retries (more reliable on macOS Sequoia)
+        // CGPreflightScreenCaptureAccess can return false even when permission is granted
+        // ScreenCaptureKit can also throw errors at app launch, so we retry a few times
+        let hasPermissionNow = await verifyPermissionViaScreenCaptureKit(maxAttempts: 3, delaySeconds: 0.5)
+
+        // If already granted, no need to show dialog
+        if hasPermissionNow {
+            Logger.log(.info, "Permission already granted (verified via ScreenCaptureKit with retries)")
+            return
+        }
+
+        // Only trigger the system permission dialog if truly not granted after retries
+        Logger.log(.info, "Permission not detected after retries, showing system dialog")
         let result = CGRequestScreenCaptureAccess()
         hasPermission = result
 
@@ -61,9 +83,9 @@ final class ScreenCapturePermissionManager: ObservableObject {
             return true
         }
 
-        // Fallback: verify via ScreenCaptureKit asynchronously
+        // Fallback: verify via ScreenCaptureKit asynchronously (with retries)
         Task {
-            await verifyPermissionViaScreenCaptureKit()
+            _ = await verifyPermissionViaScreenCaptureKit(maxAttempts: 3, delaySeconds: 0.5)
         }
 
         return hasPermission
@@ -101,9 +123,9 @@ final class ScreenCapturePermissionManager: ObservableObject {
             return
         }
 
-        // Fallback: check via ScreenCaptureKit
-        await verifyPermissionViaScreenCaptureKit()
-        if hasPermission {
+        // Fallback: check via ScreenCaptureKit (single attempt since we're polling)
+        let verified = await verifyPermissionViaScreenCaptureKit(maxAttempts: 1, delaySeconds: 0)
+        if verified {
             Logger.log(.info, "Screen capture permission granted (via ScreenCaptureKit)")
         }
     }

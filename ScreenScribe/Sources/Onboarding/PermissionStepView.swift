@@ -69,7 +69,9 @@ struct PermissionStepView: View {
         .onAppear {
             // Start monitoring for permission if not already granted
             if !permissionManager.hasPermission {
-                permissionManager.requestPermissionAndStartMonitoring()
+                Task {
+                    await permissionManager.requestPermissionAndStartMonitoring()
+                }
             }
         }
     }
