@@ -55,7 +55,7 @@ final class App: NSObject, NSApplicationDelegate {
     private let onboardingManager = OnboardingManager.shared
     private let historyManager = HistoryManager.shared
     private let promptManager = PromptManager.shared
-    private let permissionManager = ScreenCapturePermissionManager.shared
+    private lazy var permissionManager = ScreenCapturePermissionManager.shared
 
     private var isExtracting = false
     private var isFullySetup = false

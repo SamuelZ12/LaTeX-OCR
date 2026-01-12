@@ -18,16 +18,12 @@ final class ScreenCapturePermissionManager: ObservableObject {
     private let pollingInterval: TimeInterval = 2.0
 
     private init() {
-        // Initial check with standard API
+        // Only use safe, read-only check on init
+        // CGPreflightScreenCaptureAccess does NOT trigger any dialog
         hasPermission = CGPreflightScreenCaptureAccess()
-
-        // If standard API says no permission, verify with ScreenCaptureKit
-        // (CGPreflightScreenCaptureAccess can return false even when permission is granted on macOS Sequoia)
-        if !hasPermission {
-            Task {
-                _ = await verifyPermissionViaScreenCaptureKit(maxAttempts: 3, delaySeconds: 0.5)
-            }
-        }
+        // Note: On macOS Sequoia, this may return false even when permission is granted
+        // The verification via ScreenCaptureKit will happen when explicitly requested
+        // via requestPermissionAndStartMonitoring()
     }
 
     /// Verify permission using ScreenCaptureKit with retry logic
@@ -75,19 +71,14 @@ final class ScreenCapturePermissionManager: ObservableObject {
         }
     }
 
-    /// Check permission status once
+    /// Check permission status (read-only, does not trigger any dialogs)
     func checkPermission() -> Bool {
-        // Try standard API first
+        // Only use the safe read-only API
         if CGPreflightScreenCaptureAccess() {
             hasPermission = true
             return true
         }
-
-        // Fallback: verify via ScreenCaptureKit asynchronously (with retries)
-        Task {
-            _ = await verifyPermissionViaScreenCaptureKit(maxAttempts: 3, delaySeconds: 0.5)
-        }
-
+        // Return the cached value (may have been updated by prior ScreenCaptureKit verification)
         return hasPermission
     }
 
