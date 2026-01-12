@@ -111,10 +111,13 @@ final class App: NSObject, NSApplicationDelegate {
     private var statusItemMenu: NSMenu?
 
     private lazy var statusItem: NSStatusItem = {
+        Logger.log(.info, "Creating status item...")
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.behavior = .terminationOnRemoval
-        item.autosaveName = Bundle.main.bundleName
+        // Temporarily disabled autosaveName to rule out caching issues after project rename
+        // item.autosaveName = Bundle.main.bundleName
         item.button?.image = .with(symbolName: Icons.textViewFinder, pointSize: 15)
+        Logger.log(.info, "Status item button: \(String(describing: item.button)), image: \(String(describing: item.button?.image))")
 
         let menu = NSMenu()
         menu.delegate = self
@@ -205,18 +208,25 @@ final class App: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Logger.log(.info, "applicationDidFinishLaunching started")
         setupMainMenu()
 
         // Always show the status item
+        Logger.log(.info, "About to access statusItem.isVisible")
         statusItem.isVisible = true
+        Logger.log(.info, "Status item isVisible set to true, actual value: \(self.statusItem.isVisible)")
+        Logger.log(.info, "Status item button exists: \(self.statusItem.button != nil)")
 
         // Check if onboarding is needed
+        Logger.log(.info, "shouldShowOnboarding: \(self.onboardingManager.shouldShowOnboarding)")
         if onboardingManager.shouldShowOnboarding {
+            Logger.log(.info, "Showing onboarding")
             showOnboarding()
             return
         }
 
         // Normal startup flow (no onboarding needed)
+        Logger.log(.info, "Proceeding with normal startup")
         proceedWithNormalStartup()
     }
 

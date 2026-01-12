@@ -2,6 +2,7 @@ import Foundation
 import CoreGraphics
 import AppKit
 import Combine
+import ScreenCaptureKit
 
 @MainActor
 final class ScreenCapturePermissionManager: ObservableObject {
@@ -17,7 +18,27 @@ final class ScreenCapturePermissionManager: ObservableObject {
     private let pollingInterval: TimeInterval = 2.0
 
     private init() {
+        // Initial check with standard API
         hasPermission = CGPreflightScreenCaptureAccess()
+
+        // If standard API says no permission, verify with ScreenCaptureKit
+        // (CGPreflightScreenCaptureAccess can return false even when permission is granted)
+        if !hasPermission {
+            Task {
+                await verifyPermissionViaScreenCaptureKit()
+            }
+        }
+    }
+
+    /// Verify permission using ScreenCaptureKit (more reliable than CGPreflightScreenCaptureAccess)
+    private func verifyPermissionViaScreenCaptureKit() async {
+        do {
+            _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            hasPermission = true
+            stopPolling()
+        } catch {
+            // Permission not granted
+        }
     }
 
     /// Request permission and start monitoring for changes
@@ -34,7 +55,17 @@ final class ScreenCapturePermissionManager: ObservableObject {
 
     /// Check permission status once
     func checkPermission() -> Bool {
-        hasPermission = CGPreflightScreenCaptureAccess()
+        // Try standard API first
+        if CGPreflightScreenCaptureAccess() {
+            hasPermission = true
+            return true
+        }
+
+        // Fallback: verify via ScreenCaptureKit asynchronously
+        Task {
+            await verifyPermissionViaScreenCaptureKit()
+        }
+
         return hasPermission
     }
 
@@ -47,7 +78,7 @@ final class ScreenCapturePermissionManager: ObservableObject {
             repeats: true
         ) { [weak self] _ in
             Task { @MainActor in
-                self?.pollPermission()
+                await self?.pollPermission()
             }
         }
     }
@@ -59,12 +90,21 @@ final class ScreenCapturePermissionManager: ObservableObject {
     }
 
     /// Single poll iteration
-    private func pollPermission() {
-        let granted = CGPreflightScreenCaptureAccess()
-        if granted && !hasPermission {
-            hasPermission = true
-            stopPolling()
-            Logger.log(.info, "Screen capture permission granted")
+    private func pollPermission() async {
+        // Try standard API first
+        if CGPreflightScreenCaptureAccess() {
+            if !hasPermission {
+                hasPermission = true
+                stopPolling()
+                Logger.log(.info, "Screen capture permission granted")
+            }
+            return
+        }
+
+        // Fallback: check via ScreenCaptureKit
+        await verifyPermissionViaScreenCaptureKit()
+        if hasPermission {
+            Logger.log(.info, "Screen capture permission granted (via ScreenCaptureKit)")
         }
     }
 

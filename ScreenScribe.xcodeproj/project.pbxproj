@@ -43,7 +43,6 @@
 		C2000005000000000000000A /* PermissionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000005000000000000000B /* PermissionStepView.swift */; };
 		C2000006000000000000000A /* APIKeyStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000006000000000000000B /* APIKeyStepView.swift */; };
 		C2000007000000000000000A /* CompletionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000007000000000000000B /* CompletionStepView.swift */; };
-		B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FBEAAE2DC3080000C587FD /* Config.swift */; };
 		C1000001000000000000000A /* Prompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000001000000000000000B /* Prompt.swift */; };
 		C1000002000000000000000A /* PromptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000002000000000000000B /* PromptManager.swift */; };
 		C1000003000000000000000A /* PromptEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000003000000000000000B /* PromptEditorView.swift */; };
@@ -91,7 +90,6 @@
 		C2000005000000000000000B /* PermissionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionStepView.swift; sourceTree = "<group>"; };
 		C2000006000000000000000B /* APIKeyStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStepView.swift; sourceTree = "<group>"; };
 		C2000007000000000000000B /* CompletionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionStepView.swift; sourceTree = "<group>"; };
-		B9FBEAAE2DC3080000C587FD /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		C1000001000000000000000B /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
 		C1000002000000000000000B /* PromptManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptManager.swift; sourceTree = "<group>"; };
 		C1000003000000000000000B /* PromptEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptEditorView.swift; sourceTree = "<group>"; };
@@ -176,7 +174,6 @@
 				B9583C942DBD8C8300F43550 /* Logger.swift */,
 				B9583C952DBD8C8300F43550 /* Recognizer.swift */,
 				B9583C962DBD8C8300F43550 /* Resources.swift */,
-				B9FBEAAE2DC3080000C587FD /* Config.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -313,7 +310,6 @@
 				B9583CB82DBD8C8300F43550 /* SettingsManager.swift in Sources */,
 				B9583CB92DBD8C8300F43550 /* ShortcutMonitor.swift in Sources */,
 				B9583CBA2DBD8C8300F43550 /* NSImage+Extension.swift in Sources */,
-				B9FBEAAF2DC3080000C587FD /* Config.swift in Sources */,
 				B9F54FED2F1089BD0070D1C2 /* APIKeyStepView.swift in Sources */,
 				B9F54FE92F10866C0070D1C2 /* ScreenCapturePermissionManager.swift in Sources */,
 				B9583CBB2DBD8C8300F43550 /* main.swift in Sources */,
