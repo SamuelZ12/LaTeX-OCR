@@ -52,6 +52,18 @@ struct PermissionStepView: View {
                 .controlSize(.large)
 
                 Button(action: {
+                    Task {
+                        await permissionManager.requestPermissionAndStartMonitoring()
+                    }
+                }) {
+                    Text("Recheck Permission")
+                        .frame(width: 200)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .disabled(permissionManager.hasPermission)
+
+                Button(action: {
                     manager.nextStep()
                 }) {
                     Text("Continue")
