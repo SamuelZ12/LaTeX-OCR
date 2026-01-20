@@ -36,6 +36,10 @@
 		B9583CC52DBD8C8300F43550 /* NSMenu+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C812DBD8C8300F43550 /* NSMenu+Extension.swift */; };
 		B9583CC62DBD8C8300F43550 /* SMAppService+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9583C872DBD8C8300F43550 /* SMAppService+Extension.swift */; };
 		B9F54FE92F10866C0070D1C2 /* ScreenCapturePermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F54FE82F10866C0070D1C2 /* ScreenCapturePermissionManager.swift */; };
+		C1000001000000000000000A /* Prompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000001000000000000000B /* Prompt.swift */; };
+		C1000002000000000000000A /* PromptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000002000000000000000B /* PromptManager.swift */; };
+		C1000003000000000000000A /* PromptEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000003000000000000000B /* PromptEditorView.swift */; };
+		C1000004000000000000000A /* PromptListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000004000000000000000B /* PromptListView.swift */; };
 		C2000001000000000000000A /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000001000000000000000B /* OnboardingManager.swift */; };
 		C2000002000000000000000A /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000002000000000000000B /* OnboardingWindowController.swift */; };
 		C2000003000000000000000A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000003000000000000000B /* OnboardingView.swift */; };
@@ -43,10 +47,7 @@
 		C2000005000000000000000A /* PermissionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000005000000000000000B /* PermissionStepView.swift */; };
 		C2000006000000000000000A /* APIKeyStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000006000000000000000B /* APIKeyStepView.swift */; };
 		C2000007000000000000000A /* CompletionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000007000000000000000B /* CompletionStepView.swift */; };
-		C1000001000000000000000A /* Prompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000001000000000000000B /* Prompt.swift */; };
-		C1000002000000000000000A /* PromptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000002000000000000000B /* PromptManager.swift */; };
-		C1000003000000000000000A /* PromptEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000003000000000000000B /* PromptEditorView.swift */; };
-		C1000004000000000000000A /* PromptListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1000004000000000000000B /* PromptListView.swift */; };
+		F5B0C7647A784F30BB1B71D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C128894D5D084D2FBAADA65C /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +84,11 @@
 		B9583C9F2DBD8C8300F43550 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B9583CCA2DBD935300F43550 /* ScreenScribe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScreenScribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9F54FE82F10866C0070D1C2 /* ScreenCapturePermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePermissionManager.swift; sourceTree = "<group>"; };
+		C1000001000000000000000B /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
+		C1000002000000000000000B /* PromptManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptManager.swift; sourceTree = "<group>"; };
+		C1000003000000000000000B /* PromptEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptEditorView.swift; sourceTree = "<group>"; };
+		C1000004000000000000000B /* PromptListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptListView.swift; sourceTree = "<group>"; };
+		C128894D5D084D2FBAADA65C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C2000001000000000000000B /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingManager.swift; sourceTree = "<group>"; };
 		C2000002000000000000000B /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		C2000003000000000000000B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -90,10 +96,6 @@
 		C2000005000000000000000B /* PermissionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionStepView.swift; sourceTree = "<group>"; };
 		C2000006000000000000000B /* APIKeyStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStepView.swift; sourceTree = "<group>"; };
 		C2000007000000000000000B /* CompletionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionStepView.swift; sourceTree = "<group>"; };
-		C1000001000000000000000B /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
-		C1000002000000000000000B /* PromptManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptManager.swift; sourceTree = "<group>"; };
-		C1000003000000000000000B /* PromptEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptEditorView.swift; sourceTree = "<group>"; };
-		C1000004000000000000000B /* PromptListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +183,7 @@
 		B9583C9D2DBD8C8300F43550 /* ScreenScribe */ = {
 			isa = PBXGroup;
 			children = (
+				C128894D5D084D2FBAADA65C /* Assets.xcassets */,
 				B9583C972DBD8C8300F43550 /* Sources */,
 				B9583C982DBD8C8300F43550 /* Info.entitlements */,
 				B9583C992DBD8C8300F43550 /* Info.plist */,
@@ -284,6 +287,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5B0C7647A784F30BB1B71D9 /* Assets.xcassets in Resources */,
 				B9583CA72DBD8C8300F43550 /* Secrets.plist in Resources */,
 				B9583CA82DBD8C8300F43550 /* Build.xcconfig in Resources */,
 				B9583CAC2DBD8C8300F43550 /* Screen Capture.aif in Resources */,
@@ -310,7 +314,6 @@
 				B9583CB82DBD8C8300F43550 /* SettingsManager.swift in Sources */,
 				B9583CB92DBD8C8300F43550 /* ShortcutMonitor.swift in Sources */,
 				B9583CBA2DBD8C8300F43550 /* NSImage+Extension.swift in Sources */,
-				B9F54FED2F1089BD0070D1C2 /* APIKeyStepView.swift in Sources */,
 				B9F54FE92F10866C0070D1C2 /* ScreenCapturePermissionManager.swift in Sources */,
 				B9583CBB2DBD8C8300F43550 /* main.swift in Sources */,
 				B9583CBC2DBD8C8300F43550 /* App.swift in Sources */,
