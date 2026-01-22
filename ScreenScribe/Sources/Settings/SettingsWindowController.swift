@@ -3,13 +3,13 @@ import SwiftUI
 
 class SettingsWindowController: NSWindowController, NSWindowDelegate {
     static var shared: SettingsWindowController?
-
+    
     convenience init() {
         let settingsView = SettingsView()
         let hostingController = NSHostingController(rootView: settingsView)
-
+        
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 450, height: 680),
+            contentRect: NSRect(x: 0, y: 0, width: 450, height: 550),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -18,24 +18,24 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         window.contentViewController = hostingController
         window.title = "Settings"
         window.isReleasedWhenClosed = false
-        window.minSize = NSSize(width: 450, height: 680)
-
+        window.minSize = NSSize(width: 450, height: 550)
+        
         self.init(window: window)
         window.delegate = self
     }
-
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
+    
     override func showWindow(_ sender: Any?) {
         // Create a fresh window if needed to avoid ViewBridge issues
         if window == nil {
             let settingsView = SettingsView()
             let hostingController = NSHostingController(rootView: settingsView)
-
+            
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 450, height: 680),
+                contentRect: NSRect(x: 0, y: 0, width: 450, height: 550),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false
@@ -44,18 +44,18 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
             window.contentViewController = hostingController
             window.center()
             window.isReleasedWhenClosed = false
-            window.minSize = NSSize(width: 450, height: 680)
+            window.minSize = NSSize(width: 450, height: 550)
             self.window = window
         }
-
+        
         window?.makeKeyAndOrderFront(sender)
         NSApp.activate(ignoringOtherApps: true)
     }
-
+    
     func windowWillClose(_ notification: Notification) {
         Self.shared = nil
     }
-
+    
     static func showSettings() {
         if shared == nil {
             shared = SettingsWindowController()

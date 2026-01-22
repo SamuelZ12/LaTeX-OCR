@@ -175,7 +175,7 @@ struct SettingsView: View {
 
             Section {
                 PromptListView()
-                    .frame(height: 360)
+                    .frame(height: 280)
             } header: {
                 Text("Prompts")
             } footer: {
@@ -184,7 +184,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 500, height: 680)
+        .frame(width: 500, height: 700)
         .onAppear {
             isValidAPIKey = validateAPIKey(apiKeyInput)
         }

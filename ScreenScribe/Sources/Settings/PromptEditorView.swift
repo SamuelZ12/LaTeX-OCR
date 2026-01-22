@@ -55,20 +55,21 @@ struct PromptEditorView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                TextEditor(text: isBuiltIn ? .constant(content) : $content)
+                TextEditor(text: $content)
                     .font(.system(.body, design: .monospaced))
                     .frame(minHeight: 200)
                     .scrollContentBackground(.hidden)
                     .padding(8)
-                    .background(Color(nsColor: isBuiltIn ? .controlBackgroundColor : .textBackgroundColor))
+                    .background(Color(nsColor: .textBackgroundColor))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
                             .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
                     )
+                    .disabled(isBuiltIn)
 
                 if isBuiltIn {
-                    Text("Built-in prompt content is read-only (you can view and copy)")
+                    Text("Built-in prompt content cannot be modified")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
