@@ -17,6 +17,12 @@ final class ScreenCapturePermissionManager: ObservableObject {
     /// Polling interval in seconds
     private let pollingInterval: TimeInterval = 2.0
 
+    /// Minimum time interval (in seconds) between showing the system permission dialog
+    private let popupCooldownInterval: TimeInterval = 30.0
+
+    /// Timestamp of the last time we showed the system permission dialog
+    private var lastPopupTime: Date?
+
     private init() {
         // Only use safe, read-only check on init
         // CGPreflightScreenCaptureAccess does NOT trigger any dialog
@@ -88,9 +94,28 @@ final class ScreenCapturePermissionManager: ObservableObject {
         }
 
         // Only trigger the system permission dialog if truly not granted after all retry methods
-        Logger.log(.info, "Permission not detected after retries, showing system dialog")
-        let result = CGRequestScreenCaptureAccess()
-        hasPermission = result
+        // AND if enough time has passed since the last popup (cooldown period)
+        let now = Date()
+        let shouldShowPopup: Bool
+
+        if let lastTime = lastPopupTime {
+            let timeSinceLastPopup = now.timeIntervalSince(lastTime)
+            shouldShowPopup = timeSinceLastPopup >= popupCooldownInterval
+
+            if !shouldShowPopup {
+                let remainingCooldown = Int(popupCooldownInterval - timeSinceLastPopup)
+                Logger.log(.info, "Skipping system dialog (cooldown active, \(remainingCooldown)s remaining)")
+            }
+        } else {
+            shouldShowPopup = true
+        }
+
+        if shouldShowPopup {
+            Logger.log(.info, "Permission not detected after retries, showing system dialog")
+            let result = CGRequestScreenCaptureAccess()
+            hasPermission = result
+            lastPopupTime = now
+        }
 
         // If not granted, start polling
         if !hasPermission {
