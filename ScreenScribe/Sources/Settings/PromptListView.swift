@@ -146,6 +146,7 @@ struct PromptListView: View {
                     promptManager.updatePrompt(savedPrompt)
                 }
             }
+            .id(promptToEdit?.id ?? UUID())
         }
     }
 }
