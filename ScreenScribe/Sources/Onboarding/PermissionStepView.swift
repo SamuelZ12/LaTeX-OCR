@@ -4,6 +4,7 @@ import Combine
 struct PermissionStepView: View {
     @StateObject private var manager = OnboardingManager.shared
     @StateObject private var permissionManager = ScreenCapturePermissionManager.shared
+    @State private var isCheckingPermission = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -53,7 +54,9 @@ struct PermissionStepView: View {
 
                 Button(action: {
                     Task {
+                        isCheckingPermission = true
                         await permissionManager.requestPermissionAndStartMonitoring()
+                        isCheckingPermission = false
                     }
                 }) {
                     Text("Recheck Permission")
@@ -61,7 +64,7 @@ struct PermissionStepView: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
-                .disabled(permissionManager.hasPermission)
+                .disabled(permissionManager.hasPermission || isCheckingPermission)
 
                 Button(action: {
                     manager.nextStep()

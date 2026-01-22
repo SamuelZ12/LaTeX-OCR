@@ -39,15 +39,15 @@ final class ScreenCapturePermissionManager: ObservableObject {
                 Logger.log(.info, "ScreenCaptureKit permission verified on attempt \(attempt)")
                 return true
             } catch let error as NSError {
-                // Log known error codes that indicate permission is actually granted
-                // but system is not ready yet (common on macOS Sequoia after restart)
-                // Known transient errors: -3801 (userDeclined), -3802 (failedToStart),
-                // -3803 (missingEntitlements), -3805 (systemStoppedStream)
+                // On macOS Sequoia, ScreenCaptureKit can fail temporarily during system initialization
+                // even when permission is granted. We retry to handle these transient failures.
+                // Note: Some error codes like -3801 (userDeclined) may indicate actual denials,
+                // but Sequoia exhibits flaky behavior where retrying can succeed after system warmup.
 
                 Logger.log(.info, "ScreenCaptureKit attempt \(attempt)/\(maxAttempts) failed: \(error.localizedDescription) (domain: \(error.domain), code: \(error.code))")
 
                 if attempt < maxAttempts {
-                    // Use exponential backoff for better handling of slow system initialization
+                    // Use linear backoff for better handling of slow system initialization
                     let delay = delaySeconds * Double(attempt)
                     Logger.log(.info, "Waiting \(delay)s before retry...")
                     try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
@@ -69,7 +69,7 @@ final class ScreenCapturePermissionManager: ObservableObject {
 
         // First, check via ScreenCaptureKit with retries (more reliable on macOS Sequoia)
         // CGPreflightScreenCaptureAccess can return false even when permission is granted
-        // ScreenCaptureKit can also throw errors after restart/cold boot, so we retry with exponential backoff
+        // ScreenCaptureKit can also throw errors after restart/cold boot, so we retry with linear backoff
         // Use more attempts (5) and longer base delay (1.0s) for initial check since we might be starting from cold boot
         let hasPermissionNow = await verifyPermissionViaScreenCaptureKit(maxAttempts: 5, delaySeconds: 1.0)
 
