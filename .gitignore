@@ -69,3 +69,8 @@ TextGrabber2/Secrets.plist
 *.sqlite
 *.sqlite3
 
+
+
+# Agent
+.agent/
+_antigravity/

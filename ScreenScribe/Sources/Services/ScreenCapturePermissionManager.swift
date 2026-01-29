@@ -17,6 +17,12 @@ final class ScreenCapturePermissionManager: ObservableObject {
     /// Polling interval in seconds
     private let pollingInterval: TimeInterval = 2.0
 
+    /// Minimum time interval (in seconds) between showing the system permission dialog
+    private let popupCooldownInterval: TimeInterval = 30.0
+
+    /// Timestamp of the last time we showed the system permission dialog
+    private var lastPopupTime: Date?
+
     private init() {
         // Only use safe, read-only check on init
         // CGPreflightScreenCaptureAccess does NOT trigger any dialog
@@ -29,7 +35,8 @@ final class ScreenCapturePermissionManager: ObservableObject {
     /// Verify permission using ScreenCaptureKit with retry logic
     /// Returns true if permission is confirmed, false if all attempts fail
     /// On macOS Sequoia, ScreenCaptureKit can throw errors at app launch even when permission is granted
-    private func verifyPermissionViaScreenCaptureKit(maxAttempts: Int = 3, delaySeconds: Double = 0.5) async -> Bool {
+    /// This is a known issue where the system needs time to initialize screen capture subsystems
+    private func verifyPermissionViaScreenCaptureKit(maxAttempts: Int = 5, delaySeconds: Double = 1.0) async -> Bool {
         for attempt in 1...maxAttempts {
             do {
                 _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
@@ -37,10 +44,25 @@ final class ScreenCapturePermissionManager: ObservableObject {
                 stopPolling()
                 Logger.log(.info, "ScreenCaptureKit permission verified on attempt \(attempt)")
                 return true
-            } catch {
-                Logger.log(.info, "ScreenCaptureKit attempt \(attempt) failed: \(error.localizedDescription)")
+            } catch let error as NSError {
+                // On macOS Sequoia, ScreenCaptureKit can fail temporarily during system initialization
+                // even when permission is granted. We retry to handle these transient failures.
+                // Note: Some error codes like -3801 (userDeclined) may indicate actual denials,
+                // but Sequoia exhibits flaky behavior where retrying can succeed after system warmup.
+
+                Logger.log(.info, "ScreenCaptureKit attempt \(attempt)/\(maxAttempts) failed: \(error.localizedDescription) (domain: \(error.domain), code: \(error.code))")
+
                 if attempt < maxAttempts {
-                    try? await Task.sleep(nanoseconds: UInt64(delaySeconds * 1_000_000_000))
+                    // Use linear backoff for better handling of slow system initialization
+                    let delay = delaySeconds * Double(attempt)
+                    Logger.log(.info, "Waiting \(delay)s before retry...")
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                }
+            } catch {
+                Logger.log(.info, "ScreenCaptureKit attempt \(attempt)/\(maxAttempts) failed with unexpected error: \(error.localizedDescription)")
+                if attempt < maxAttempts {
+                    let delay = delaySeconds * Double(attempt)
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
                 }
             }
         }
@@ -49,10 +71,13 @@ final class ScreenCapturePermissionManager: ObservableObject {
 
     /// Request permission and start monitoring for changes
     func requestPermissionAndStartMonitoring() async {
+        Logger.log(.info, "Starting permission request and monitoring...")
+
         // First, check via ScreenCaptureKit with retries (more reliable on macOS Sequoia)
         // CGPreflightScreenCaptureAccess can return false even when permission is granted
-        // ScreenCaptureKit can also throw errors at app launch, so we retry a few times
-        let hasPermissionNow = await verifyPermissionViaScreenCaptureKit(maxAttempts: 3, delaySeconds: 0.5)
+        // ScreenCaptureKit can also throw errors after restart/cold boot, so we retry with linear backoff
+        // Use more attempts (5) and longer base delay (1.0s) for initial check since we might be starting from cold boot
+        let hasPermissionNow = await verifyPermissionViaScreenCaptureKit(maxAttempts: 5, delaySeconds: 1.0)
 
         // If already granted, no need to show dialog
         if hasPermissionNow {
@@ -60,10 +85,37 @@ final class ScreenCapturePermissionManager: ObservableObject {
             return
         }
 
-        // Only trigger the system permission dialog if truly not granted after retries
-        Logger.log(.info, "Permission not detected after retries, showing system dialog")
-        let result = CGRequestScreenCaptureAccess()
-        hasPermission = result
+        // Also try CGPreflightScreenCaptureAccess as a final check before showing dialog
+        // Sometimes it works even when ScreenCaptureKit fails
+        if CGPreflightScreenCaptureAccess() {
+            Logger.log(.info, "Permission detected via CGPreflightScreenCaptureAccess after ScreenCaptureKit failed")
+            hasPermission = true
+            return
+        }
+
+        // Only trigger the system permission dialog if truly not granted after all retry methods
+        // AND if enough time has passed since the last popup (cooldown period)
+        let now = Date()
+        let shouldShowPopup: Bool
+
+        if let lastTime = lastPopupTime {
+            let timeSinceLastPopup = now.timeIntervalSince(lastTime)
+            shouldShowPopup = timeSinceLastPopup >= popupCooldownInterval
+
+            if !shouldShowPopup {
+                let remainingCooldown = Int(popupCooldownInterval - timeSinceLastPopup)
+                Logger.log(.info, "Skipping system dialog (cooldown active, \(remainingCooldown)s remaining)")
+            }
+        } else {
+            shouldShowPopup = true
+        }
+
+        if shouldShowPopup {
+            Logger.log(.info, "Permission not detected after retries, showing system dialog")
+            let result = CGRequestScreenCaptureAccess()
+            hasPermission = result
+            lastPopupTime = now
+        }
 
         // If not granted, start polling
         if !hasPermission {
@@ -109,15 +161,16 @@ final class ScreenCapturePermissionManager: ObservableObject {
             if !hasPermission {
                 hasPermission = true
                 stopPolling()
-                Logger.log(.info, "Screen capture permission granted")
+                Logger.log(.info, "Screen capture permission granted (via CGPreflightScreenCaptureAccess)")
             }
             return
         }
 
-        // Fallback: check via ScreenCaptureKit (single attempt since we're polling)
-        let verified = await verifyPermissionViaScreenCaptureKit(maxAttempts: 1, delaySeconds: 0)
+        // Fallback: check via ScreenCaptureKit with a couple of attempts
+        // On macOS Sequoia, permission detection can be flaky even during polling
+        let verified = await verifyPermissionViaScreenCaptureKit(maxAttempts: 2, delaySeconds: 0.5)
         if verified {
-            Logger.log(.info, "Screen capture permission granted (via ScreenCaptureKit)")
+            Logger.log(.info, "Screen capture permission granted (via ScreenCaptureKit polling)")
         }
     }
 
