@@ -4,6 +4,7 @@ import Combine
 struct PermissionStepView: View {
     @StateObject private var manager = OnboardingManager.shared
     @StateObject private var permissionManager = ScreenCapturePermissionManager.shared
+    @State private var isCheckingPermission = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -39,6 +40,82 @@ struct PermissionStepView: View {
             .font(.subheadline)
             .padding(.top, 8)
 
+            // Troubleshooting section
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Troubleshooting:")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+
+                Text("If permission is not working:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("1.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("Open System Settings → Privacy & Security → Screen Recording")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("2.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("Remove ScreenScribe from the list")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("3.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("Quit ScreenScribe completely")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("4.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("Restart ScreenScribe")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("5.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("Accept the permission when prompted")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("6.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text("Restart ScreenScribe again")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.leading, 8)
+            }
+            .frame(maxWidth: 360)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.secondary.opacity(0.1))
+            )
+
             Spacer()
 
             VStack(spacing: 12) {
@@ -50,6 +127,20 @@ struct PermissionStepView: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
+
+                Button(action: {
+                    Task {
+                        isCheckingPermission = true
+                        await permissionManager.requestPermissionAndStartMonitoring()
+                        isCheckingPermission = false
+                    }
+                }) {
+                    Text("Recheck Permission")
+                        .frame(width: 200)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .disabled(permissionManager.hasPermission || isCheckingPermission)
 
                 Button(action: {
                     manager.nextStep()
