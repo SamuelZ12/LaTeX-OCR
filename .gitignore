@@ -71,6 +71,5 @@ TextGrabber2/Secrets.plist
 
 
 
-# Agent
-.agent/
 _antigravity/
+.agent/
